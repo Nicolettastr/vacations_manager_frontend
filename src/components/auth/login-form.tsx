@@ -16,7 +16,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useLogin } from "@/hooks/auth/useLogin";
+import { useRegister } from "@/hooks/auth/useRegister";
 import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email." }),
@@ -26,8 +29,11 @@ const formSchema = z.object({
     .min(6, { message: "Password must be at least 6 characters." }),
 });
 
-export function LoginForm() {
+export const LoginForm = () => {
   const { toast } = useToast();
+  const { mutate: register } = useRegister();
+  const { mutate: login } = useLogin();
+  const [type, setType] = useState<"login" | "register" | undefined>(undefined);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -37,23 +43,41 @@ export function LoginForm() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // NOTE: This is a placeholder for the actual sign-in logic.
-    console.log("Email/Password sign-in attempt:", values);
-    toast({
-      title: "Sign In Action",
-      description: "Email/password sign-in logic would be handled here.",
-    });
-  }
+  const handleSubmitType = (type: "login" | "register") => {
+    setType(type);
+  };
 
-  function handleGoogleSignIn() {
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    switch (type) {
+      case "login":
+        login(values);
+        toast({
+          title: "Sign In Action",
+          description: "Email/password sign-in logic would be handled here.",
+        });
+        break;
+      case "register":
+        register(values);
+        toast({
+          title: "Register Action",
+          description: "Email/password sign-in logic would be handled here.",
+        });
+        break;
+    }
+  };
+
+  const handleGoogleSignIn = () => {
     // NOTE: This is a placeholder for the actual Google sign-in logic.
     console.log("Google sign-in attempt");
     toast({
       title: "Sign In Action",
       description: "Google sign-in logic would be handled here.",
     });
-  }
+  };
+
+  const handleAccountRegister = (values: z.infer<typeof formSchema>) => {
+    register(values);
+  };
 
   return (
     <div className="space-y-6">
@@ -101,8 +125,20 @@ export function LoginForm() {
               </FormItem>
             )}
           />
-          <Button type="submit" className="w-full">
+          <Button
+            type="submit"
+            className="w-full"
+            onClick={() => handleSubmitType("login")}
+          >
             Sign In
+          </Button>
+          <Button
+            type="submit"
+            variant={"secondary"}
+            onClick={() => handleSubmitType("register")}
+            className="w-full"
+          >
+            Register
           </Button>
         </form>
       </Form>
@@ -124,4 +160,4 @@ export function LoginForm() {
       </Button>
     </div>
   );
-}
+};

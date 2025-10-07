@@ -1,12 +1,15 @@
+"use client";
+
 import { AuthCard } from "@/components/auth/auth-card";
 import CalendarView from "@/components/calendar/calendar-view";
 import { EmployeeLegend } from "@/components/employee-legend";
 import { Header } from "@/components/layout/header";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export default function Home() {
-  const login = false;
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
 
-  return !login ? (
+  return !isLoggedIn ? (
     <div className="flex min-h-screen w-full items-center justify-center bg-background p-4">
       <AuthCard />
     </div>

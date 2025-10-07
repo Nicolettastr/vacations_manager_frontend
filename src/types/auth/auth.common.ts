@@ -1,0 +1,19 @@
+export interface Login {
+  message: string;
+  token: string;
+  user: User;
+}
+
+export type Register = Omit<Login, "token">;
+
+export interface User {
+  id: string;
+  email: string;
+  created_at: Date;
+  updated_at: Date;
+}
+
+export interface userParams {
+  email: string;
+  password: string;
+}
