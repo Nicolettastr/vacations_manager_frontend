@@ -1,9 +1,16 @@
-import { Header } from '@/components/layout/header';
-import { EmployeeLegend } from '@/components/employee-legend';
-import CalendarView from '@/components/calendar/calendar-view';
+import { AuthCard } from "@/components/auth/auth-card";
+import CalendarView from "@/components/calendar/calendar-view";
+import { EmployeeLegend } from "@/components/employee-legend";
+import { Header } from "@/components/layout/header";
 
 export default function Home() {
-  return (
+  const login = false;
+
+  return !login ? (
+    <div className="flex min-h-screen w-full items-center justify-center bg-background p-4">
+      <AuthCard />
+    </div>
+  ) : (
     <div className="flex h-screen w-full flex-col bg-background">
       <div className="flex flex-1 overflow-hidden">
         <EmployeeLegend />
