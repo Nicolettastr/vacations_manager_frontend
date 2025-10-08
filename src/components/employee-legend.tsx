@@ -1,8 +1,15 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useGetEmployees } from "@/hooks/employees/useGetEmployee";
 import { employees } from "@/lib/data";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
+import { useAuthStore } from "@/store/useAuthStore";
 
 export function EmployeeLegend() {
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  const { employees: employees2 } = useGetEmployees(isLoggedIn);
+
+  console.log("employees2", employees2);
+
   const employeeMenu = employees.map((employee) => {
     const avatar = PlaceHolderImages.find((p) => p.id === employee.avatar);
     return (
