@@ -11,23 +11,32 @@ import FullCalendar from "@fullcalendar/react";
 import { addDays } from "date-fns";
 import { useCallback, useEffect, useState } from "react";
 
-import { employees, leaves as initialLeaves, leaveTypes } from "@/lib/data";
-import type { Employee, Leave } from "@/lib/types";
+import { useGetEmployees } from "@/hooks/employees/useGetEmployee";
+import { useGetEmployeesLeaves } from "@/hooks/leaves/useGetEmployeesLeaves";
+import { useGetLeavesTypes } from "@/hooks/leaves/useGetLeavesTypes";
+import { useAuthStore } from "@/store/useAuthStore";
+import { Employee } from "@/types/employees/employees.common";
+import { LeaveRequest, LeaveResponse } from "@/types/leaves/leaves.common";
 import { EventModal } from "./event-modal";
 
 type ModalState = {
   isOpen: boolean;
   mode: "create" | "edit" | "view";
-  data?: Leave | { startDate: string; endDate: string };
+  data?: LeaveResponse | { startDate: string; endDate: string };
 };
 
 export default function CalendarView() {
-  const [leaves, setLeaves] = useState<Leave[]>(initialLeaves);
   const [events, setEvents] = useState<EventInput[]>([]);
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  const { employees, fetchingEmployee } = useGetEmployees(isLoggedIn);
+  const { leavesTypes } = useGetLeavesTypes(isLoggedIn);
+  const { leaves, fetchingLeaves } = useGetEmployeesLeaves(isLoggedIn);
+  const [LeaveRequest, setLeaveRequest] = useState<LeaveRequest | undefined>(
+    undefined
+  );
   const [employeesMap, setEmployeesMap] = useState<Map<string, Employee>>(
     new Map()
   );
-
   const [modalState, setModalState] = useState<ModalState>({
     isOpen: false,
     mode: "create",
@@ -36,31 +45,31 @@ export default function CalendarView() {
   useEffect(() => {
     const employeeMap = new Map(employees.map((emp) => [emp.id, emp]));
     setEmployeesMap(employeeMap);
-  }, []);
+  }, [fetchingEmployee]);
 
   useEffect(() => {
     const transformedEvents = leaves.map((leave) => {
-      const employee = employeesMap.get(leave.employeeId);
-      const endDate = addDays(new Date(leave.endDate), 1)
+      const employee = employeesMap.get(leave.employee_id);
+      const endDate = addDays(new Date(leave.end_date), 1)
         .toISOString()
         .split("T")[0];
       return {
         id: leave.id,
         title: employee ? `${employee.name} ${employee.surname}` : "Unknown",
-        start: leave.startDate,
+        start: leave.start_date,
         end: endDate,
         allDay: true,
         backgroundColor: employee?.color || "#888",
         borderColor: employee?.color || "#888",
         extendedProps: {
-          employeeId: leave.employeeId,
+          employeeId: leave.employee_id,
           note: leave.note,
           type: leave.type,
         },
       };
     });
     setEvents(transformedEvents);
-  }, [leaves, employeesMap]);
+  }, [fetchingLeaves, employeesMap]);
 
   const handleDateSelect = useCallback((selectInfo: DateSelectArg) => {
     const endDate = addDays(selectInfo.end, -1);
@@ -92,19 +101,13 @@ export default function CalendarView() {
     setModalState({ isOpen: false, mode: "create" });
   };
 
-  const handleSaveLeave = (leave: Leave) => {
-    if (leaves.some((l) => l.id === leave.id)) {
-      // Update
-      setLeaves((prev) => prev.map((l) => (l.id === leave.id ? leave : l)));
-    } else {
-      // Create
-      setLeaves((prev) => [...prev, { ...leave, id: `leave-${Date.now()}` }]);
-    }
+  const handleSaveLeave = (leave: LeaveRequest) => {
+    console.log("handleSaveLeave", leave);
     handleCloseModal();
   };
 
   const handleDeleteLeave = (leaveId: string) => {
-    setLeaves((prev) => prev.filter((l) => l.id !== leaveId));
+    console.log("handleDeleteLeave", leaveId);
     handleCloseModal();
   };
 
@@ -143,7 +146,7 @@ export default function CalendarView() {
         mode={modalState.mode}
         data={modalState.data}
         employees={employees}
-        leaveTypes={leaveTypes}
+        leaveTypes={leavesTypes}
         onClose={handleCloseModal}
         onSave={handleSaveLeave}
         onDelete={handleDeleteLeave}

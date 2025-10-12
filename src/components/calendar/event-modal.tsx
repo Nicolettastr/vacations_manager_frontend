@@ -37,8 +37,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import type { EventModalProps, Leave, LeaveType } from "@/lib/types";
+import type { EventModalProps } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { LeaveRequest, LeaveResponse } from "@/types/leaves/leaves.common";
 import { useEffect } from "react";
 
 const leaveSchema = z
@@ -78,8 +79,8 @@ export function EventModal({
     if (data) {
       const defaultValues = {
         ...data,
-        startDate: new Date((data as Leave).startDate || new Date()),
-        endDate: new Date((data as Leave).endDate || new Date()),
+        startDate: new Date((data as LeaveResponse).start_date || new Date()),
+        endDate: new Date((data as LeaveResponse).end_date || new Date()),
       };
       form.reset(defaultValues as any);
     } else {
@@ -95,19 +96,18 @@ export function EventModal({
   }, [data, form, isOpen]);
 
   function onSubmit(values: z.infer<typeof leaveSchema>) {
-    const leaveData: Leave = {
-      ...values,
-      id: (data as Leave)?.id || `leave-${Date.now()}`,
-      type: values.type as LeaveType,
-      startDate: format(values.startDate, "yyyy-MM-dd"),
-      endDate: format(values.endDate, "yyyy-MM-dd"),
+    const leaveData: LeaveRequest = {
+      employee_id: values.employeeId,
+      type: values.type,
+      start_date: format(values.startDate, "yyyy-MM-dd"),
+      end_date: format(values.endDate, "yyyy-MM-dd"),
       note: values.note || "",
     };
     onSave(leaveData);
   }
 
-  const currentLeave = data as Leave;
-  const employee = employees.find((e) => e.id === currentLeave?.employeeId);
+  const currentLeave = data as LeaveResponse;
+  const employee = employees.find((e) => e.id === currentLeave?.employee_id);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -174,8 +174,8 @@ export function EventModal({
                         </FormControl>
                         <SelectContent>
                           {leaveTypes.map((type) => (
-                            <SelectItem key={type} value={type}>
-                              {type}
+                            <SelectItem key={type.id} value={type.id}>
+                              {type.name}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -287,13 +287,13 @@ export function EventModal({
                 </p>
                 <p>
                   <strong>Desde:</strong>{" "}
-                  {currentLeave?.startDate &&
-                    format(new Date(currentLeave.startDate), "PPP")}
+                  {currentLeave?.start_date &&
+                    format(new Date(currentLeave.start_date), "PPP")}
                 </p>
                 <p>
                   <strong>Hasta:</strong>{" "}
-                  {currentLeave?.endDate &&
-                    format(new Date(currentLeave.endDate), "PPP")}
+                  {currentLeave?.end_date &&
+                    format(new Date(currentLeave.end_date), "PPP")}
                 </p>
                 {currentLeave?.note && (
                   <p>

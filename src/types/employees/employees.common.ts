@@ -6,6 +6,7 @@ export interface Employee extends User {
   surname: string;
   color: null;
   user_id: string;
+  avatar: string;
 }
 
 export type newEmployee = Pick<Employee, "name" | "surname" | "email">;

@@ -3,7 +3,7 @@ import { Employee } from "@/types/employees/employees.common";
 
 export const getEmployees = async (
   token: string | null
-): Promise<Employee | undefined> => {
+): Promise<Employee[] | undefined> => {
   if (!token) {
     return;
   }

@@ -19,7 +19,7 @@ import { Input } from "@/components/ui/input";
 import { useLogin } from "@/hooks/auth/useLogin";
 import { useRegister } from "@/hooks/auth/useRegister";
 import { useToast } from "@/hooks/use-toast";
-import { useState } from "react";
+import { useRef } from "react";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email." }),
@@ -33,7 +33,7 @@ export const LoginForm = () => {
   const { toast } = useToast();
   const { mutate: register } = useRegister();
   const { mutate: login } = useLogin();
-  const [type, setType] = useState<"login" | "register" | undefined>(undefined);
+  const submitType = useRef<"login" | "register" | null>(null);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -43,12 +43,8 @@ export const LoginForm = () => {
     },
   });
 
-  const handleSubmitType = (type: "login" | "register") => {
-    setType(type);
-  };
-
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    switch (type) {
+    switch (submitType.current) {
       case "login":
         login(values);
         toast({
@@ -72,10 +68,6 @@ export const LoginForm = () => {
       title: "Sign In Action",
       description: "Google sign-in logic would be handled here.",
     });
-  };
-
-  const handleAccountRegister = (values: z.infer<typeof formSchema>) => {
-    register(values);
   };
 
   return (
@@ -127,14 +119,14 @@ export const LoginForm = () => {
           <Button
             type="submit"
             className="w-full"
-            onClick={() => handleSubmitType("login")}
+            onClick={() => (submitType.current = "login")}
           >
             Sign In
           </Button>
           <Button
             type="submit"
             variant={"secondary"}
-            onClick={() => handleSubmitType("register")}
+            onClick={() => (submitType.current = "register")}
             className="w-full"
           >
             Register

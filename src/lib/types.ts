@@ -1,14 +1,12 @@
 // DATES
 // ISO string "YYYY-MM-DD"
 
-export type Employee = {
-  id: string;
-  name: string;
-  surname: string;
-  email: string;
-  avatar: string;
-  color: string;
-};
+import { Employee } from "@/types/employees/employees.common";
+import {
+  LeaveRequest,
+  LeaveResponse,
+  leaveTypes,
+} from "@/types/leaves/leaves.common";
 
 export type LeaveType = "Vacation" | "Sick Leave" | "Personal" | "Unpaid";
 
@@ -32,11 +30,11 @@ export type Note = {
 export type EventModalProps = {
   isOpen: boolean;
   mode: "create" | "edit" | "view";
-  data?: Leave | { startDate: string; endDate: string };
+  data?: LeaveResponse | { startDate: string; endDate: string };
   employees: Employee[];
-  leaveTypes: LeaveType[];
+  leaveTypes: leaveTypes[];
   onClose: () => void;
-  onSave: (leave: Leave) => void;
+  onSave: (leave: LeaveRequest) => void;
   onDelete: (leaveId: string) => void;
   setMode: (mode: "create" | "edit" | "view") => void;
 };
