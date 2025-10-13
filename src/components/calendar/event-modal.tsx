@@ -39,8 +39,10 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import type { EventModalProps } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { useLeaveStore } from "@/store/useLeavesStore";
 import { LeaveRequest, LeaveResponse } from "@/types/leaves/leaves.common";
 import { useEffect } from "react";
+import { useShallow } from "zustand/shallow";
 
 const leaveSchema = z
   .object({
@@ -67,9 +69,12 @@ export function EventModal({
   onClose,
   onSave,
   onDelete,
-  setMode,
 }: EventModalProps) {
   const isEditMode = mode === "edit" || mode === "create";
+
+  const [modalState, setModalState] = useLeaveStore(
+    useShallow((state) => [state.modalState, state.setModalState])
+  );
 
   const form = useForm<z.infer<typeof leaveSchema>>({
     resolver: zodResolver(leaveSchema),
@@ -164,8 +169,8 @@ export function EventModal({
                     <FormItem>
                       <FormLabel>Tipo de Ausencia</FormLabel>
                       <Select
+                        value={field.value}
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
                       >
                         <FormControl>
                           <SelectTrigger>
@@ -174,7 +179,7 @@ export function EventModal({
                         </FormControl>
                         <SelectContent>
                           {leaveTypes.map((type) => (
-                            <SelectItem key={type.id} value={type.id}>
+                            <SelectItem key={type.id} value={type.name}>
                               {type.name}
                             </SelectItem>
                           ))}
@@ -306,7 +311,12 @@ export function EventModal({
             <DialogFooter>
               {mode === "view" && currentLeave?.id && (
                 <>
-                  <Button variant="outline" onClick={() => setMode("edit")}>
+                  <Button
+                    variant="outline"
+                    onClick={() =>
+                      setModalState({ ...modalState, mode: "edit" })
+                    }
+                  >
                     Editar
                   </Button>
                   <Button

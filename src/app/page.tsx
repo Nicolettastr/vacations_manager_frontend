@@ -9,6 +9,8 @@ import { useAuthStore } from "@/store/useAuthStore";
 export default function Home() {
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
 
+  console.log("isLoggedIn", isLoggedIn);
+
   return !isLoggedIn ? (
     <div className="flex min-h-screen w-full items-center justify-center bg-background p-4">
       <AuthCard />

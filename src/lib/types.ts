@@ -36,5 +36,4 @@ export type EventModalProps = {
   onClose: () => void;
   onSave: (leave: LeaveRequest) => void;
   onDelete: (leaveId: string) => void;
-  setMode: (mode: "create" | "edit" | "view") => void;
 };

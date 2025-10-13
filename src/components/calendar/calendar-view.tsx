@@ -14,33 +14,29 @@ import { useCallback, useEffect, useState } from "react";
 import { useGetEmployees } from "@/hooks/employees/useGetEmployee";
 import { useGetEmployeesLeaves } from "@/hooks/leaves/useGetEmployeesLeaves";
 import { useGetLeavesTypes } from "@/hooks/leaves/useGetLeavesTypes";
+import { usePostEmployeeLeave } from "@/hooks/leaves/usePostEmployeeLeave";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useLeaveStore } from "@/store/useLeavesStore";
 import { Employee } from "@/types/employees/employees.common";
-import { LeaveRequest, LeaveResponse } from "@/types/leaves/leaves.common";
+import { LeaveRequest } from "@/types/leaves/leaves.common";
+import { useShallow } from "zustand/shallow";
 import { EventModal } from "./event-modal";
-
-type ModalState = {
-  isOpen: boolean;
-  mode: "create" | "edit" | "view";
-  data?: LeaveResponse | { startDate: string; endDate: string };
-};
 
 export default function CalendarView() {
   const [events, setEvents] = useState<EventInput[]>([]);
-  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
-  const { employees, fetchingEmployee } = useGetEmployees(isLoggedIn);
-  const { leavesTypes } = useGetLeavesTypes(isLoggedIn);
-  const { leaves, fetchingLeaves } = useGetEmployeesLeaves(isLoggedIn);
-  const [LeaveRequest, setLeaveRequest] = useState<LeaveRequest | undefined>(
-    undefined
-  );
   const [employeesMap, setEmployeesMap] = useState<Map<string, Employee>>(
     new Map()
   );
-  const [modalState, setModalState] = useState<ModalState>({
-    isOpen: false,
-    mode: "create",
-  });
+
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  const [modalState, setModalState] = useLeaveStore(
+    useShallow((state) => [state.modalState, state.setModalState])
+  );
+
+  const { employees, fetchingEmployee } = useGetEmployees(isLoggedIn);
+  const { leavesTypes } = useGetLeavesTypes(isLoggedIn);
+  const { leaves, fetchingLeaves } = useGetEmployeesLeaves(isLoggedIn);
+  const { mutate: onCreateEmployeeLeave } = usePostEmployeeLeave();
 
   useEffect(() => {
     const employeeMap = new Map(employees.map((emp) => [emp.id, emp]));
@@ -103,6 +99,7 @@ export default function CalendarView() {
 
   const handleSaveLeave = (leave: LeaveRequest) => {
     console.log("handleSaveLeave", leave);
+    onCreateEmployeeLeave(leave);
     handleCloseModal();
   };
 
@@ -150,7 +147,6 @@ export default function CalendarView() {
         onClose={handleCloseModal}
         onSave={handleSaveLeave}
         onDelete={handleDeleteLeave}
-        setMode={(mode) => setModalState((s) => ({ ...s, mode }))}
       />
     </>
   );
