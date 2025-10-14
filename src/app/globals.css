@@ -87,15 +87,15 @@
   .fc .fc-toolbar-title {
     @apply text-xl font-semibold text-foreground;
   }
-  
+
   .fc .fc-button {
     @apply bg-secondary text-secondary-foreground;
   }
-  
+
   .fc .fc-button-primary {
     @apply bg-primary text-primary-foreground border-none;
   }
-  
+
   .fc .fc-button-primary:hover {
     @apply bg-primary/90;
   }
@@ -111,16 +111,27 @@
   .fc .fc-daygrid-event {
     @apply rounded-md p-1 text-sm font-medium;
   }
-  
+
   .fc .fc-h-event {
     @apply border-0;
   }
 
-  .fc-direction-ltr .fc-daygrid-event.fc-event-end, .fc-direction-rtl .fc-daygrid-event.fc-event-start {
+  .fc-direction-ltr .fc-daygrid-event.fc-event-end,
+  .fc-direction-rtl .fc-daygrid-event.fc-event-start {
     @apply mr-1;
   }
 
-  .fc-direction-ltr .fc-daygrid-event.fc-event-start, .fc-direction-rtl .fc-daygrid-event.fc-event-end {
+  .fc-direction-ltr .fc-daygrid-event.fc-event-start,
+  .fc-direction-rtl .fc-daygrid-event.fc-event-end {
     @apply ml-1;
   }
+}
+
+.icon:hover {
+  transform: scale(1.1);
+  transition: transform 0.2s, color 0.2s;
+}
+
+.add_employee_icon:hover {
+  color: #1570e0ff;
 }

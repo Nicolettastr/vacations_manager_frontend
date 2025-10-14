@@ -60,7 +60,7 @@ const leaveSchema = z
     path: ["endDate"],
   });
 
-export function EventModal({
+export const EventModal = ({
   isOpen,
   mode,
   data,
@@ -69,7 +69,7 @@ export function EventModal({
   onClose,
   onSave,
   onDelete,
-}: EventModalProps) {
+}: EventModalProps) => {
   const isEditMode = mode === "edit" || mode === "create";
 
   const [modalState, setModalState] = useLeaveStore(
@@ -334,4 +334,4 @@ export function EventModal({
       </DialogContent>
     </Dialog>
   );
-}
+};
