@@ -1,16 +1,18 @@
+"use client";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useDeleteEmployee } from "@/hooks/employees/useDeleteEmployee";
 import { useGetEmployees } from "@/hooks/employees/useGetEmployee";
+import { usePatchEmployee } from "@/hooks/employees/usePatchEmployee";
+import { usePostEmployee } from "@/hooks/employees/usePostEmployee";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useEmployeeStore } from "@/store/useEmployeeStore";
-import { newEmployee } from "@/types/employees/employees.common";
+import { Employee, newEmployee } from "@/types/employees/employees.common";
 import { Pencil, Plus, Settings, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useShallow } from "zustand/shallow";
-import { Button } from "../ui/button";
 import { EmployeeModal } from "./employee-modal";
 export function EmployeeLegend() {
-  const [addEmployee, setAddEmployee] = useState<boolean>(false);
   const [configureEmployees, setConfigureEmployees, modalState, setModalState] =
     useEmployeeStore(
       useShallow((state) => [
@@ -23,6 +25,23 @@ export function EmployeeLegend() {
 
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const { employees } = useGetEmployees(isLoggedIn);
+  const { mutate: onAddEmployee } = usePostEmployee();
+  const { mutate: onDeleteEmployee } = useDeleteEmployee();
+  const { mutate: onEditEmployee } = usePatchEmployee();
+
+  const [id, setId] = useState<string>("");
+
+  const handleDeleteEmployee = (employee: Employee) => {
+    setModalState({ isOpen: true, mode: "delete", data: employee });
+    setId(employee.id);
+  };
+
+  const handleSelectedEmployee = (employeeId: string) => {
+    setId(employeeId);
+    const employee = employees.find((emp) => emp.id === employeeId);
+    setModalState({ isOpen: true, mode: "edit", data: employee });
+    return employees.find((employee) => employee.id === employeeId);
+  };
 
   const employeeMenu = employees.map((employee) => {
     const avatar = PlaceHolderImages.find((p) => p.id === employee.avatar);
@@ -50,8 +69,18 @@ export function EmployeeLegend() {
         />
         {configureEmployees && (
           <span className="flex flex-row gap-1 cursor-pointer">
-            <Pencil size={17} color="#1570e0ff" className="icon" />
-            <Trash2 size={17} color="#DC143C" className="icon" />
+            <Pencil
+              onClick={() => handleSelectedEmployee(employee.id)}
+              size={17}
+              color="#1570e0ff"
+              className="icon"
+            />
+            <Trash2
+              onClick={() => handleDeleteEmployee(employee)}
+              size={17}
+              color="#DC143C"
+              className="icon"
+            />
           </span>
         )}
       </div>
@@ -62,17 +91,24 @@ export function EmployeeLegend() {
     setConfigureEmployees(!configureEmployees);
   };
 
-  const handleSaveChanges = () => {
-    console.log();
-  };
-
-  const handleCancel = () => {
-    console.log();
-  };
-
   const handleSaveEmployeeChanges = (employee: newEmployee) => {
-    console.log(employee);
-    setModalState({ isOpen: false, mode: "create" });
+    switch (modalState.mode) {
+      case "create":
+        console.log("Creating employee:", employee);
+        onAddEmployee(employee);
+        break;
+      case "edit":
+        console.log("Editing employee:", employee);
+        onEditEmployee({ id, data: employee });
+        break;
+      case "delete":
+        console.log("Deleting employee:", employee);
+        onDeleteEmployee(id);
+        break;
+      default:
+        break;
+    }
+    setModalState({ isOpen: false, mode: modalState.mode });
   };
 
   return (
@@ -83,7 +119,12 @@ export function EmployeeLegend() {
             Empleados
           </h2>
           <span className="flex flex-row">
-            <Plus className="mr-2 cursor-pointer add_employee_icon icon" />
+            <Plus
+              onClick={() =>
+                setModalState({ isOpen: true, mode: "create", data: undefined })
+              }
+              className="mr-2 cursor-pointer add_employee_icon icon"
+            />
             <Settings
               onClick={handleConfigureEmployees}
               className="icon cursor-pointer"
@@ -91,7 +132,7 @@ export function EmployeeLegend() {
           </span>
         </div>
         <div className="flex flex-col gap-4 h-[80vh]">{employeeMenu}</div>
-        {configureEmployees && (
+        {/* {configureEmployees && (
           <div className="w-100 flex-row lg:flex justify-end m-1 gap-1">
             <Button
               type="button"
@@ -110,13 +151,13 @@ export function EmployeeLegend() {
               Cancel
             </Button>
           </div>
-        )}
+        )} */}
       </aside>
       <EmployeeModal
         isOpen={modalState.isOpen}
         data={modalState.data as newEmployee}
         mode={modalState.mode}
-        onClose={() => setModalState({ isOpen: false, mode: "create" })}
+        onClose={() => setModalState({ isOpen: false, mode: modalState.mode })}
         onSave={handleSaveEmployeeChanges}
       />
     </>

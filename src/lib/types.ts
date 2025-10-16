@@ -27,10 +27,12 @@ export type Note = {
   employeeId?: string;
 };
 
+export type Dates = { startDate: string; endDate: string };
+
 export type EventModalProps = {
   isOpen: boolean;
-  mode: "create" | "edit" | "view";
-  data?: LeaveResponse | { startDate: string; endDate: string };
+  mode: "create" | "edit" | "view" | "delete";
+  data?: LeaveResponse | Dates;
   employees: Employee[];
   leaveTypes: leaveTypes[];
   onClose: () => void;

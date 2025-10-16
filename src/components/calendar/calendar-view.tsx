@@ -15,10 +15,11 @@ import { useGetEmployees } from "@/hooks/employees/useGetEmployee";
 import { useGetEmployeesLeaves } from "@/hooks/leaves/useGetEmployeesLeaves";
 import { useGetLeavesTypes } from "@/hooks/leaves/useGetLeavesTypes";
 import { usePostEmployeeLeave } from "@/hooks/leaves/usePostEmployeeLeave";
+import { Dates } from "@/lib/types";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useLeaveStore } from "@/store/useLeavesStore";
 import { Employee } from "@/types/employees/employees.common";
-import { LeaveRequest } from "@/types/leaves/leaves.common";
+import { LeaveRequest, LeaveResponse } from "@/types/leaves/leaves.common";
 import { useShallow } from "zustand/shallow";
 import { EventModal } from "./event-modal";
 
@@ -75,7 +76,7 @@ export default function CalendarView() {
       data: {
         startDate: selectInfo.startStr,
         endDate: endDate.toISOString().split("T")[0],
-      },
+      } as Dates,
     });
   }, []);
 
@@ -141,7 +142,7 @@ export default function CalendarView() {
       <EventModal
         isOpen={modalState.isOpen}
         mode={modalState.mode}
-        data={modalState.data}
+        data={modalState.data as LeaveResponse}
         employees={employees}
         leaveTypes={leavesTypes}
         onClose={handleCloseModal}

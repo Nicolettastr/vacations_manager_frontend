@@ -26,7 +26,7 @@ import * as z from "zod";
 
 export type EmployeeModalProps = {
   isOpen: boolean;
-  mode: "create" | "edit" | "view";
+  mode: "create" | "edit" | "view" | "delete";
   data?: newEmployee;
   onClose: () => void;
   onSave: (employee: newEmployee) => void;
@@ -76,108 +76,137 @@ export const EmployeeModal = ({
       <DialogContent className="sm:max-w-[480px]">
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <DialogHeader>
-              <DialogTitle>
-                {mode === "create" && "Agregar Empleado"}
-                {mode === "edit" && "Editar Empleado"}
-                {mode === "view" && `${data?.name} ${data?.surname}`}
-              </DialogTitle>
-              {isEditMode && (
-                <DialogDescription>
-                  Complete los datos del empleado.
-                </DialogDescription>
-              )}
-            </DialogHeader>
-
-            {isEditMode ? (
-              <div className="space-y-4">
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Nombre</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Nombre" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="surname"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Apellido</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Apellido" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input
-                          type="email"
-                          placeholder="Correo electrónico"
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="color"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Color</FormLabel>
-                      <FormControl>
-                        <Input type="color" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+            {mode === "delete" ? (
+              <>
+                <DialogHeader>
+                  <DialogTitle>
+                    {`Delete all records of ${data?.name} ${data?.surname}`}
+                  </DialogTitle>
+                  <DialogDescription>
+                    Once employee records are deleted, all associated data
+                    including leave records will be permanently removed and
+                    cannot be recovered. Please confirm that you want to proceed
+                    with this action.
+                  </DialogDescription>
+                  <DialogFooter>
+                    <Button variant={"destructive"} type="submit">
+                      Delete
+                    </Button>
+                    <Button
+                      variant={"secondary"}
+                      type="button"
+                      onClick={onClose}
+                    >
+                      Cancel
+                    </Button>
+                  </DialogFooter>
+                </DialogHeader>
+              </>
             ) : (
-              <div className="space-y-2 text-sm">
-                <p>
-                  <strong>Nombre:</strong> {data?.name}
-                </p>
-                <p>
-                  <strong>Apellido:</strong> {data?.surname}
-                </p>
-                <p>
-                  <strong>Email:</strong> {data?.email}
-                </p>
-                {data?.color && (
-                  <p>
-                    <strong>Color:</strong>{" "}
-                    <span
-                      className="inline-block w-4 h-4 rounded"
-                      style={{ backgroundColor: data.color }}
+              <>
+                {" "}
+                <DialogHeader>
+                  <DialogTitle>
+                    {mode === "create" && "Agregar Empleado"}
+                    {mode === "edit" && "Editar Empleado"}
+                    {mode === "view" && `${data?.name} ${data?.surname}`}
+                  </DialogTitle>
+                  {isEditMode && (
+                    <DialogDescription>
+                      Complete los datos del empleado.
+                    </DialogDescription>
+                  )}
+                </DialogHeader>
+                {isEditMode ? (
+                  <div className="space-y-4">
+                    <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Nombre</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Nombre" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
                     />
-                  </p>
-                )}
-              </div>
-            )}
 
-            {isEditMode && (
-              <DialogFooter>
-                <Button type="submit">Guardar</Button>
-              </DialogFooter>
+                    <FormField
+                      control={form.control}
+                      name="surname"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Apellido</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Apellido" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="email"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Email</FormLabel>
+                          <FormControl>
+                            <Input
+                              type="email"
+                              placeholder="Correo electrónico"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="color"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Color</FormLabel>
+                          <FormControl>
+                            <Input type="color" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                ) : (
+                  <div className="space-y-2 text-sm">
+                    <p>
+                      <strong>Nombre:</strong> {data?.name}
+                    </p>
+                    <p>
+                      <strong>Apellido:</strong> {data?.surname}
+                    </p>
+                    <p>
+                      <strong>Email:</strong> {data?.email}
+                    </p>
+                    {data?.color && (
+                      <p>
+                        <strong>Color:</strong>{" "}
+                        <span
+                          className="inline-block w-4 h-4 rounded"
+                          style={{ backgroundColor: data.color }}
+                        />
+                      </p>
+                    )}
+                  </div>
+                )}
+                {isEditMode && (
+                  <DialogFooter>
+                    <Button type="submit">Guardar</Button>
+                  </DialogFooter>
+                )}
+              </>
             )}
           </form>
         </Form>
