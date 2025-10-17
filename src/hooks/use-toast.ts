@@ -16,7 +16,7 @@ type ToasterToast = ToastProps & {
   variant?: ToastVariant;
 };
 
-type ToastVariant = "default" | "success" | "error" | "info";
+type ToastVariant = "default" | "success" | "error" | "info" | "destructive";
 
 const actionTypes = {
   ADD_TOAST: "ADD_TOAST",

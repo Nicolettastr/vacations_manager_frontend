@@ -50,6 +50,7 @@ export const LoginForm = () => {
         toast({
           title: "Sign In Action",
           description: "Email/password sign-in logic would be handled here.",
+          variant: "success",
         });
         break;
       case "register":
@@ -57,6 +58,7 @@ export const LoginForm = () => {
         toast({
           title: "Register Action",
           description: "Email/password sign-in logic would be handled here.",
+          variant: "success",
         });
         break;
     }

@@ -4,15 +4,17 @@ import { useDeleteEmployee } from "@/hooks/employees/useDeleteEmployee";
 import { useGetEmployees } from "@/hooks/employees/useGetEmployee";
 import { usePatchEmployee } from "@/hooks/employees/usePatchEmployee";
 import { usePostEmployee } from "@/hooks/employees/usePostEmployee";
+import { useToast } from "@/hooks/use-toast";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useEmployeeStore } from "@/store/useEmployeeStore";
 import { Employee, newEmployee } from "@/types/employees/employees.common";
 import { Pencil, Plus, Settings, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useShallow } from "zustand/shallow";
 import { EmployeeModal } from "./employee-modal";
 export function EmployeeLegend() {
+  const { toast } = useToast();
   const [configureEmployees, setConfigureEmployees, modalState, setModalState] =
     useEmployeeStore(
       useShallow((state) => [
@@ -24,12 +26,22 @@ export function EmployeeLegend() {
     );
 
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
-  const { employees } = useGetEmployees(isLoggedIn);
+  const { employees, errorEmployee } = useGetEmployees(isLoggedIn);
   const { mutate: onAddEmployee } = usePostEmployee();
   const { mutate: onDeleteEmployee } = useDeleteEmployee();
   const { mutate: onEditEmployee } = usePatchEmployee();
 
   const [id, setId] = useState<string>("");
+
+  useEffect(() => {
+    if (errorEmployee) {
+      toast({
+        title: "Employee editing Failed",
+        description: "There was an error editing the employee.",
+        variant: "destructive",
+      });
+    }
+  }, [errorEmployee]);
 
   const handleDeleteEmployee = (employee: Employee) => {
     setModalState({ isOpen: true, mode: "delete", data: employee });

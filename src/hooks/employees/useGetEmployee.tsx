@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 export const useGetEmployees = (isLoggedIn: boolean) => {
   const token = useAuthStore((state) => state.token);
 
-  const { data, isFetching } = useQuery({
+  const { data, isFetching, error } = useQuery({
     queryKey: ["getEmployees", token],
     queryFn: () => getEmployees(token),
     enabled: isLoggedIn && !!token,
@@ -14,5 +14,6 @@ export const useGetEmployees = (isLoggedIn: boolean) => {
   return {
     employees: data ?? [],
     fetchingEmployee: isFetching,
+    errorEmployee: error,
   };
 };
