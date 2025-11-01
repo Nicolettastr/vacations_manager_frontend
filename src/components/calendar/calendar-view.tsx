@@ -37,8 +37,12 @@ export default function CalendarView() {
   const [selectTypeModal, setSelectTypeModal] = useState<boolean>(false);
 
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
-  const [modalState, setModalState] = useModalStore(
-    useShallow((state) => [state.modalState, state.setModalState])
+  const [modalState, setModalState, clearModal] = useModalStore(
+    useShallow((state) => [
+      state.modalState,
+      state.setModalState,
+      state.clearModal,
+    ])
   );
   const setSelectedDate = useCommonDataStore((state) => state.setSelectedDate);
 
@@ -57,6 +61,10 @@ export default function CalendarView() {
   const employeesMap = useMemo(() => {
     return new Map(employees.map((emp) => [emp.id, emp]));
   }, [employees]);
+
+  useEffect(() => {
+    clearModal();
+  }, []);
 
   const generateLeaveEvents = useCallback(() => {
     return leaves.map((leave) => {
@@ -121,12 +129,8 @@ export default function CalendarView() {
   }, [generateLeaveEvents, generateNoteEvents]);
 
   const handleDateSelect = useCallback((selectInfo: DateSelectArg) => {
-    //const endDate = addDays(selectInfo.end, -1);
     const startDate = selectInfo.startStr;
-    // const endDateStr = endDate.toISOString().split("T")[0];
-
     setSelectedDate(startDate);
-
     setSelectTypeModal(true);
   }, []);
 

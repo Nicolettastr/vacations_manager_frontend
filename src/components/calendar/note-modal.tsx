@@ -73,32 +73,60 @@ export function NoteModal({
   );
   const selectedDate = useCommonDataStore((state) => state.selectedDate);
 
+  const defaultValues = {
+    id: undefined,
+    employee_id: undefined,
+    date: selectedDate,
+    type: "low" as NoteTypes,
+    title: "",
+    content: "",
+  };
+
   const form = useForm<z.infer<typeof noteSchema>>({
     resolver: zodResolver(noteSchema),
+    defaultValues,
   });
 
   useEffect(() => {
-    if (data) {
-      const defaultValues = {
-        ...data,
-        employee_id: data.employee_id || undefined,
-        date: isEditMode ? new Date(data.date) : selectedDate,
-        type: data.type || notestypes[0]?.name || ("low" as NoteTypes),
-        title: data.title || "",
-        content: data.content || "",
+    if (data && isOpen) {
+      const noteValues = {
+        id: data?.id,
+        employee_id: data?.employee_id,
+        date: data?.date,
+        type: data?.type,
+        title: data?.title,
+        content: data?.content,
       };
-      form.reset(defaultValues as NoteCreateRequest);
+      form.reset(noteValues as NoteCreateRequest);
     } else {
-      form.reset({
-        id: undefined,
-        employee_id: undefined,
-        type: "low" as NoteTypes,
-        date: selectedDate,
-        title: "",
-        content: "",
-      });
+      form.reset(defaultValues);
     }
-  }, [data, form, isOpen]);
+  }, [isOpen, data]);
+
+  console.log("data", data);
+
+  // useEffect(() => {
+  //   if (data) {
+  //     const defaultValues = {
+  //       ...data,
+  //       employee_id: data.employee_id || undefined,
+  //       date: isEditMode ? new Date(data.date) : selectedDate,
+  //       type: data.type || notestypes[0]?.name || ("low" as NoteTypes),
+  //       title: data.title || "",
+  //       content: data.content || "",
+  //     };
+  //     form.reset(defaultValues as NoteCreateRequest);
+  //   } else {
+  //     form.reset({
+  //       id: undefined,
+  //       employee_id: undefined,
+  //       type: "low" as NoteTypes,
+  //       date: selectedDate,
+  //       title: "",
+  //       content: "",
+  //     });
+  //   }
+  // }, [data, form, isOpen]);
 
   async function onSubmit(values: NoteCreateRequest) {
     onSave(values);
@@ -106,7 +134,11 @@ export function NoteModal({
   }
 
   const currentNote = data as NoteResponse;
-  const employee = employees?.find((emp) => emp.id === currentNote.employee_id);
+  const employee = employees?.find(
+    (emp) => emp.id === currentNote?.employee_id
+  );
+
+  console.log("isEditMode", isEditMode);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -201,19 +233,19 @@ export function NoteModal({
                 )}
 
                 <p>
-                  <strong>Tipo:</strong> {currentNote.type}
+                  <strong>Tipo:</strong> {currentNote?.type}
                 </p>
 
                 <p>
                   <strong>Desde:</strong>{" "}
-                  {currentNote.date &&
-                    format(new Date(currentNote.date), "PPP")}
+                  {currentNote?.date &&
+                    format(new Date(currentNote?.date), "PPP")}
                 </p>
                 <p>
-                  <strong>Title:</strong> {currentNote.title}
+                  <strong>Title:</strong> {currentNote?.title}
                 </p>
                 <p>
-                  <strong>Nota:</strong> {currentNote.content}
+                  <strong>Nota:</strong> {currentNote?.content}
                 </p>
               </div>
             )}
@@ -235,7 +267,7 @@ export function NoteModal({
                   </Button>
                   <Button
                     variant="destructive"
-                    onClick={() => onDelete(String(currentNote.id), "note")}
+                    onClick={() => onDelete(String(currentNote?.id), "note")}
                   >
                     <Trash2 className="mr-2 h-4 w-4" /> Eliminar
                   </Button>

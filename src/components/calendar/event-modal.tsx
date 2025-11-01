@@ -37,7 +37,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { cn } from "@/lib/utils";
+import { cn, formatDate } from "@/lib/utils";
 import { useCommonDataStore } from "@/store/useCommonDataStore";
 import { useModalStore } from "@/store/useModalStore";
 import { EventModalProps } from "@/types/common";
@@ -78,22 +78,18 @@ export const EventModal = ({
   );
   const selectedDate = useCommonDataStore((state) => state.selectedDate);
 
-  function convertirFecha(fechaStr?: string) {
-    if (!fechaStr) return new Date();
-    const [year, month, day] = fechaStr.split(/[-/]/).map(Number);
-    return new Date(year, month - 1, day, 12, 0, 0);
-  }
+  const defaultValues = {
+    id: undefined,
+    employeeId: undefined,
+    type: undefined,
+    startDate: formatDate(selectedDate),
+    endDate: formatDate(selectedDate),
+    note: "",
+  };
 
   const form = useForm<z.infer<typeof leaveSchema>>({
     resolver: zodResolver(leaveSchema),
-    defaultValues: {
-      id: undefined,
-      employeeId: undefined,
-      type: undefined,
-      startDate: convertirFecha(selectedDate),
-      endDate: convertirFecha(selectedDate),
-      note: "",
-    },
+    defaultValues,
   });
 
   useEffect(() => {
@@ -101,20 +97,12 @@ export const EventModal = ({
       form.reset({
         id: data.id,
         employeeId: data.employee_id,
-        startDate: convertirFecha(data.start_date),
-        endDate: convertirFecha(data.end_date),
+        startDate: formatDate(data.start_date),
+        endDate: formatDate(data.end_date),
         type: data.type,
         note: data.note || "",
       });
     } else {
-      const defaultValues = {
-        id: undefined,
-        employeeId: undefined,
-        type: undefined,
-        startDate: convertirFecha(selectedDate),
-        endDate: convertirFecha(selectedDate),
-        note: "",
-      };
       form.reset(defaultValues);
     }
   }, [isOpen, data]);
