@@ -1,10 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useModalStore } from "@/store/useModalStore";
 import { Calendar as CalendarIcon, Plus, Search } from "lucide-react";
 
 export function Header() {
   const logout = useAuthStore((state) => state.logout);
+  const setModalState = useModalStore((state) => state.setModalState);
 
   return (
     <header className="flex h-16 shrink-0 items-center border-b bg-card px-4 md:px-6 z-10">
@@ -23,7 +25,7 @@ export function Header() {
             className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[300px]"
           />
         </div>
-        <Button>
+        <Button onClick={() => setModalState({ isOpen: true, mode: "create" })}>
           <Plus className="mr-2 h-4 w-4" />
           Nueva Ausencia
         </Button>

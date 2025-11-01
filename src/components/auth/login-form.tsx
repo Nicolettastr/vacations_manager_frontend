@@ -25,8 +25,15 @@ const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email." }),
   password: z
     .string()
-    .min(1, { message: "Password is required." })
-    .min(6, { message: "Password must be at least 6 characters." }),
+    .min(8, "La contraseña debe tener al menos 8 caracteres.")
+    .max(32, "La contraseña no puede tener más de 32 caracteres.")
+    .regex(
+      /[!@#$%^&*(),.?":{}|<>_\-]/,
+      "Debe contener al menos un carácter especial."
+    )
+    .regex(/[A-Z]/, "Debe contener al menos una letra mayúscula.")
+    .regex(/[a-z]/, "Debe contener al menos una letra minúscula.")
+    .regex(/\d/, "Debe contener al menos un número."),
 });
 
 export const LoginForm = () => {
@@ -48,16 +55,16 @@ export const LoginForm = () => {
       case "login":
         login(values);
         toast({
-          title: "Sign In Action",
-          description: "Email/password sign-in logic would be handled here.",
+          title: "Sign In",
+          description: "Sign in successfully",
           variant: "success",
         });
         break;
       case "register":
         register(values);
         toast({
-          title: "Register Action",
-          description: "Email/password sign-in logic would be handled here.",
+          title: "Register",
+          description: "Register successfully",
           variant: "success",
         });
         break;

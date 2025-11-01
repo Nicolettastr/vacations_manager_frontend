@@ -6,16 +6,49 @@ import { EmployeeLegend } from "@/components/employees/employee-legend";
 import { Header } from "@/components/layout/header";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useEmployeeStore } from "@/store/useEmployeeStore";
+import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/shallow";
 
 export default function Home() {
-  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  const { t } = useTranslation();
+  const [isLoggedIn, isLoading, setIsLoading, setToken, setUser] = useAuthStore(
+    useShallow((state) => [
+      state.isLoggedIn,
+      state.isLoading,
+      state.setIsLoading,
+      state.setToken,
+      state.setUser,
+    ])
+  );
   const [configureEmployees, setConfigureEmployees] = useEmployeeStore(
     useShallow((state) => [
       state.configureEmployees,
       state.setConfigureEmployees,
     ])
   );
+
+  useEffect(() => {
+    setIsLoading(true);
+
+    const storedToken = localStorage.getItem("token");
+    const storedUser = localStorage.getItem("user");
+
+    if (storedToken && storedUser) {
+      setToken(storedToken);
+      setUser(JSON.parse(storedUser));
+    }
+
+    setIsLoading(false);
+  }, [setIsLoading, setToken, setUser]);
+
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <p className="text-muted-foreground">{t("common.loading")}</p>
+      </div>
+    );
+  }
 
   return !isLoggedIn ? (
     <div className="flex min-h-screen w-full items-center justify-center bg-background p-4">
