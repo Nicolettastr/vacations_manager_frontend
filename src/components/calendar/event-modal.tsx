@@ -37,9 +37,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import type { EventModalProps } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { useLeaveStore } from "@/store/useLeavesStore";
+import { useCommonDataStore } from "@/store/useCommonDataStore";
+import { useModalStore } from "@/store/useModalStore";
+import { EventModalProps } from "@/types/common";
 import { LeaveRequest, LeaveResponse } from "@/types/leaves/leaves.common";
 import { useEffect } from "react";
 import { useShallow } from "zustand/shallow";
@@ -72,36 +73,55 @@ export const EventModal = ({
 }: EventModalProps) => {
   const isEditMode = mode === "edit" || mode === "create";
 
-  const [modalState, setModalState] = useLeaveStore(
+  const [modalState, setModalState] = useModalStore(
     useShallow((state) => [state.modalState, state.setModalState])
   );
+  const selectedDate = useCommonDataStore((state) => state.selectedDate);
+
+  function convertirFecha(fechaStr?: string) {
+    if (!fechaStr) return new Date();
+    const [year, month, day] = fechaStr.split(/[-/]/).map(Number);
+    return new Date(year, month - 1, day, 12, 0, 0);
+  }
 
   const form = useForm<z.infer<typeof leaveSchema>>({
     resolver: zodResolver(leaveSchema),
+    defaultValues: {
+      id: undefined,
+      employeeId: undefined,
+      type: undefined,
+      startDate: convertirFecha(selectedDate),
+      endDate: convertirFecha(selectedDate),
+      note: "",
+    },
   });
 
   useEffect(() => {
-    if (data) {
-      const defaultValues = {
-        ...data,
-        startDate: new Date((data as LeaveResponse).start_date || new Date()),
-        endDate: new Date((data as LeaveResponse).end_date || new Date()),
-      };
-      form.reset(defaultValues as any);
-    } else {
+    if (data && isOpen) {
       form.reset({
+        id: data.id,
+        employeeId: data.employee_id,
+        startDate: convertirFecha(data.start_date),
+        endDate: convertirFecha(data.end_date),
+        type: data.type,
+        note: data.note || "",
+      });
+    } else {
+      const defaultValues = {
         id: undefined,
         employeeId: undefined,
         type: undefined,
-        startDate: new Date(),
-        endDate: new Date(),
+        startDate: convertirFecha(selectedDate),
+        endDate: convertirFecha(selectedDate),
         note: "",
-      });
+      };
+      form.reset(defaultValues);
     }
-  }, [data, form, isOpen]);
+  }, [isOpen, data]);
 
   function onSubmit(values: z.infer<typeof leaveSchema>) {
     const leaveData: LeaveRequest = {
+      id: values.id ?? "",
       employee_id: values.employeeId,
       type: values.type,
       start_date: format(values.startDate, "yyyy-MM-dd"),
@@ -112,7 +132,7 @@ export const EventModal = ({
   }
 
   const currentLeave = data as LeaveResponse;
-  const employee = employees.find((e) => e.id === currentLeave?.employee_id);
+  const employee = employees?.find((e) => e.id === currentLeave?.employee_id);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -150,8 +170,8 @@ export const EventModal = ({
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {employees.map((emp) => (
-                            <SelectItem key={emp.id} value={emp.id}>
+                          {employees?.map((emp) => (
+                            <SelectItem key={emp.id} value={String(emp.id)}>
                               {emp.name} {emp.surname}
                             </SelectItem>
                           ))}
@@ -194,39 +214,44 @@ export const EventModal = ({
                   <FormField
                     control={form.control}
                     name="startDate"
-                    render={({ field }) => (
-                      <FormItem className="flex flex-col flex-1">
-                        <FormLabel>Fecha de Inicio</FormLabel>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                variant="outline"
-                                className={cn(
-                                  !field.value && "text-muted-foreground"
-                                )}
-                              >
-                                {field.value ? (
-                                  format(field.value, "PPP")
-                                ) : (
-                                  <span>Elija una fecha</span>
-                                )}
-                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              selected={field.value}
-                              onSelect={field.onChange}
-                              initialFocus
-                            />
-                          </PopoverContent>
-                        </Popover>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                    render={({ field }) => {
+                      return (
+                        <FormItem className="flex flex-col flex-1">
+                          <FormLabel>Fecha de Inicio</FormLabel>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <FormControl>
+                                <Button
+                                  variant="outline"
+                                  className={cn(
+                                    !field.value && "text-muted-foreground"
+                                  )}
+                                >
+                                  {field.value ? (
+                                    format(field.value, "PPP")
+                                  ) : (
+                                    <span>Elija una fecha</span>
+                                  )}
+                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent
+                              className="w-auto p-0"
+                              align="start"
+                            >
+                              <Calendar
+                                mode="single"
+                                selected={field.value}
+                                onSelect={field.onChange}
+                                initialFocus
+                              />
+                            </PopoverContent>
+                          </Popover>
+                          <FormMessage />
+                        </FormItem>
+                      );
+                    }}
                   />
                   <FormField
                     control={form.control}
@@ -314,14 +339,18 @@ export const EventModal = ({
                   <Button
                     variant="outline"
                     onClick={() =>
-                      setModalState({ ...modalState, mode: "edit" })
+                      setModalState({
+                        ...modalState,
+                        mode: "edit",
+                        data: currentLeave,
+                      })
                     }
                   >
                     Editar
                   </Button>
                   <Button
                     variant="destructive"
-                    onClick={() => onDelete(currentLeave.id)}
+                    onClick={() => onDelete(currentLeave.id, "leave")}
                   >
                     <Trash2 className="mr-2 h-4 w-4" /> Eliminar
                   </Button>

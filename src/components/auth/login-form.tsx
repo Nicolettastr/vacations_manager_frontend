@@ -65,7 +65,6 @@ export const LoginForm = () => {
   };
 
   const handleGoogleSignIn = () => {
-    console.log("Google sign-in attempt");
     toast({
       title: "Sign In Action",
       description: "Google sign-in logic would be handled here.",

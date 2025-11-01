@@ -2,11 +2,11 @@ import { ModalState } from "@/types/global";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-interface LeaveStore {
+interface ModalStore {
   modalState: ModalState;
   setModalState: <T extends ModalState>(state: T) => void;
 }
-export const useLeaveStore = create<LeaveStore>()(
+export const useModalStore = create<ModalStore>()(
   persist(
     (set) => ({
       modalState: { isOpen: false, mode: "create" },

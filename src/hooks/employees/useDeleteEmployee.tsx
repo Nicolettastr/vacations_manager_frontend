@@ -12,8 +12,7 @@ export const useDeleteEmployee = () => {
 
   const mutation = useMutation({
     mutationFn: (id: string) => deleteEmployee(id),
-    onSuccess: (data) => {
-      console.log(data);
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["getEmployees"] });
       queryClient.invalidateQueries({ queryKey: ["getLeaves"] });
       setConfigureEmployees(false);

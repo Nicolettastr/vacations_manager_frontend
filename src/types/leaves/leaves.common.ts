@@ -2,23 +2,15 @@ export interface LeaveResponse {
   id: string;
   employee_id: string;
   type: string;
-  start_date: Date;
-  end_date: Date;
+  start_date: string;
+  end_date: string;
   note: string;
-  created_at: Date;
-  updated_at: Date;
+  created_at: string;
+  updated_at: string;
   user_id: string;
 }
-
-export interface LeaveRequest {
-  employee_id: string;
-  type: string;
-  start_date: String;
-  end_date: String;
-  note: string;
-}
-
-export interface leaveTypes {
-  id: string;
-  name: string;
-}
+//TODO REFACTOR TYPE USE OMIT
+export type LeaveRequest = Omit<
+  LeaveResponse,
+  "created_at" | "updated_at" | "user_id"
+>;

@@ -14,12 +14,12 @@ export const usePatchEmployee = () => {
   >({
     mutationFn: ({ id, data }) => patchEmployee(id, data),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["getEmployees"] });
       toast({
         title: "Employee Edited",
         description: "The employee has been edited successfully.",
         variant: "success",
       });
-      queryClient.invalidateQueries({ queryKey: ["getEmployees"] });
     },
     onError: (error) => {
       console.error("Error editing employee:", error);

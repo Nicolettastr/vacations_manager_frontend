@@ -1,27 +1,27 @@
-import { createEmployeeLeave } from "@/api/leaves/postEmployeesLeave";
+import { editEmployeeeLeave } from "@/api/leaves/patchEmployeeLeave";
 import { LeaveRequest, LeaveResponse } from "@/types/leaves/leaves.common";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "../use-toast";
 
-export const usePostEmployeeLeave = () => {
+export const usePatchEmployeeLeave = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
   const mutation = useMutation<LeaveResponse, Error, LeaveRequest>({
-    mutationFn: (data) => createEmployeeLeave(data),
+    mutationFn: (data) => editEmployeeeLeave(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["getLeaves"] });
       toast({
-        title: "Leave created",
-        description: "The employee leave has been successfully created.",
+        title: "Leave edited",
+        description: "The employee leave has been successfully edited.",
         variant: "success",
       });
     },
     onError: (error) => {
-      console.error("Leave creation failed", error);
+      console.error("Leave edition failed", error);
       toast({
-        title: "Leave created failed",
-        description: "The employee leave creation has failed.",
+        title: "Leave edition failed",
+        description: "The employee leave edition has failed.",
         variant: "destructive",
       });
     },

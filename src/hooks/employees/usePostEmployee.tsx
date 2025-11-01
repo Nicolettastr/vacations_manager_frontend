@@ -9,8 +9,7 @@ export const usePostEmployee = () => {
 
   const mutation = useMutation<Employee, Error, newEmployee>({
     mutationFn: (data) => postEmployee(data),
-    onSuccess: (data) => {
-      console.log(data);
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["getEmployees"] });
       toast({
         title: "Employee Created",

@@ -9,105 +9,249 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import FullCalendar from "@fullcalendar/react";
 import { addDays } from "date-fns";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { useGetEmployees } from "@/hooks/employees/useGetEmployee";
+import { useDeleteEmployeeLeave } from "@/hooks/leaves/useDeleteLeave";
 import { useGetEmployeesLeaves } from "@/hooks/leaves/useGetEmployeesLeaves";
 import { useGetLeavesTypes } from "@/hooks/leaves/useGetLeavesTypes";
+import { usePatchEmployeeLeave } from "@/hooks/leaves/usePatchEmployeeLeave";
 import { usePostEmployeeLeave } from "@/hooks/leaves/usePostEmployeeLeave";
-import { Dates } from "@/lib/types";
+import { useDeleteNotes } from "@/hooks/notes/useDeleteNotes";
+import { useGetNotes } from "@/hooks/notes/useGetNotes";
+import { usePatchNotes } from "@/hooks/notes/usePatchNotes";
+import { usePostNote } from "@/hooks/notes/usePostNote";
 import { useAuthStore } from "@/store/useAuthStore";
-import { useLeaveStore } from "@/store/useLeavesStore";
-import { Employee } from "@/types/employees/employees.common";
+import { useCommonDataStore } from "@/store/useCommonDataStore";
+import { useModalStore } from "@/store/useModalStore";
 import { LeaveRequest, LeaveResponse } from "@/types/leaves/leaves.common";
+import { NoteCreateRequest, NoteResponse } from "@/types/notes/notes.common";
 import { useShallow } from "zustand/shallow";
 import { EventModal } from "./event-modal";
+import { NoteModal } from "./note-modal";
+import EventTypeModal from "./select-event-type-modal";
 
 export default function CalendarView() {
   const [events, setEvents] = useState<EventInput[]>([]);
-  const [employeesMap, setEmployeesMap] = useState<Map<string, Employee>>(
-    new Map()
-  );
+
+  const [selectTypeModal, setSelectTypeModal] = useState<boolean>(false);
 
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
-  const [modalState, setModalState] = useLeaveStore(
+  const [modalState, setModalState] = useModalStore(
     useShallow((state) => [state.modalState, state.setModalState])
   );
+  const setSelectedDate = useCommonDataStore((state) => state.setSelectedDate);
 
-  const { employees, fetchingEmployee } = useGetEmployees(isLoggedIn);
+  const { employees } = useGetEmployees(isLoggedIn);
   const { leavesTypes } = useGetLeavesTypes(isLoggedIn);
-  const { leaves, fetchingLeaves } = useGetEmployeesLeaves(isLoggedIn);
+  const { leaves } = useGetEmployeesLeaves(isLoggedIn);
   const { mutate: onCreateEmployeeLeave } = usePostEmployeeLeave();
+  const { mutate: onEditEmployeeLeave } = usePatchEmployeeLeave();
+  const { mutate: onDeleteEmployeeLeave } = useDeleteEmployeeLeave();
 
-  useEffect(() => {
-    const employeeMap = new Map(employees.map((emp) => [emp.id, emp]));
-    setEmployeesMap(employeeMap);
-  }, [fetchingEmployee]);
+  const { notes } = useGetNotes(isLoggedIn);
+  const { mutate: onCreateNote } = usePostNote();
+  const { mutate: onEditNote } = usePatchNotes();
+  const { mutate: onDeleteNote } = useDeleteNotes();
 
-  useEffect(() => {
-    const transformedEvents = leaves.map((leave) => {
+  const employeesMap = useMemo(() => {
+    return new Map(employees.map((emp) => [emp.id, emp]));
+  }, [employees]);
+
+  const generateLeaveEvents = useCallback(() => {
+    return leaves.map((leave) => {
       const employee = employeesMap.get(leave.employee_id);
+
       const endDate = addDays(new Date(leave.end_date), 1)
         .toISOString()
         .split("T")[0];
+
       return {
         id: leave.id,
-        title: employee ? `${employee.name} ${employee.surname}` : "Unknown",
+        title: employee
+          ? `${employee.name} ${employee.surname}`
+          : "Empleado desconocido",
         start: leave.start_date,
         end: endDate,
         allDay: true,
         backgroundColor: employee?.color || "#888",
         borderColor: employee?.color || "#888",
         extendedProps: {
+          type: "leave",
           employeeId: leave.employee_id,
-          note: leave.note,
-          type: leave.type,
+          leaveType: leave.type,
+          note: leave.note || "",
         },
       };
     });
-    setEvents(transformedEvents);
-  }, [fetchingLeaves, employeesMap]);
+  }, [leaves, employeesMap]);
+
+  const generateNoteEvents = useCallback(() => {
+    return notes.map((note) => ({
+      id: note.id,
+      title: note.title || "(Sin título)",
+      start: note.date,
+      end: note.date,
+      allDay: true,
+      backgroundColor:
+        note.type === "high"
+          ? "#ff4d4d"
+          : note.type === "medium"
+          ? "#ffd633"
+          : "#4da6ff",
+      borderColor: "#00000020",
+      extendedProps: {
+        type: "note",
+        content: note.content,
+        employeeId: note.employee_id,
+      },
+    }));
+  }, [notes]);
+
+  useEffect(() => {
+    const leaveEvents = generateLeaveEvents();
+    const noteEvents = generateNoteEvents();
+    const combined = [...leaveEvents, ...noteEvents];
+
+    setEvents((prev) => {
+      const prevStr = JSON.stringify(prev);
+      const newStr = JSON.stringify(combined);
+      return prevStr === newStr ? prev : combined;
+    });
+  }, [generateLeaveEvents, generateNoteEvents]);
 
   const handleDateSelect = useCallback((selectInfo: DateSelectArg) => {
-    const endDate = addDays(selectInfo.end, -1);
-    setModalState({
-      isOpen: true,
-      mode: "create",
-      data: {
-        startDate: selectInfo.startStr,
-        endDate: endDate.toISOString().split("T")[0],
-      } as Dates,
-    });
+    //const endDate = addDays(selectInfo.end, -1);
+    const startDate = selectInfo.startStr;
+    // const endDateStr = endDate.toISOString().split("T")[0];
+
+    setSelectedDate(startDate);
+
+    setSelectTypeModal(true);
   }, []);
 
   const handleEventClick = useCallback(
     (clickInfo: EventClickArg) => {
-      const leave = leaves.find((l) => l.id === clickInfo.event.id);
-      if (leave) {
-        setModalState({
-          isOpen: true,
-          mode: "view",
-          data: leave,
-        });
+      const eventType = clickInfo.event.extendedProps.type;
+
+      if (eventType === "leave") {
+        const leave = leaves.find((l) => l.id === clickInfo.event.id);
+        if (leave) {
+          setModalState({
+            isOpen: true,
+            mode: "view",
+            type: "leave",
+            data: leave,
+          });
+        }
+      } else if (eventType === "note") {
+        const note = notes.find((n) => n.id === clickInfo.event.id);
+        if (note) {
+          setModalState({
+            isOpen: true,
+            mode: "view",
+            type: "note",
+            data: note,
+          });
+        }
       }
     },
-    [leaves]
+    [leaves, notes]
   );
 
-  const handleCloseModal = () => {
-    setModalState({ isOpen: false, mode: "create" });
+  const handleDelete = (id: string, type: "note" | "leave") => {
+    setModalState({ isOpen: false, mode: "delete" });
+    switch (type) {
+      case "note":
+        onDeleteNote(id);
+        break;
+      case "leave":
+        onDeleteEmployeeLeave(id);
+        break;
+    }
   };
 
-  const handleSaveLeave = (leave: LeaveRequest) => {
-    console.log("handleSaveLeave", leave);
-    onCreateEmployeeLeave(leave);
-    handleCloseModal();
+  const handleSaveNoteChanges = (note: NoteCreateRequest) => {
+    switch (modalState.mode) {
+      case "create":
+        onCreateNote(note);
+        break;
+      case "edit":
+        onEditNote(note);
+        break;
+      default:
+        break;
+    }
+    setModalState({ isOpen: false, mode: modalState.mode });
   };
 
-  const handleDeleteLeave = (leaveId: string) => {
-    console.log("handleDeleteLeave", leaveId);
-    handleCloseModal();
+  const handleSaveLeaveChanges = (leaveData: LeaveRequest) => {
+    switch (modalState.mode) {
+      case "create":
+        onCreateEmployeeLeave(leaveData);
+        break;
+      case "edit":
+        onEditEmployeeLeave(leaveData);
+        break;
+      default:
+        break;
+    }
+    setModalState({ isOpen: false, mode: modalState.mode });
   };
+
+  const handleEventDrop = useCallback(
+    (info: any) => {
+      const { event } = info;
+      const eventType = event.extendedProps.type;
+
+      const formatDateLocal = (date: Date) => date.toLocaleDateString("en-CA");
+
+      const newStart = event.start ? formatDateLocal(event.start) : "";
+      const newEnd = event.end
+        ? formatDateLocal(addDays(event.end, -1))
+        : newStart;
+
+      if (eventType === "leave") {
+        const updatedLeave: LeaveRequest = {
+          id: event.id,
+          employee_id: event.extendedProps.employeeId,
+          type: event.extendedProps.leaveType,
+          start_date: newStart!,
+          end_date: newEnd!,
+          note: event.extendedProps.note,
+        };
+
+        try {
+          onEditEmployeeLeave(updatedLeave);
+        } catch (error) {
+          console.error("Error actualizando baja:", error);
+          info.revert();
+        }
+      } else if (eventType === "note") {
+        const updatedNote: NoteCreateRequest = {
+          id: event.id,
+          employee_id: event.extendedProps.employeeId,
+          title: event.title,
+          content: event.extendedProps.content,
+          date: newStart!,
+          type:
+            event.backgroundColor === "#ff4d4d"
+              ? "high"
+              : event.backgroundColor === "#ffd633"
+              ? "medium"
+              : "low",
+        };
+
+        try {
+          onEditNote(updatedNote);
+        } catch (error) {
+          console.error("Error actualizando nota:", error);
+          info.revert();
+        }
+      }
+    },
+    [onEditEmployeeLeave, onEditNote]
+  );
 
   return (
     <>
@@ -128,7 +272,6 @@ export default function CalendarView() {
           select={handleDateSelect}
           eventClick={handleEventClick}
           editable={true}
-          droppable={true}
           locale="es"
           buttonText={{
             today: "Hoy",
@@ -137,18 +280,37 @@ export default function CalendarView() {
             day: "Día",
           }}
           height="100%"
+          eventDrop={handleEventDrop}
         />
       </div>
-      <EventModal
-        isOpen={modalState.isOpen}
-        mode={modalState.mode}
-        data={modalState.data as LeaveResponse}
-        employees={employees}
-        leaveTypes={leavesTypes}
-        onClose={handleCloseModal}
-        onSave={handleSaveLeave}
-        onDelete={handleDeleteLeave}
+      <EventTypeModal
+        selectTypeModal={selectTypeModal}
+        setSelectTypeModal={setSelectTypeModal}
       />
+      {modalState.type === "note" ? (
+        <NoteModal
+          isOpen={modalState.isOpen}
+          data={modalState.data as NoteResponse}
+          onClose={() => setModalState({ isOpen: false, mode: "view" })}
+          onSave={handleSaveNoteChanges}
+          onDelete={handleDelete}
+          mode={modalState.mode}
+          employees={employees}
+        />
+      ) : (
+        <EventModal
+          isOpen={modalState.isOpen}
+          mode={modalState.mode}
+          data={modalState.data as LeaveResponse}
+          employees={employees}
+          leaveTypes={leavesTypes}
+          onClose={() =>
+            setModalState({ isOpen: false, mode: modalState.mode })
+          }
+          onSave={handleSaveLeaveChanges}
+          onDelete={handleDelete}
+        />
+      )}
     </>
   );
 }

@@ -106,15 +106,12 @@ export function EmployeeLegend() {
   const handleSaveEmployeeChanges = (employee: newEmployee) => {
     switch (modalState.mode) {
       case "create":
-        console.log("Creating employee:", employee);
         onAddEmployee(employee);
         break;
       case "edit":
-        console.log("Editing employee:", employee);
         onEditEmployee({ id, data: employee });
         break;
       case "delete":
-        console.log("Deleting employee:", employee);
         onDeleteEmployee(id);
         break;
       default:
