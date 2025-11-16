@@ -26,14 +26,15 @@ import { useCommonDataStore } from "@/store/useCommonDataStore";
 import { useModalStore } from "@/store/useModalStore";
 import { LeaveRequest, LeaveResponse } from "@/types/leaves/leaves.common";
 import { NoteCreateRequest, NoteResponse } from "@/types/notes/notes.common";
+import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/shallow";
-import { EventModal } from "./event-modal";
+import { EventModalForm } from "./event-modal";
 import { NoteModal } from "./note-modal";
 import EventTypeModal from "./select-event-type-modal";
 
 export default function CalendarView() {
+  const { t } = useTranslation();
   const [events, setEvents] = useState<EventInput[]>([]);
-
   const [selectTypeModal, setSelectTypeModal] = useState<boolean>(false);
 
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
@@ -78,7 +79,7 @@ export default function CalendarView() {
         id: leave.id,
         title: employee
           ? `${employee.name} ${employee.surname}`
-          : "Empleado desconocido",
+          : t("unknownEmployee"),
         start: leave.start_date,
         end: endDate,
         allDay: true,
@@ -92,12 +93,12 @@ export default function CalendarView() {
         },
       };
     });
-  }, [leaves, employeesMap]);
+  }, [leaves, employeesMap, t]);
 
   const generateNoteEvents = useCallback(() => {
     return notes.map((note) => ({
       id: note.id,
-      title: note.title || "(Sin título)",
+      title: note.title || t("untitled"),
       start: note.date,
       end: note.date,
       allDay: true,
@@ -114,7 +115,7 @@ export default function CalendarView() {
         employeeId: note.employee_id,
       },
     }));
-  }, [notes]);
+  }, [notes, t]);
 
   useEffect(() => {
     const leaveEvents = generateLeaveEvents();
@@ -160,7 +161,7 @@ export default function CalendarView() {
         }
       }
     },
-    [leaves, notes]
+    [leaves, notes, t]
   );
 
   const handleDelete = (id: string, type: "note" | "leave") => {
@@ -183,8 +184,6 @@ export default function CalendarView() {
       case "edit":
         onEditNote(note);
         break;
-      default:
-        break;
     }
     setModalState({ isOpen: false, mode: modalState.mode });
   };
@@ -196,8 +195,6 @@ export default function CalendarView() {
         break;
       case "edit":
         onEditEmployeeLeave(leaveData);
-        break;
-      default:
         break;
     }
     setModalState({ isOpen: false, mode: modalState.mode });
@@ -228,7 +225,7 @@ export default function CalendarView() {
         try {
           onEditEmployeeLeave(updatedLeave);
         } catch (error) {
-          console.error("Error actualizando baja:", error);
+          console.error(t("errorUpdatingLeave"), error);
           info.revert();
         }
       } else if (eventType === "note") {
@@ -249,12 +246,12 @@ export default function CalendarView() {
         try {
           onEditNote(updatedNote);
         } catch (error) {
-          console.error("Error actualizando nota:", error);
+          console.error(t("errorUpdatingNote"), error);
           info.revert();
         }
       }
     },
-    [onEditEmployeeLeave, onEditNote]
+    [onEditEmployeeLeave, onEditNote, t]
   );
 
   return (
@@ -276,12 +273,12 @@ export default function CalendarView() {
           select={handleDateSelect}
           eventClick={handleEventClick}
           editable={true}
-          locale="es"
+          locale="en"
           buttonText={{
-            today: "Hoy",
-            month: "Mes",
-            week: "Semana",
-            day: "Día",
+            today: t("today"),
+            month: t("month"),
+            week: t("week"),
+            day: t("day"),
           }}
           height="100%"
           eventDrop={handleEventDrop}
@@ -302,7 +299,7 @@ export default function CalendarView() {
           employees={employees}
         />
       ) : (
-        <EventModal
+        <EventModalForm
           isOpen={modalState.isOpen}
           mode={modalState.mode}
           data={modalState.data as LeaveResponse}

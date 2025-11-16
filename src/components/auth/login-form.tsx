@@ -20,27 +20,28 @@ import { useLogin } from "@/hooks/auth/useLogin";
 import { useRegister } from "@/hooks/auth/useRegister";
 import { useToast } from "@/hooks/use-toast";
 import { useRef } from "react";
-
-const formSchema = z.object({
-  email: z.string().email({ message: "Please enter a valid email." }),
-  password: z
-    .string()
-    .min(8, "La contraseña debe tener al menos 8 caracteres.")
-    .max(32, "La contraseña no puede tener más de 32 caracteres.")
-    .regex(
-      /[!@#$%^&*(),.?":{}|<>_\-]/,
-      "Debe contener al menos un carácter especial."
-    )
-    .regex(/[A-Z]/, "Debe contener al menos una letra mayúscula.")
-    .regex(/[a-z]/, "Debe contener al menos una letra minúscula.")
-    .regex(/\d/, "Debe contener al menos un número."),
-});
+import { useTranslation } from "react-i18next";
 
 export const LoginForm = () => {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const { mutate: register } = useRegister();
   const { mutate: login } = useLogin();
   const submitType = useRef<"login" | "register" | null>(null);
+
+  const formSchema = z.object({
+    email: z.string().email({ message: t("formErrors.invalidEmail") }),
+    password: z
+      .string()
+      .min(8, { message: t("formErrors.passwordMin") })
+      .max(32, { message: t("formErrors.passwordMax") })
+      .regex(new RegExp('[!@#$%^&*(),.?/":{}|<>_\\-]'), {
+        message: t("formErrors.passwordSpecial"),
+      })
+      .regex(/[A-Z]/, { message: t("formErrors.passwordUpper") })
+      .regex(/[a-z]/, { message: t("formErrors.passwordLower") })
+      .regex(/\d/, { message: t("formErrors.passwordNumber") }),
+  });
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -55,16 +56,16 @@ export const LoginForm = () => {
       case "login":
         login(values);
         toast({
-          title: "Sign In",
-          description: "Sign in successfully",
+          title: t("signInButton"),
+          description: t("signInSuccess"),
           variant: "success",
         });
         break;
       case "register":
         register(values);
         toast({
-          title: "Register",
-          description: "Register successfully",
+          title: t("registerButton"),
+          description: t("registerSuccess"),
           variant: "success",
         });
         break;
@@ -73,8 +74,8 @@ export const LoginForm = () => {
 
   const handleGoogleSignIn = () => {
     toast({
-      title: "Sign In Action",
-      description: "Google sign-in logic would be handled here.",
+      title: t("googleSignInTitle"),
+      description: t("googleSignInDescription"),
     });
   };
 
@@ -87,7 +88,7 @@ export const LoginForm = () => {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel>{t("email")}</FormLabel>
                 <FormControl>
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -108,7 +109,7 @@ export const LoginForm = () => {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Password</FormLabel>
+                <FormLabel>{t("password")}</FormLabel>
                 <FormControl>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -129,7 +130,7 @@ export const LoginForm = () => {
             className="w-full"
             onClick={() => (submitType.current = "login")}
           >
-            Sign In
+            {t("signIn")}
           </Button>
           <Button
             type="submit"
@@ -137,7 +138,7 @@ export const LoginForm = () => {
             onClick={() => (submitType.current = "register")}
             className="w-full"
           >
-            Register
+            {t("register")}
           </Button>
         </form>
       </Form>
@@ -148,7 +149,7 @@ export const LoginForm = () => {
         </div>
         <div className="relative flex justify-center text-xs uppercase">
           <span className="bg-card px-2 text-muted-foreground">
-            Or continue with
+            {t("orContinueWith")}
           </span>
         </div>
       </div>
@@ -160,7 +161,7 @@ export const LoginForm = () => {
         disabled
       >
         <GoogleIcon className="mr-2 h-5 w-5" />
-        Sign in with Google
+        {t("signInWithGoogle")}
       </Button>
     </div>
   );

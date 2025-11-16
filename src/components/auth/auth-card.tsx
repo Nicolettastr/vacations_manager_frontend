@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { Logo } from "../icons/logo";
 import {
   Card,
@@ -9,6 +10,8 @@ import {
 import { LoginForm } from "./login-form";
 
 export const AuthCard = () => {
+  const { t } = useTranslation();
+
   return (
     <>
       <Card className="w-full max-w-md shadow-lg rounded-xl">
@@ -16,10 +19,10 @@ export const AuthCard = () => {
           <div className="flex items-center gap-3">
             <Logo />
             <CardTitle className="text-3xl font-bold tracking-tight font-headline">
-              VacationVisor
+              TeamTracker
             </CardTitle>
           </div>
-          <CardDescription>Sign in to plan your next adventure</CardDescription>
+          <CardDescription>{t("signInMessage")}</CardDescription>
         </CardHeader>
         <CardContent className="p-6 pt-0">
           <LoginForm />

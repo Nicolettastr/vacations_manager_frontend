@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { CalendarIcon, Trash2 } from "lucide-react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import * as z from "zod";
 
 import { Button } from "@/components/ui/button";
@@ -37,7 +38,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { cn, formatDate } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { useCommonDataStore } from "@/store/useCommonDataStore";
 import { useModalStore } from "@/store/useModalStore";
 import { EventModalProps } from "@/types/common";
@@ -45,23 +46,7 @@ import { LeaveRequest, LeaveResponse } from "@/types/leaves/leaves.common";
 import { useEffect } from "react";
 import { useShallow } from "zustand/shallow";
 
-const leaveSchema = z
-  .object({
-    id: z.string().optional(),
-    employeeId: z.string({ required_error: "Debe seleccionar un empleado." }),
-    type: z.string({ required_error: "Debe seleccionar un tipo de ausencia." }),
-    startDate: z.date({
-      required_error: "Debe seleccionar una fecha de inicio.",
-    }),
-    endDate: z.date({ required_error: "Debe seleccionar una fecha de fin." }),
-    note: z.string().optional(),
-  })
-  .refine((data) => data.endDate >= data.startDate, {
-    message: "La fecha de fin no puede ser anterior a la fecha de inicio.",
-    path: ["endDate"],
-  });
-
-export const EventModal = ({
+export const EventModalForm = ({
   isOpen,
   mode,
   data,
@@ -71,6 +56,7 @@ export const EventModal = ({
   onSave,
   onDelete,
 }: EventModalProps) => {
+  const { t } = useTranslation();
   const isEditMode = mode === "edit" || mode === "create";
 
   const [modalState, setModalState] = useModalStore(
@@ -78,12 +64,28 @@ export const EventModal = ({
   );
   const selectedDate = useCommonDataStore((state) => state.selectedDate);
 
+  const leaveSchema = z
+    .object({
+      id: z.string().optional(),
+      employeeId: z.string({
+        required_error: t("formErrors.employeeRequired"),
+      }),
+      type: z.string({ required_error: t("formErrors.leaveTypeRequired") }),
+      startDate: z.date({ required_error: t("formErrors.startDateRequired") }),
+      endDate: z.date({ required_error: t("formErrors.endDateRequired") }),
+      note: z.string().optional(),
+    })
+    .refine((data) => data.endDate >= data.startDate, {
+      message: t("formErrors.endDateAfterStartDate"),
+      path: ["endDate"],
+    });
+
   const defaultValues = {
     id: undefined,
-    employeeId: undefined,
-    type: undefined,
-    startDate: formatDate(selectedDate),
-    endDate: formatDate(selectedDate),
+    employeeId: "",
+    type: "",
+    startDate: selectedDate ? new Date(selectedDate) : new Date(),
+    endDate: selectedDate ? new Date(selectedDate) : new Date(),
     note: "",
   };
 
@@ -97,8 +99,8 @@ export const EventModal = ({
       form.reset({
         id: data.id,
         employeeId: data.employee_id,
-        startDate: formatDate(data.start_date),
-        endDate: formatDate(data.end_date),
+        startDate: data.start_date ? new Date(data.start_date) : new Date(),
+        endDate: data.end_date ? new Date(data.end_date) : new Date(),
         type: data.type,
         note: data.note || "",
       });
@@ -129,13 +131,14 @@ export const EventModal = ({
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <DialogHeader>
               <DialogTitle>
-                {mode === "create" && "Crear Ausencia"}
-                {mode === "edit" && "Editar Ausencia"}
-                {mode === "view" && `Ausencia de ${employee?.name || ""}`}
+                {mode === "create" && t("modal.createLeave")}
+                {mode === "edit" && t("modal.editLeave")}
+                {mode === "view" &&
+                  `${t("modal.leaveOf")} ${employee?.name || ""}`}
               </DialogTitle>
               {mode !== "view" && (
                 <DialogDescription>
-                  Complete los detalles de la ausencia.
+                  {t("modal.completeDetails")}
                 </DialogDescription>
               )}
             </DialogHeader>
@@ -147,14 +150,14 @@ export const EventModal = ({
                   name="employeeId"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Empleado</FormLabel>
+                      <FormLabel>{t("employee")}</FormLabel>
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Seleccione un empleado" />
+                            <SelectValue placeholder={t("selectEmployee")} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -175,14 +178,14 @@ export const EventModal = ({
                   name="type"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Tipo de Ausencia</FormLabel>
+                      <FormLabel>{t("leaveType")}</FormLabel>
                       <Select
                         value={field.value}
                         onValueChange={field.onChange}
                       >
                         <FormControl>
                           <SelectTrigger>
-                            <SelectValue placeholder="Seleccione un tipo" />
+                            <SelectValue placeholder={t("selectLeaveType")} />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
@@ -202,51 +205,9 @@ export const EventModal = ({
                   <FormField
                     control={form.control}
                     name="startDate"
-                    render={({ field }) => {
-                      return (
-                        <FormItem className="flex flex-col flex-1">
-                          <FormLabel>Fecha de Inicio</FormLabel>
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <FormControl>
-                                <Button
-                                  variant="outline"
-                                  className={cn(
-                                    !field.value && "text-muted-foreground"
-                                  )}
-                                >
-                                  {field.value ? (
-                                    format(field.value, "PPP")
-                                  ) : (
-                                    <span>Elija una fecha</span>
-                                  )}
-                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                                </Button>
-                              </FormControl>
-                            </PopoverTrigger>
-                            <PopoverContent
-                              className="w-auto p-0"
-                              align="start"
-                            >
-                              <Calendar
-                                mode="single"
-                                selected={field.value}
-                                onSelect={field.onChange}
-                                initialFocus
-                              />
-                            </PopoverContent>
-                          </Popover>
-                          <FormMessage />
-                        </FormItem>
-                      );
-                    }}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="endDate"
                     render={({ field }) => (
                       <FormItem className="flex flex-col flex-1">
-                        <FormLabel>Fecha de Fin</FormLabel>
+                        <FormLabel>{t("startDate")}</FormLabel>
                         <Popover>
                           <PopoverTrigger asChild>
                             <FormControl>
@@ -256,11 +217,44 @@ export const EventModal = ({
                                   !field.value && "text-muted-foreground"
                                 )}
                               >
-                                {field.value ? (
-                                  format(field.value, "PPP")
-                                ) : (
-                                  <span>Elija una fecha</span>
+                                {field.value
+                                  ? format(field.value, "PPP")
+                                  : t("chooseDate")}
+                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                              </Button>
+                            </FormControl>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <Calendar
+                              mode="single"
+                              selected={field.value}
+                              onSelect={field.onChange}
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        </Popover>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="endDate"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col flex-1">
+                        <FormLabel>{t("endDate")}</FormLabel>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <FormControl>
+                              <Button
+                                variant="outline"
+                                className={cn(
+                                  !field.value && "text-muted-foreground"
                                 )}
+                              >
+                                {field.value
+                                  ? format(field.value, "PPP")
+                                  : t("chooseDate")}
                                 <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                               </Button>
                             </FormControl>
@@ -285,9 +279,9 @@ export const EventModal = ({
                   name="note"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Nota</FormLabel>
+                      <FormLabel>{t("note")}</FormLabel>
                       <FormControl>
-                        <Textarea placeholder="Añada una nota..." {...field} />
+                        <Textarea placeholder={t("addNote")} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -297,25 +291,25 @@ export const EventModal = ({
             ) : (
               <div className="space-y-4 text-sm">
                 <p>
-                  <strong>Empleado:</strong> {employee?.name}{" "}
+                  <strong>{t("employee")}:</strong> {employee?.name}{" "}
                   {employee?.surname}
                 </p>
                 <p>
-                  <strong>Tipo:</strong> {currentLeave?.type}
+                  <strong>{t("leaveType")}:</strong> {currentLeave?.type}
                 </p>
                 <p>
-                  <strong>Desde:</strong>{" "}
+                  <strong>{t("startDate")}:</strong>{" "}
                   {currentLeave?.start_date &&
                     format(new Date(currentLeave.start_date), "PPP")}
                 </p>
                 <p>
-                  <strong>Hasta:</strong>{" "}
+                  <strong>{t("endDate")}:</strong>{" "}
                   {currentLeave?.end_date &&
                     format(new Date(currentLeave.end_date), "PPP")}
                 </p>
                 {currentLeave?.note && (
                   <p>
-                    <strong>Nota:</strong> {currentLeave.note}
+                    <strong>{t("note")}:</strong> {currentLeave.note}
                   </p>
                 )}
               </div>
@@ -334,17 +328,17 @@ export const EventModal = ({
                       })
                     }
                   >
-                    Editar
+                    {t("edit")}
                   </Button>
                   <Button
                     variant="destructive"
                     onClick={() => onDelete(currentLeave.id, "leave")}
                   >
-                    <Trash2 className="mr-2 h-4 w-4" /> Eliminar
+                    <Trash2 className="mr-2 h-4 w-4" /> {t("delete")}
                   </Button>
                 </>
               )}
-              {isEditMode && <Button type="submit">Guardar</Button>}
+              {isEditMode && <Button type="submit">{t("save")}</Button>}
             </DialogFooter>
           </form>
         </Form>
