@@ -23,6 +23,7 @@
   "viewLeave": "Leave of {{employee}}",
   "leaveDescription": "Complete the leave details.",
   "employee": "Employee",
+  "employees": "Employees",
   "selectEmployee": "Select an employee",
   "leaveType": "Leave Type",
   "selectLeaveType": "Select a leave type",
@@ -43,6 +44,17 @@
   "selectNoteType": "Select note type",
   "noteTitlePlaceholder": "Enter note title",
   "noteContentPlaceholder": "Enter note content",
+  "chooseWhatToCreate": "What do you want to create?",
+  "addEmployee": "Add Employee",
+  "editEmployee": "Edit Employee",
+  "name": "Name",
+  "surname": "Surname",
+  "emailPlaceholder": "Email address",
+  "color": "Color",
+  "deleteEmployeeTitle": "Delete all records of {{employee}}",
+  "deleteEmployeeDescription": "Once employee records are deleted, all associated data including leave records will be permanently removed and cannot be recovered.",
+  "cancel": "Cancel",
+  "completeEmployeeDetails": "Complete the employee details.",
   "modal": {
     "createNote": "Create Note",
     "editNote": "Edit Note",
@@ -51,7 +63,9 @@
   },
   "errors": {
     "errorUpdatingLeave": "Error updating leave:",
-    "errorUpdatingNote": "Error updating note:"
+    "errorUpdatingNote": "Error updating note:",
+    "errorUpdatingEmployeeTitle": "Employee editing failed",
+    "errorUpdatingEmployeeDesc": "There was an error editing the employee."
   },
   "formErrors": {
     "invalidEmail": "Please enter a valid email.",
@@ -69,6 +83,10 @@
     "noteTitleRequired": "Please add a title.",
     "noteContentRequired": "Please add content.",
     "noteTypeRequired": "Please select a note type.",
-    "dateRequired": "Please select a date."
+    "dateRequired": "Please select a date.",
+    "nameRequired": "El nombre es obligatorio",
+    "surnameRequired": "El apellido es obligatorio",
+    "emailRequired": "El email es obligatorio",
+    "invalidEmailModal": "Email inválido"
   }
 }

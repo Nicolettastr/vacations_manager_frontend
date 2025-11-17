@@ -1,6 +1,7 @@
 import { useModalStore } from "@/store/useModalStore";
 import { Dialog } from "@radix-ui/react-dialog";
 import { Dispatch, SetStateAction } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "../ui/button";
 import {
   DialogContent,
@@ -18,6 +19,7 @@ const EventTypeModal: React.FC<EventTypeModalProps> = ({
   selectTypeModal,
   setSelectTypeModal,
 }) => {
+  const { t } = useTranslation();
   const setModalState = useModalStore((state) => state.setModalState);
 
   return (
@@ -27,11 +29,11 @@ const EventTypeModal: React.FC<EventTypeModalProps> = ({
     >
       <DialogContent className="sm:max-w-[300px] flex-col justify-center align-center">
         <DialogHeader>
-          <DialogTitle>¿Qué quieres crear?</DialogTitle>
+          <DialogTitle>{t("chooseWhatToCreate")}</DialogTitle>
         </DialogHeader>
         <DialogFooter className="flex justify-between">
           <Button
-            variant={"destructive"}
+            variant="destructive"
             onClick={() => {
               setModalState({
                 isOpen: true,
@@ -42,7 +44,7 @@ const EventTypeModal: React.FC<EventTypeModalProps> = ({
               setSelectTypeModal(false);
             }}
           >
-            Ausencia
+            {t("createLeave")}
           </Button>
           <Button
             variant="default"
@@ -56,7 +58,7 @@ const EventTypeModal: React.FC<EventTypeModalProps> = ({
               setSelectTypeModal(false);
             }}
           >
-            Nota
+            {t("modal.createNote")}
           </Button>
         </DialogFooter>
       </DialogContent>

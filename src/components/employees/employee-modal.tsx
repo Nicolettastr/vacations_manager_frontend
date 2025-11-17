@@ -22,6 +22,7 @@ import { newEmployee } from "@/types/employees/employees.common";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import * as z from "zod";
 
 export type EmployeeModalProps = {
@@ -32,15 +33,6 @@ export type EmployeeModalProps = {
   onSave: (employee: newEmployee) => void;
 };
 
-const employeeSchema = z.object({
-  name: z.string({ required_error: "El nombre es obligatorio" }),
-  surname: z.string({ required_error: "El apellido es obligatorio" }),
-  email: z
-    .string({ required_error: "El email es obligatorio" })
-    .email("Email inválido"),
-  color: z.string().optional(),
-});
-
 export const EmployeeModal = ({
   isOpen,
   mode,
@@ -48,7 +40,18 @@ export const EmployeeModal = ({
   onClose,
   onSave,
 }: EmployeeModalProps) => {
+  const { t } = useTranslation();
+
   const isEditMode = mode === "edit" || mode === "create";
+
+  const employeeSchema = z.object({
+    name: z.string({ required_error: t("formErrors.nameRequired") }),
+    surname: z.string({ required_error: t("formErrors.surnameRequired") }),
+    email: z
+      .string({ required_error: t("formErrors.emailRequired") })
+      .email(t("formErrors.invalidEmailModal")),
+    color: z.string().optional(),
+  });
 
   const form = useForm<z.infer<typeof employeeSchema>>({
     resolver: zodResolver(employeeSchema),
@@ -80,43 +83,48 @@ export const EmployeeModal = ({
               <>
                 <DialogHeader>
                   <DialogTitle>
-                    {`Delete all records of ${data?.name} ${data?.surname}`}
+                    {t("deleteEmployeeRecords", {
+                      name: data?.name,
+                      surname: data?.surname,
+                    })}
                   </DialogTitle>
                   <DialogDescription>
-                    Once employee records are deleted, all associated data
-                    including leave records will be permanently removed and
-                    cannot be recovered. Please confirm that you want to proceed
-                    with this action.
+                    {t("deleteEmployeeWarning")}
                   </DialogDescription>
                   <DialogFooter>
                     <Button variant={"destructive"} type="submit">
-                      Delete
+                      {t("delete")}
                     </Button>
                     <Button
                       variant={"secondary"}
                       type="button"
                       onClick={onClose}
                     >
-                      Cancel
+                      {t("cancel")}
                     </Button>
                   </DialogFooter>
                 </DialogHeader>
               </>
             ) : (
               <>
-                {" "}
                 <DialogHeader>
                   <DialogTitle>
-                    {mode === "create" && "Agregar Empleado"}
-                    {mode === "edit" && "Editar Empleado"}
-                    {mode === "view" && `${data?.name} ${data?.surname}`}
+                    {mode === "create" && t("addEmployee")}
+                    {mode === "edit" && t("editEmployee")}
+                    {mode === "view" &&
+                      t("viewEmployee", {
+                        name: data?.name,
+                        surname: data?.surname,
+                      })}
                   </DialogTitle>
+
                   {isEditMode && (
                     <DialogDescription>
-                      Complete los datos del empleado.
+                      {t("employeeDataDescription")}
                     </DialogDescription>
                   )}
                 </DialogHeader>
+
                 {isEditMode ? (
                   <div className="space-y-4">
                     <FormField
@@ -124,9 +132,9 @@ export const EmployeeModal = ({
                       name="name"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Nombre</FormLabel>
+                          <FormLabel>{t("name")}</FormLabel>
                           <FormControl>
-                            <Input placeholder="Nombre" {...field} />
+                            <Input placeholder={t("name")} {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -138,9 +146,9 @@ export const EmployeeModal = ({
                       name="surname"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Apellido</FormLabel>
+                          <FormLabel>{t("surname")}</FormLabel>
                           <FormControl>
-                            <Input placeholder="Apellido" {...field} />
+                            <Input placeholder={t("surname")} {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -152,11 +160,11 @@ export const EmployeeModal = ({
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Email</FormLabel>
+                          <FormLabel>{t("email")}</FormLabel>
                           <FormControl>
                             <Input
                               type="email"
-                              placeholder="Correo electrónico"
+                              placeholder={t("emailPlaceholder")}
                               {...field}
                             />
                           </FormControl>
@@ -170,7 +178,7 @@ export const EmployeeModal = ({
                       name="color"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Color</FormLabel>
+                          <FormLabel>{t("color")}</FormLabel>
                           <FormControl>
                             <Input type="color" {...field} />
                           </FormControl>
@@ -182,17 +190,17 @@ export const EmployeeModal = ({
                 ) : (
                   <div className="space-y-2 text-sm">
                     <p>
-                      <strong>Nombre:</strong> {data?.name}
+                      <strong>{t("name")}:</strong> {data?.name}
                     </p>
                     <p>
-                      <strong>Apellido:</strong> {data?.surname}
+                      <strong>{t("surname")}:</strong> {data?.surname}
                     </p>
                     <p>
-                      <strong>Email:</strong> {data?.email}
+                      <strong>{t("email")}:</strong> {data?.email}
                     </p>
                     {data?.color && (
                       <p>
-                        <strong>Color:</strong>{" "}
+                        <strong>{t("color")}:</strong>{" "}
                         <span
                           className="inline-block w-4 h-4 rounded"
                           style={{ backgroundColor: data.color }}
@@ -201,9 +209,10 @@ export const EmployeeModal = ({
                     )}
                   </div>
                 )}
+
                 {isEditMode && (
                   <DialogFooter>
-                    <Button type="submit">Guardar</Button>
+                    <Button type="submit">{t("save")}</Button>
                   </DialogFooter>
                 )}
               </>

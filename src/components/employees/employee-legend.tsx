@@ -11,10 +11,14 @@ import { useEmployeeStore } from "@/store/useEmployeeStore";
 import { Employee, newEmployee } from "@/types/employees/employees.common";
 import { Pencil, Plus, Settings, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/shallow";
 import { EmployeeModal } from "./employee-modal";
+
 export function EmployeeLegend() {
+  const { t } = useTranslation();
   const { toast } = useToast();
+
   const [configureEmployees, setConfigureEmployees, modalState, setModalState] =
     useEmployeeStore(
       useShallow((state) => [
@@ -36,12 +40,12 @@ export function EmployeeLegend() {
   useEffect(() => {
     if (errorEmployee) {
       toast({
-        title: "Employee editing Failed",
-        description: "There was an error editing the employee.",
+        title: t("errors.errorUpdatingEmployeeTitle"),
+        description: t("errors.errorUpdatingEmployeeDesc"),
         variant: "destructive",
       });
     }
-  }, [errorEmployee]);
+  }, [errorEmployee, t]);
 
   const handleDeleteEmployee = (employee: Employee) => {
     setModalState({ isOpen: true, mode: "delete", data: employee });
@@ -125,7 +129,7 @@ export function EmployeeLegend() {
       <aside className="hidden w-64 flex-col border-r bg-card p-4 lg:flex">
         <div className="w-100 flex-row lg:flex justify-between">
           <h2 className="mb-6 text-lg font-semibold tracking-tight">
-            Empleados
+            {t("employees")}
           </h2>
           <span className="flex flex-row">
             <Plus
@@ -141,27 +145,8 @@ export function EmployeeLegend() {
           </span>
         </div>
         <div className="flex flex-col gap-4 h-[80vh]">{employeeMenu}</div>
-        {/* {configureEmployees && (
-          <div className="w-100 flex-row lg:flex justify-end m-1 gap-1">
-            <Button
-              type="button"
-              variant={"default"}
-              className=""
-              onClick={handleSaveChanges}
-            >
-              Save
-            </Button>
-            <Button
-              type="button"
-              variant={"destructive"}
-              className=""
-              onClick={handleCancel}
-            >
-              Cancel
-            </Button>
-          </div>
-        )} */}
       </aside>
+
       <EmployeeModal
         isOpen={modalState.isOpen}
         data={modalState.data as newEmployee}
