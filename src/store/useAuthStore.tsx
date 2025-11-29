@@ -12,6 +12,8 @@ interface AuthState {
   setIsLoading: (isLoading: boolean) => void;
   login: (user: User, token: string) => void;
   logout: () => void;
+  forgotPassword: boolean;
+  setForgotPassword: (forgotPassword: boolean) => void;
 }
 export const useAuthStore = create<AuthState>()(
   persist(
@@ -33,6 +35,9 @@ export const useAuthStore = create<AuthState>()(
         set({ user: null, token: null, isLoggedIn: false });
         localStorage.removeItem("token");
       },
+
+      forgotPassword: false,
+      setForgotPassword: (forgotPassword) => set({ forgotPassword }),
     }),
     { name: "auth-storage" }
   )

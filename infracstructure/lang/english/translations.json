@@ -55,6 +55,9 @@
   "deleteEmployeeDescription": "Once employee records are deleted, all associated data including leave records will be permanently removed and cannot be recovered.",
   "cancel": "Cancel",
   "completeEmployeeDetails": "Complete the employee details.",
+  "forgotPasswordTitle": "Forgot password?",
+  "sendResetLink": "Send reset link",
+  "forgotPasswordDescription": "Please enter your email address to receive a password reset link.",
   "modal": {
     "createNote": "Create Note",
     "editNote": "Edit Note",

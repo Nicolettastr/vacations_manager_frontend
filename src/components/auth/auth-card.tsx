@@ -1,3 +1,4 @@
+import { useAuthStore } from "@/store/useAuthStore";
 import { useTranslation } from "react-i18next";
 import { Logo } from "../icons/logo";
 import {
@@ -7,10 +8,12 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
+import ForgotPasswordForm from "./forgot-password";
 import { LoginForm } from "./login-form";
 
 export const AuthCard = () => {
   const { t } = useTranslation();
+  const forgotPassword = useAuthStore((state) => state.forgotPassword);
 
   return (
     <>
@@ -22,10 +25,12 @@ export const AuthCard = () => {
               TeamTracker
             </CardTitle>
           </div>
-          <CardDescription>{t("signInMessage")}</CardDescription>
+          <CardDescription>
+            {t(forgotPassword ? "" : "signInMessage")}
+          </CardDescription>
         </CardHeader>
         <CardContent className="p-6 pt-0">
-          <LoginForm />
+          {forgotPassword ? <ForgotPasswordForm /> : <LoginForm />}
         </CardContent>
       </Card>
     </>

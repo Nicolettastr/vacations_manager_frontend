@@ -1,7 +1,18 @@
 import { api } from "@/client";
-import { Register, userParams } from "@/types/auth/auth.common";
+import { RegisterResponse, userParams } from "@/types/auth/auth.common";
 
-export const registerUser = async (data: userParams): Promise<Register> => {
-  const res = await api.post("api/auth/register", data);
-  return res.data;
+export const registerUser = async (
+  data: userParams
+): Promise<RegisterResponse> => {
+  try {
+    const res = await api.post("api/auth/register", data);
+
+    if (res.data?.error) {
+      throw new Error(res.data.error);
+    }
+
+    return res.data;
+  } catch (err: any) {
+    throw new Error(err.response);
+  }
 };

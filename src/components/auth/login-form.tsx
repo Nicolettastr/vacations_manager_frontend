@@ -19,6 +19,7 @@ import { Input } from "@/components/ui/input";
 import { useLogin } from "@/hooks/auth/useLogin";
 import { useRegister } from "@/hooks/auth/useRegister";
 import { useToast } from "@/hooks/use-toast";
+import { useAuthStore } from "@/store/useAuthStore";
 import { useRef } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -28,6 +29,7 @@ export const LoginForm = () => {
   const { mutate: register } = useRegister();
   const { mutate: login } = useLogin();
   const submitType = useRef<"login" | "register" | null>(null);
+  const setForgotPassword = useAuthStore((state) => state.setForgotPassword);
 
   const formSchema = z.object({
     email: z.string().email({ message: t("formErrors.invalidEmail") }),
@@ -55,19 +57,9 @@ export const LoginForm = () => {
     switch (submitType.current) {
       case "login":
         login(values);
-        toast({
-          title: t("signInButton"),
-          description: t("signInSuccess"),
-          variant: "success",
-        });
         break;
       case "register":
         register(values);
-        toast({
-          title: t("registerButton"),
-          description: t("registerSuccess"),
-          variant: "success",
-        });
         break;
     }
   };
@@ -77,6 +69,10 @@ export const LoginForm = () => {
       title: t("googleSignInTitle"),
       description: t("googleSignInDescription"),
     });
+  };
+
+  const handleForgotPassword = () => {
+    setForgotPassword(true);
   };
 
   return (
@@ -125,6 +121,15 @@ export const LoginForm = () => {
               </FormItem>
             )}
           />
+          <div className="text-sm text-right">
+            <Button
+              variant={"ghost"}
+              onClick={handleForgotPassword}
+              className="text-blue-600 hover:text-blue-500 hover:underline"
+            >
+              Forgot your password?
+            </Button>
+          </div>
           <Button
             type="submit"
             className="w-full"

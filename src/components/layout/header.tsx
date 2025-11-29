@@ -3,8 +3,10 @@ import { Input } from "@/components/ui/input";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useModalStore } from "@/store/useModalStore";
 import { Calendar as CalendarIcon, Plus, Search } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export function Header() {
+  const { t } = useTranslation();
   const logout = useAuthStore((state) => state.logout);
   const setModalState = useModalStore((state) => state.setModalState);
 
@@ -13,7 +15,7 @@ export function Header() {
       <div className="flex items-center gap-2">
         <CalendarIcon className="h-6 w-6 text-primary" />
         <h1 className="text-lg font-semibold tracking-tight md:text-xl">
-          VisorVacaciones
+          TeamTracker
         </h1>
       </div>
       <div className="ml-auto flex items-center gap-4">
@@ -27,7 +29,7 @@ export function Header() {
         </div>
         <Button onClick={() => setModalState({ isOpen: true, mode: "create" })}>
           <Plus className="mr-2 h-4 w-4" />
-          Nueva Ausencia
+          {t("newLeave")}
         </Button>
         <Button
           type="button"
@@ -35,7 +37,7 @@ export function Header() {
           className=""
           onClick={logout}
         >
-          Log Out
+          {t("logout")}
         </Button>
       </div>
     </header>
