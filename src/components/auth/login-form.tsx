@@ -126,6 +126,7 @@ export const LoginForm = () => {
               variant={"ghost"}
               onClick={handleForgotPassword}
               className="text-blue-600 hover:text-blue-500 hover:underline"
+              type="button"
             >
               Forgot your password?
             </Button>

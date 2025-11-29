@@ -20,6 +20,6 @@ export const useModalStore = create<ModalStore>()(
         })),
       clearModal: () => set({ modalState: INIT_MODAL_STATE }),
     }),
-    { name: "auth-storage" }
+    { name: "modal-storage" }
   )
 );

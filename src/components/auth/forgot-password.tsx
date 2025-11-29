@@ -18,7 +18,7 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import * as z from "zod";
 
-export default function ForgotPasswordForm() {
+const ForgotPasswordForm = () => {
   const { t } = useTranslation();
   const setForgotPassword = useAuthStore((state) => state.setForgotPassword);
   const { mutate: forgotPasswordaLink } = useForgotPassword();
@@ -86,4 +86,6 @@ export default function ForgotPasswordForm() {
       </Form>
     </div>
   );
-}
+};
+
+export default ForgotPasswordForm;

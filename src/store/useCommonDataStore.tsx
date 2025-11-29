@@ -11,6 +11,6 @@ export const useCommonDataStore = create<CommonDataStore>()(
       selectedDate: "",
       setSelectedDate: (selectedDate) => set({ selectedDate }),
     }),
-    { name: "auth-storage" }
+    { name: "common-data-storage" }
   )
 );

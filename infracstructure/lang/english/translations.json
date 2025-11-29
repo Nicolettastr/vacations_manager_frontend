@@ -91,5 +91,9 @@
     "surnameRequired": "El apellido es obligatorio",
     "emailRequired": "El email es obligatorio",
     "invalidEmailModal": "Email inválido"
-  }
+  },
+  "newLeave": "New leave",
+  "searchEmployee": "Search employee",
+  "employeesSettings": "Employees settings",
+  "addNewEmployee": "Add new employee"
 }

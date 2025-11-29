@@ -13,6 +13,7 @@ import { Pencil, Plus, Settings, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/shallow";
+import IconTooltip from "../icons/Tooltip";
 import { EmployeeModal } from "./employee-modal";
 
 export function EmployeeLegend() {
@@ -132,16 +133,24 @@ export function EmployeeLegend() {
             {t("employees")}
           </h2>
           <span className="flex flex-row">
-            <Plus
-              onClick={() =>
-                setModalState({ isOpen: true, mode: "create", data: undefined })
-              }
-              className="mr-2 cursor-pointer add_employee_icon icon"
-            />
-            <Settings
-              onClick={handleConfigureEmployees}
-              className="icon cursor-pointer"
-            />
+            <IconTooltip content={t("addNewEmployee")}>
+              <Plus
+                onClick={() =>
+                  setModalState({
+                    isOpen: true,
+                    mode: "create",
+                    data: undefined,
+                  })
+                }
+                className="mr-2 cursor-pointer add_employee_icon icon"
+              />
+            </IconTooltip>
+            <IconTooltip content={t("employeesSettings")}>
+              <Settings
+                onClick={handleConfigureEmployees}
+                className="icon cursor-pointer"
+              />
+            </IconTooltip>
           </span>
         </div>
         <div className="flex flex-col gap-4 h-[80vh]">{employeeMenu}</div>
