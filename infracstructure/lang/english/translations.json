@@ -95,5 +95,8 @@
   "newLeave": "New leave",
   "searchEmployee": "Search employee",
   "employeesSettings": "Employees settings",
-  "addNewEmployee": "Add new employee"
+  "addNewEmployee": "Add new employee",
+  "logout": "Logout",
+  "deleteEmployeeRecords": "Delete employee records",
+  "deleteEmployeeWarning": "This will permanently delete the employee and all their data. This action cannot be undone."
 }

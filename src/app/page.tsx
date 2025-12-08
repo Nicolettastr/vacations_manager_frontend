@@ -42,6 +42,8 @@ export default function Home() {
     setIsLoading(false);
   }, [setIsLoading, setToken, setUser]);
 
+  const handleConfigureEmployee = () => setConfigureEmployees(false);
+
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
@@ -68,7 +70,7 @@ export default function Home() {
           {configureEmployees && (
             <div
               className="absolute inset-0 z-50 flex items-center justify-center bg-[#000B58]/40 backdrop-blur-sm"
-              onClick={() => setConfigureEmployees(false)}
+              onClick={handleConfigureEmployee}
             ></div>
           )}
         </div>

@@ -109,6 +109,14 @@ export function NoteModal({
     onClose();
   }
 
+  const handleSetModal = () => {
+    setModalState({
+      ...modalState,
+      mode: "edit",
+      data: currentNote,
+    });
+  };
+
   const currentNote = data as NoteResponse;
   const employee = employees?.find(
     (emp) => emp.id === currentNote?.employee_id
@@ -233,16 +241,7 @@ export function NoteModal({
             <DialogFooter>
               {mode === "view" && currentNote?.id && (
                 <>
-                  <Button
-                    variant="outline"
-                    onClick={() =>
-                      setModalState({
-                        ...modalState,
-                        mode: "edit",
-                        data: currentNote,
-                      })
-                    }
-                  >
+                  <Button variant="outline" onClick={handleSetModal}>
                     {t("edit")}
                   </Button>
                   <Button

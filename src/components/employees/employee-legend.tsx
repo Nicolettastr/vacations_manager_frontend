@@ -125,6 +125,14 @@ export function EmployeeLegend() {
     setModalState({ isOpen: false, mode: modalState.mode });
   };
 
+  const handleSetModal = () => {
+    setModalState({
+      isOpen: true,
+      mode: "create",
+      data: undefined,
+    });
+  };
+
   return (
     <>
       <aside className="hidden w-64 flex-col border-r bg-card p-4 lg:flex">
@@ -135,13 +143,7 @@ export function EmployeeLegend() {
           <span className="flex flex-row">
             <IconTooltip content={t("addNewEmployee")}>
               <Plus
-                onClick={() =>
-                  setModalState({
-                    isOpen: true,
-                    mode: "create",
-                    data: undefined,
-                  })
-                }
+                onClick={handleSetModal}
                 className="mr-2 cursor-pointer add_employee_icon icon"
               />
             </IconTooltip>
