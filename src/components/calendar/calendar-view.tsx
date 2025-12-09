@@ -32,6 +32,12 @@ import { EventModalForm } from "./event-modal";
 import { NoteModal } from "./note-modal";
 import EventTypeModal from "./select-event-type-modal";
 
+const NOTE_TYPE_COLORS = {
+  high: "var(--note-high-color, #ff4d4d)",
+  medium: "var(--note-medium-color, #ffd633)",
+  low: "var(--note-low-color, #4da6ff)",
+} as const;
+
 export default function CalendarView() {
   const { t } = useTranslation();
   const [events, setEvents] = useState<EventInput[]>([]);
@@ -96,25 +102,26 @@ export default function CalendarView() {
   }, [leaves, employeesMap, t]);
 
   const generateNoteEvents = useCallback(() => {
-    return notes.map((note) => ({
-      id: note.id,
-      title: note.title || t("untitled"),
-      start: note.date,
-      end: note.date,
-      allDay: true,
-      backgroundColor:
-        note.type === "high"
-          ? "#ff4d4d"
-          : note.type === "medium"
-          ? "#ffd633"
-          : "#4da6ff",
-      borderColor: "#00000020",
-      extendedProps: {
-        type: "note",
-        content: note.content,
-        employeeId: note.employee_id,
-      },
-    }));
+    return notes.map((note) => {
+      const color =
+        NOTE_TYPE_COLORS[note.type as keyof typeof NOTE_TYPE_COLORS] ||
+        NOTE_TYPE_COLORS.low;
+
+      return {
+        id: note.id,
+        title: note.title || t("untitled"),
+        start: note.date,
+        end: note.date,
+        allDay: true,
+        backgroundColor: color,
+        borderColor: color,
+        extendedProps: {
+          type: "note",
+          content: note.content,
+          employeeId: note.employee_id,
+        },
+      };
+    });
   }, [notes, t]);
 
   useEffect(() => {
@@ -292,7 +299,9 @@ export default function CalendarView() {
         <NoteModal
           isOpen={modalState.isOpen}
           data={modalState.data as NoteResponse}
-          onClose={() => setModalState({ isOpen: false, mode: "view" })}
+          onClose={() =>
+            setModalState({ isOpen: false, mode: modalState.mode })
+          }
           onSave={handleSaveNoteChanges}
           onDelete={handleDelete}
           mode={modalState.mode}

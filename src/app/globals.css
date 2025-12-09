@@ -4,6 +4,9 @@
 
 @layer base {
   :root {
+    --note-high-color: #ff4d4d;
+    --note-medium-color: #ffd633;
+    --note-low-color: #4da6ff;
     --background: 210 40% 98%;
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
@@ -30,6 +33,7 @@
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
   }
+
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
