@@ -29,7 +29,11 @@ const IconTooltip = ({
             {children}
           </button>
         </TooltipTrigger>
-        <TooltipContent side={side} align={align} className={className}>
+        <TooltipContent
+          side={side}
+          align={align}
+          className={`z-[100] ${className}`}
+        >
           {typeof content === "string" ? <p>{content}</p> : content}
         </TooltipContent>
       </Tooltip>

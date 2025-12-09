@@ -21,10 +21,15 @@ export default function Home() {
       state.setUser,
     ])
   );
-  const [configureEmployees, setConfigureEmployees] = useEmployeeStore(
+  const [
+    configureEmployees,
+    setConfigureEmployees,
+    setEmployeesSettingsMobileIcon,
+  ] = useEmployeeStore(
     useShallow((state) => [
       state.configureEmployees,
       state.setConfigureEmployees,
+      state.setEmployeesSettingsMobileIcon,
     ])
   );
 
@@ -41,6 +46,20 @@ export default function Home() {
 
     setIsLoading(false);
   }, [setIsLoading, setToken, setUser]);
+
+  useEffect(() => {
+    function handleResize() {
+      if (window.innerWidth < 768) {
+        setConfigureEmployees(false);
+        setEmployeesSettingsMobileIcon(true);
+      }
+    }
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, [window.innerWidth]);
 
   const handleConfigureEmployee = () => setConfigureEmployees(false);
 

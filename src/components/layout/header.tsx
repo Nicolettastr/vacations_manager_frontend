@@ -1,14 +1,34 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useEmployeeStore } from "@/store/useEmployeeStore";
 import { useModalStore } from "@/store/useModalStore";
-import { Calendar as CalendarIcon, Plus, Search } from "lucide-react";
+import { Calendar as CalendarIcon, Plus, Search, Settings } from "lucide-react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useShallow } from "zustand/shallow";
+import IconTooltip from "../icons/Tooltip";
 
 export function Header() {
   const { t } = useTranslation();
   const logout = useAuthStore((state) => state.logout);
   const setModalState = useModalStore((state) => state.setModalState);
+  const [configureEmployeesMobile, setConfigureEmployeesMobile] =
+    useState<boolean>(false);
+  const [configureEmployees, setConfigureEmployees] = useEmployeeStore(
+    useShallow((state) => [
+      state.configureEmployees,
+      state.setConfigureEmployees,
+    ])
+  );
+
+  const employeesSettingsMobileIcon = useEmployeeStore(
+    (state) => state.employeesSettingsMobileIcon
+  );
+
+  const handleConfigureEmployees = () => {
+    setConfigureEmployees(!configureEmployees);
+  };
 
   return (
     <header className="flex h-16 shrink-0 items-center border-b bg-card px-4 md:px-6 z-10">
@@ -27,6 +47,14 @@ export function Header() {
             className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[300px]"
           />
         </div>
+        {employeesSettingsMobileIcon && (
+          <IconTooltip content={t("employeesSettings")}>
+            <Settings
+              onClick={handleConfigureEmployees}
+              className="icon cursor-pointer"
+            />
+          </IconTooltip>
+        )}
         <Button onClick={() => setModalState({ isOpen: true, mode: "create" })}>
           <Plus className="mr-2 h-4 w-4" />
           {t("newLeave")}

@@ -1,34 +1,37 @@
 "use client";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useDeleteEmployee } from "@/hooks/employees/useDeleteEmployee";
 import { useGetEmployees } from "@/hooks/employees/useGetEmployee";
 import { usePatchEmployee } from "@/hooks/employees/usePatchEmployee";
 import { usePostEmployee } from "@/hooks/employees/usePostEmployee";
 import { useToast } from "@/hooks/use-toast";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useEmployeeStore } from "@/store/useEmployeeStore";
-import { Employee, newEmployee } from "@/types/employees/employees.common";
-import { Pencil, Plus, Settings, Trash2 } from "lucide-react";
+import { newEmployee } from "@/types/employees/employees.common";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/shallow";
-import IconTooltip from "../icons/Tooltip";
 import { EmployeeModal } from "./employee-modal";
+import { Legend } from "./legend";
 
 export function EmployeeLegend() {
   const { t } = useTranslation();
   const { toast } = useToast();
 
-  const [configureEmployees, setConfigureEmployees, modalState, setModalState] =
-    useEmployeeStore(
-      useShallow((state) => [
-        state.configureEmployees,
-        state.setConfigureEmployees,
-        state.modalState,
-        state.setModalState,
-      ])
-    );
+  const [
+    configureEmployees,
+    setConfigureEmployees,
+    modalState,
+    setModalState,
+    employeesSettingsMobileIcon,
+  ] = useEmployeeStore(
+    useShallow((state) => [
+      state.configureEmployees,
+      state.setConfigureEmployees,
+      state.modalState,
+      state.setModalState,
+      state.employeesSettingsMobileIcon,
+    ])
+  );
 
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const { employees, errorEmployee } = useGetEmployees(isLoggedIn);
@@ -37,6 +40,10 @@ export function EmployeeLegend() {
   const { mutate: onEditEmployee } = usePatchEmployee();
 
   const [id, setId] = useState<string>("");
+
+  const handleId = (id: string) => {
+    setId(id);
+  };
 
   useEffect(() => {
     if (errorEmployee) {
@@ -47,62 +54,6 @@ export function EmployeeLegend() {
       });
     }
   }, [errorEmployee, t]);
-
-  const handleDeleteEmployee = (employee: Employee) => {
-    setModalState({ isOpen: true, mode: "delete", data: employee });
-    setId(employee.id);
-  };
-
-  const handleSelectedEmployee = (employeeId: string) => {
-    setId(employeeId);
-    const employee = employees.find((emp) => emp.id === employeeId);
-    setModalState({ isOpen: true, mode: "edit", data: employee });
-    return employees.find((employee) => employee.id === employeeId);
-  };
-
-  const employeeMenu = employees.map((employee) => {
-    const avatar = PlaceHolderImages.find((p) => p.id === employee.avatar);
-    return (
-      <div key={employee.id} className="flex items-center gap-3">
-        <Avatar className="h-8 w-8">
-          {avatar && (
-            <AvatarImage
-              src={avatar.imageUrl}
-              alt={avatar.description}
-              data-ai-hint={avatar.imageHint}
-            />
-          )}
-          <AvatarFallback>
-            {employee.name[0]}
-            {employee.surname[0]}
-          </AvatarFallback>
-        </Avatar>
-        <span className="font-medium text-sm">
-          {employee.name} {employee.surname}
-        </span>
-        <div
-          className="ml-auto h-3 w-3 shrink-0 rounded-full"
-          style={{ backgroundColor: employee.color ?? "#000000" }}
-        />
-        {configureEmployees && (
-          <span className="flex flex-row gap-1 cursor-pointer">
-            <Pencil
-              onClick={() => handleSelectedEmployee(employee.id)}
-              size={17}
-              color="#1570e0ff"
-              className="icon"
-            />
-            <Trash2
-              onClick={() => handleDeleteEmployee(employee)}
-              size={17}
-              color="#DC143C"
-              className="icon"
-            />
-          </span>
-        )}
-      </div>
-    );
-  });
 
   const handleConfigureEmployees = () => {
     setConfigureEmployees(!configureEmployees);
@@ -135,28 +86,38 @@ export function EmployeeLegend() {
 
   return (
     <>
-      <aside className="hidden w-64 flex-col border-r bg-card p-4 lg:flex">
-        <div className="w-100 flex-row lg:flex justify-between">
-          <h2 className="mb-6 text-lg font-semibold tracking-tight">
-            {t("employees")}
-          </h2>
-          <span className="flex flex-row">
-            <IconTooltip content={t("addNewEmployee")}>
-              <Plus
-                onClick={handleSetModal}
-                className="mr-2 cursor-pointer add_employee_icon icon"
-              />
-            </IconTooltip>
-            <IconTooltip content={t("employeesSettings")}>
-              <Settings
-                onClick={handleConfigureEmployees}
-                className="icon cursor-pointer"
-              />
-            </IconTooltip>
-          </span>
-        </div>
-        <div className="flex flex-col gap-4 h-[80vh]">{employeeMenu}</div>
-      </aside>
+      {employeesSettingsMobileIcon ? (
+        <section
+          className={`${
+            configureEmployees ? "flex" : "hidden"
+          } fixed inset-0 z-[70] m-auto w-[90%] h-[95%] max-w-sm rounded-xl bg-card p-4 shadow-xl flex-col`}
+        >
+          <Legend
+            employees={employees}
+            handleId={handleId}
+            handleSetModal={handleSetModal}
+            handleConfigureEmployees={handleConfigureEmployees}
+          />
+        </section>
+      ) : (
+        <aside className="hidden min-[965px]:flex w-64 flex-col border-r bg-card p-4 relative z-[60]">
+          <Legend
+            employees={employees}
+            handleId={handleId}
+            handleSetModal={handleSetModal}
+            handleConfigureEmployees={handleConfigureEmployees}
+          />
+        </aside>
+      )}
+
+      {configureEmployees && (
+        <div
+          className={`fixed top-0 ${
+            employeesSettingsMobileIcon ? "left-0" : "left-64"
+          } right-0 bottom-0 z-50 bg-[#000B58]/40 backdrop-blur-sm`}
+          onClick={handleConfigureEmployees}
+        ></div>
+      )}
 
       <EmployeeModal
         isOpen={modalState.isOpen}

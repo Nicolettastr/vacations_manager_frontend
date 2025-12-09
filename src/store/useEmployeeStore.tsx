@@ -7,6 +7,8 @@ interface EmployeeStore {
   setConfigureEmployees: (configure: boolean) => void;
   modalState: ModalState;
   setModalState: <T extends ModalState>(state: T) => void;
+  employeesSettingsMobileIcon: boolean;
+  setEmployeesSettingsMobileIcon: (settings: boolean) => void;
 }
 export const useEmployeeStore = create<EmployeeStore>()(
   persist(
@@ -19,6 +21,9 @@ export const useEmployeeStore = create<EmployeeStore>()(
         set((state) => ({
           modalState: { ...state.modalState, ...newState },
         })),
+      employeesSettingsMobileIcon: false,
+      setEmployeesSettingsMobileIcon: (settings) =>
+        set(() => ({ employeesSettingsMobileIcon: settings })),
     }),
     { name: "employee-storage" }
   )
