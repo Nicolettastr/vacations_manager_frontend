@@ -4,8 +4,10 @@ import { AuthCard } from "@/components/auth/auth-card";
 import CalendarView from "@/components/calendar/calendar-view";
 import { EmployeeLegend } from "@/components/employees/employee-legend";
 import { Header } from "@/components/layout/header";
+import { UserConfiguration } from "@/components/layout/userConfiguration";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useEmployeeStore } from "@/store/useEmployeeStore";
+import { useUserStore } from "@/store/useUserStore";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/shallow";
@@ -33,6 +35,9 @@ export default function Home() {
     ])
   );
 
+  const [userConfiguration, setUserConfiguration] = useUserStore(
+    useShallow((state) => [state.userConfiguration, state.setUserConfiguration])
+  );
   useEffect(() => {
     setIsLoading(true);
 
@@ -49,9 +54,11 @@ export default function Home() {
 
   useEffect(() => {
     function handleResize() {
-      if (window.innerWidth < 768) {
+      if (window.innerWidth < 965) {
         setConfigureEmployees(false);
         setEmployeesSettingsMobileIcon(true);
+      } else {
+        setEmployeesSettingsMobileIcon(false);
       }
     }
 
@@ -61,7 +68,10 @@ export default function Home() {
     return () => window.removeEventListener("resize", handleResize);
   }, [window.innerWidth]);
 
-  const handleConfigureEmployee = () => setConfigureEmployees(false);
+  const handleConfigureEmployee = () => {
+    setConfigureEmployees(false);
+    setUserConfiguration(false);
+  };
 
   if (isLoading) {
     return (
@@ -78,7 +88,8 @@ export default function Home() {
   ) : (
     <div className="flex h-screen w-full flex-col bg-background">
       <div className="flex flex-1 overflow-hidden">
-        <EmployeeLegend />
+        {!userConfiguration && <EmployeeLegend />}
+        <UserConfiguration />
 
         <div className="relative flex-1 flex flex-col">
           <Header />
@@ -86,12 +97,13 @@ export default function Home() {
             <CalendarView />
           </main>
 
-          {configureEmployees && (
-            <div
-              className="absolute inset-0 z-50 flex items-center justify-center bg-[#000B58]/40 backdrop-blur-sm"
-              onClick={handleConfigureEmployee}
-            ></div>
-          )}
+          {configureEmployees ||
+            (userConfiguration && (
+              <div
+                className="absolute inset-0 z-50 flex items-center justify-center bg-[#000B58]/40 backdrop-blur-sm"
+                onClick={handleConfigureEmployee}
+              ></div>
+            ))}
         </div>
       </div>
     </div>

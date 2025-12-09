@@ -99,7 +99,13 @@ export const Legend: React.FC<ILegendProps> = ({
               className="mr-2 cursor-pointer add_employee_icon icon"
             />
           </IconTooltip>
-          <IconTooltip content={t("employeesSettings")}>
+          <IconTooltip
+            content={t(
+              employeesSettingsMobileIcon
+                ? "closeSettings"
+                : "employeesSettings"
+            )}
+          >
             {employeesSettingsMobileIcon ? (
               <X
                 onClick={handleConfigureEmployees}
