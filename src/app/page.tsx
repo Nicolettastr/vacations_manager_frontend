@@ -5,7 +5,9 @@ import CalendarView from "@/components/calendar/calendar-view";
 import { EmployeeLegend } from "@/components/employees/employee-legend";
 import { Header } from "@/components/layout/header";
 import { UserConfiguration } from "@/components/layout/userConfiguration";
+import { useGetUser } from "@/hooks/users/useGetUser";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useCommonDataStore } from "@/store/useCommonDataStore";
 import { useEmployeeStore } from "@/store/useEmployeeStore";
 import { useUserStore } from "@/store/useUserStore";
 import { useEffect } from "react";
@@ -14,6 +16,9 @@ import { useShallow } from "zustand/shallow";
 
 export default function Home() {
   const { t } = useTranslation();
+  const [windowWidth, setWindowWidth] = useCommonDataStore(
+    useShallow((state) => [state.windowWidth, state.setWindowWidth])
+  );
   const [isLoggedIn, isLoading, setIsLoading, setToken, setUser] = useAuthStore(
     useShallow((state) => [
       state.isLoggedIn,
@@ -23,6 +28,7 @@ export default function Home() {
       state.setUser,
     ])
   );
+
   const [
     configureEmployees,
     setConfigureEmployees,
@@ -34,10 +40,18 @@ export default function Home() {
       state.setEmployeesSettingsMobileIcon,
     ])
   );
+  const { user } = useGetUser(isLoggedIn);
 
   const [userConfiguration, setUserConfiguration] = useUserStore(
     useShallow((state) => [state.userConfiguration, state.setUserConfiguration])
   );
+
+  useEffect(() => {
+    if (user) {
+      setUser(user);
+    }
+  }, [isLoggedIn]);
+
   useEffect(() => {
     setIsLoading(true);
 
@@ -54,19 +68,20 @@ export default function Home() {
 
   useEffect(() => {
     function handleResize() {
-      if (window.innerWidth < 965) {
-        setConfigureEmployees(false);
-        setEmployeesSettingsMobileIcon(true);
-      } else {
-        setEmployeesSettingsMobileIcon(false);
-      }
+      setWindowWidth(window.innerWidth);
     }
 
-    handleResize();
     window.addEventListener("resize", handleResize);
-
     return () => window.removeEventListener("resize", handleResize);
-  }, [window.innerWidth]);
+  }, []);
+
+  useEffect(() => {
+    if (windowWidth < 965) {
+      setEmployeesSettingsMobileIcon(true);
+    } else {
+      setEmployeesSettingsMobileIcon(false);
+    }
+  }, [windowWidth]);
 
   const handleConfigureEmployee = () => {
     setConfigureEmployees(false);
@@ -88,7 +103,7 @@ export default function Home() {
   ) : (
     <div className="flex h-screen w-full flex-col bg-background">
       <div className="flex flex-1 overflow-hidden">
-        {!userConfiguration && <EmployeeLegend />}
+        <EmployeeLegend />
         <UserConfiguration />
 
         <div className="relative flex-1 flex flex-col">

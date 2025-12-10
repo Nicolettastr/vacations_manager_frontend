@@ -1,11 +1,10 @@
-import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { useEmployeeStore } from "@/store/useEmployeeStore";
 import { Employee } from "@/types/employees/employees.common";
 import { Pencil, Plus, Settings, Trash2, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/shallow";
 import IconTooltip from "../icons/Tooltip";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Avatar, AvatarFallback } from "../ui/avatar";
 
 interface ILegendProps {
   handleSetModal: () => void;
@@ -43,17 +42,9 @@ export const Legend: React.FC<ILegendProps> = ({
   };
 
   const employeeMenu = employees.map((employee) => {
-    const avatar = PlaceHolderImages.find((p) => p.id === employee.avatar);
     return (
       <div key={employee.id} className="flex items-center gap-3">
         <Avatar className="h-8 w-8">
-          {avatar && (
-            <AvatarImage
-              src={avatar.imageUrl}
-              alt={avatar.description}
-              data-ai-hint={avatar.imageHint}
-            />
-          )}
           <AvatarFallback>
             {employee.name[0]}
             {employee.surname[0]}

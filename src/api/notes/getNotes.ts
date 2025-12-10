@@ -1,9 +1,9 @@
 import { api } from "@/client";
-import { Note } from "@/types/notes/notes.common";
+import { NoteResponse } from "@/types/notes/notes.common";
 
 export const getNotes = async (
   token: string | null
-): Promise<Note[] | undefined> => {
+): Promise<NoteResponse[] | undefined> => {
   if (!token) {
     return;
   }

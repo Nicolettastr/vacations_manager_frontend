@@ -13,8 +13,8 @@ export const useLogin = () => {
   const mutation = useMutation<Login, Error, userParams>({
     mutationFn: (data) => loginUser(data),
     onSuccess: (data) => {
-      const { user, token } = data;
-      login(user, token);
+      const { token } = data;
+      login(token);
       toast({
         title: t("signInButton"),
         description: t("signInSuccess"),

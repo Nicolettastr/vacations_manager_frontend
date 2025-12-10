@@ -6,7 +6,6 @@ import { usePostEmployee } from "@/hooks/employees/usePostEmployee";
 import { useToast } from "@/hooks/use-toast";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useEmployeeStore } from "@/store/useEmployeeStore";
-import { useUserStore } from "@/store/useUserStore";
 import { newEmployee } from "@/types/employees/employees.common";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -39,8 +38,6 @@ export function EmployeeLegend() {
   const { mutate: onAddEmployee } = usePostEmployee();
   const { mutate: onDeleteEmployee } = useDeleteEmployee();
   const { mutate: onEditEmployee } = usePatchEmployee();
-
-  const userConfiguration = useUserStore((state) => state.userConfiguration);
 
   const [id, setId] = useState<string>("");
 
@@ -93,7 +90,7 @@ export function EmployeeLegend() {
         <section
           className={`${
             configureEmployees ? "flex" : "hidden"
-          } fixed inset-0 m-auto w-[90%] h-[95%] max-w-sm rounded-xl bg-card p-4 shadow-xl flex-col`}
+          } fixed inset-0 m-auto w-[90%] h-[95%] max-w-sm rounded-xl bg-card p-4 shadow-xl flex-col z-[60]`}
         >
           <Legend
             employees={employees}

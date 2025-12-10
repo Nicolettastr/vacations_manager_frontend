@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { useAuthStore } from "@/store/useAuthStore";
+import { useCommonDataStore } from "@/store/useCommonDataStore";
 import { useEmployeeStore } from "@/store/useEmployeeStore";
 import { useModalStore } from "@/store/useModalStore";
 import { useUserStore } from "@/store/useUserStore";
@@ -15,7 +15,6 @@ import IconTooltip from "../icons/Tooltip";
 
 export function Header() {
   const { t } = useTranslation();
-  const logout = useAuthStore((state) => state.logout);
   const setModalState = useModalStore((state) => state.setModalState);
   const [configureEmployees, setConfigureEmployees] = useEmployeeStore(
     useShallow((state) => [
@@ -30,6 +29,8 @@ export function Header() {
   const employeesSettingsMobileIcon = useEmployeeStore(
     (state) => state.employeesSettingsMobileIcon
   );
+
+  const windowWidth = useCommonDataStore((state) => state.windowWidth);
 
   const handleConfigureEmployees = () => {
     setConfigureEmployees(!configureEmployees);
@@ -65,38 +66,34 @@ export function Header() {
               />
             </IconTooltip>
           )}
-          <Button
-            onClick={() =>
-              setModalState({ isOpen: true, mode: "create", type: "note" })
-            }
-            variant="outline"
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            {t("newNote")}
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() =>
-              setModalState({ isOpen: true, mode: "create", type: "leave" })
-            }
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            {t("newLeave")}
-          </Button>
+          {windowWidth >= 650 && (
+            <>
+              <Button
+                onClick={() =>
+                  setModalState({ isOpen: true, mode: "create", type: "note" })
+                }
+                variant="outline"
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                {t("newNote")}
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() =>
+                  setModalState({ isOpen: true, mode: "create", type: "leave" })
+                }
+              >
+                <Plus className="mr-2 h-4 w-4" />
+                {t("newLeave")}
+              </Button>
+            </>
+          )}
           <Button
             type="button"
             variant={"default"}
             onClick={handleUserConfiguration}
           >
             <UserRound />
-          </Button>
-          <Button
-            type="button"
-            variant={"destructive"}
-            className=""
-            onClick={logout}
-          >
-            {t("logout")}
           </Button>
         </div>
       </header>
