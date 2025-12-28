@@ -1,6 +1,6 @@
 import { Toaster } from "@/components/ui/toaster";
 import type { Metadata } from "next";
-import i18n from "../../infracstructure/infrastructure/i18n";
+import i18n from "../../infrastructure/i18n";
 import "./globals.css";
 import { Providers } from "./Providers";
 

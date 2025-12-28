@@ -4,7 +4,7 @@ import { AuthCard } from "@/components/auth/auth-card";
 import CalendarView from "@/components/calendar/calendar-view";
 import { EmployeeLegend } from "@/components/employees/employee-legend";
 import { Header } from "@/components/layout/header";
-import { UserConfiguration } from "@/components/layout/userConfiguration";
+import { UserConfiguration } from "@/components/user/userConfiguration";
 import { useGetUser } from "@/hooks/users/useGetUser";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useCommonDataStore } from "@/store/useCommonDataStore";
@@ -16,6 +16,7 @@ import { useShallow } from "zustand/shallow";
 
 export default function Home() {
   const { t } = useTranslation();
+
   const [windowWidth, setWindowWidth] = useCommonDataStore(
     useShallow((state) => [state.windowWidth, state.setWindowWidth])
   );
@@ -40,7 +41,7 @@ export default function Home() {
       state.setEmployeesSettingsMobileIcon,
     ])
   );
-  const { user } = useGetUser(isLoggedIn);
+  const { user, userFetching } = useGetUser(isLoggedIn);
 
   const [userConfiguration, setUserConfiguration] = useUserStore(
     useShallow((state) => [state.userConfiguration, state.setUserConfiguration])
@@ -49,8 +50,9 @@ export default function Home() {
   useEffect(() => {
     if (user) {
       setUser(user);
+      setUserConfiguration(false);
     }
-  }, [isLoggedIn]);
+  }, [userFetching]);
 
   useEffect(() => {
     setIsLoading(true);

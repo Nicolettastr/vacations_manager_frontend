@@ -99,5 +99,12 @@
   "addNewEmployee": "Add new employee",
   "logout": "Logout",
   "deleteEmployeeRecords": "Delete employee records",
-  "deleteEmployeeWarning": "This will permanently delete the employee and all their data. This action cannot be undone."
+  "deleteEmployeeWarning": "This will permanently delete the employee and all their data. This action cannot be undone.",
+  "userSettings": "User settings",
+  "editUserSettings": "Edit user settings",
+  "closeSettings": "Close settings",
+  "selectTheme": "Select theme",
+  "editProfile": "Edit profile",
+  "advancedSettings": "Advanced settings",
+  "noEmailSet": "No email set"
 }
