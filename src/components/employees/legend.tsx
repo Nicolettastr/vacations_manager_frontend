@@ -1,10 +1,12 @@
 import { useEmployeeStore } from "@/store/useEmployeeStore";
 import { Employee } from "@/types/employees/employees.common";
-import { Pencil, Plus, Settings, Trash2, X } from "lucide-react";
+import { Pencil, Plus, Search, Settings, Trash2, X } from "lucide-react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/shallow";
 import IconTooltip from "../icons/Tooltip";
 import { Avatar, AvatarFallback } from "../ui/avatar";
+import { Input } from "../ui/input";
 
 interface ILegendProps {
   handleSetModal: () => void;
@@ -20,6 +22,7 @@ export const Legend: React.FC<ILegendProps> = ({
   handleId,
 }) => {
   const { t } = useTranslation();
+  const [text, setText] = useState<string>("");
 
   const handleDeleteEmployee = (employee: Employee) => {
     setModalState({ isOpen: true, mode: "delete", data: employee });
@@ -39,6 +42,16 @@ export const Legend: React.FC<ILegendProps> = ({
     const employee = employees.find((emp) => emp.id === employeeId);
     setModalState({ isOpen: true, mode: "edit", data: employee });
     return employees.find((employee) => employee.id === employeeId);
+  };
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    // const employeeSearched = employees.filter((employee) =>
+    //   employee.name.includes(text)
+    // );
+    console.log("employeeSearched", e.target.value);
+    // //
+    //
+    setText(e.target.value);
   };
 
   const employeeMenu = employees.map((employee) => {
@@ -111,7 +124,17 @@ export const Legend: React.FC<ILegendProps> = ({
           </IconTooltip>
         </span>
       </div>
-      <div className="flex flex-col gap-4 h-[80vh] overflow-y-auto">
+      <div className="mb-2 relative w-full flex">
+        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+        <Input
+          type="text"
+          placeholder={t("searchEmployee")}
+          className="w-full rounded-lg bg-background pl-8"
+          value={text}
+          onChange={handleSearch}
+        />
+      </div>
+      <div className="flex flex-col gap-4 h-[80vh] overflow-y-auto mt-2">
         {employeeMenu}
       </div>
     </>

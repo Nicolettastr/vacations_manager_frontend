@@ -81,14 +81,15 @@ export const UserConfiguration = () => {
   }, [user, form]);
 
   useEffect(() => {
-    if (!userConfiguration) {
-      handleCancelEdit();
-    }
+    setEditUser(false);
   }, [userConfiguration]);
 
-  console.log(form.formState.defaultValues);
-
   const onSubmit = async (values: z.infer<typeof userSchema>) => {};
+
+  const handleUserSettings = () => {
+    setUserConfiguration(!userConfiguration);
+    setEditUser(false);
+  };
 
   return (
     <Form {...form}>
@@ -107,10 +108,7 @@ export const UserConfiguration = () => {
           </h2>
           <span className="flex flex-row mb-6">
             <IconTooltip content={t("closeSettings")}>
-              <X
-                onClick={() => setUserConfiguration(!userConfiguration)}
-                className="icon cursor-pointer"
-              />
+              <X onClick={handleUserSettings} className="icon cursor-pointer" />
             </IconTooltip>
           </span>
         </div>
@@ -236,7 +234,7 @@ export const UserConfiguration = () => {
                   variant={"outline"}
                   type="button"
                   className="w-full justify-between"
-                  onClick={() => setEditUser(!editUser)}
+                  onClick={handleEditUser}
                 >
                   <div className="flex items-center gap-3">
                     <User className="h-5 w-5" />

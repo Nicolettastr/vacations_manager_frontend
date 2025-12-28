@@ -106,5 +106,9 @@
   "selectTheme": "Select theme",
   "editProfile": "Edit profile",
   "advancedSettings": "Advanced settings",
-  "noEmailSet": "No email set"
+  "noEmailSet": "No email set",
+  "signInButton": "Sign in",
+  "hidePassword": "Hide password",
+  "showPassword": "Show password",
+  "employeeDataDescription": "New employee data"
 }

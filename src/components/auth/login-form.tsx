@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Lock, Mail } from "lucide-react";
+import { Eye, EyeClosed, Lock, Mail } from "lucide-react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
@@ -20,14 +20,16 @@ import { useLogin } from "@/hooks/auth/useLogin";
 import { useRegister } from "@/hooks/auth/useRegister";
 import { useToast } from "@/hooks/use-toast";
 import { useAuthStore } from "@/store/useAuthStore";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import IconTooltip from "../icons/Tooltip";
 
 export const LoginForm = () => {
   const { t } = useTranslation();
   const { toast } = useToast();
   const { mutate: register } = useRegister();
   const { mutate: login } = useLogin();
+  const [showPassword, setShowPassword] = useState(false);
   const submitType = useRef<"login" | "register" | null>(null);
   const setForgotPassword = useAuthStore((state) => state.setForgotPassword);
 
@@ -75,6 +77,10 @@ export const LoginForm = () => {
     setForgotPassword(true);
   };
 
+  const handleShowPassword = () => {
+    setShowPassword((prev) => !prev);
+  };
+
   return (
     <div className="space-y-6">
       <Form {...form}>
@@ -107,14 +113,29 @@ export const LoginForm = () => {
               <FormItem>
                 <FormLabel>{t("password")}</FormLabel>
                 <FormControl>
-                  <div className="relative">
+                  <div className="flex relative">
                     <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                     <Input
-                      type="password"
+                      type={showPassword ? `text` : `password`}
                       placeholder="••••••••"
                       className="pl-10"
                       {...field}
                     />
+                    {showPassword ? (
+                      <IconTooltip content={t("hidePassword")}>
+                        <EyeClosed
+                          onClick={handleShowPassword}
+                          className="absolute right-2.5 top-2.5 h-5 w-5 text-muted-foreground "
+                        />
+                      </IconTooltip>
+                    ) : (
+                      <IconTooltip content={t("showPassword")}>
+                        <Eye
+                          onClick={handleShowPassword}
+                          className="absolute right-2.5 top-2.5 h-5 w-5 text-muted-foreground "
+                        />
+                      </IconTooltip>
+                    )}
                   </div>
                 </FormControl>
                 <FormMessage />
