@@ -5,15 +5,15 @@ export interface Login {
 }
 
 export interface User {
-  id: string;
-  email: string;
-  created_at: string;
-  updated_at: string;
-  name: string | null;
-  lastname: string | null;
-  avatar: string;
-  theme: string;
-  extra: Record<string, any>;
+  id?: string;
+  name?: string | null;
+  lastname?: string | null;
+  avatar?: string;
+  theme?: string;
+  email?: string;
+  created_at?: string;
+  updated_at?: string;
+  extra?: Record<string, any>;
 }
 
 export interface userParams {

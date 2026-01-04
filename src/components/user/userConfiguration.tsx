@@ -1,3 +1,4 @@
+import { usePatchUser } from "@/hooks/users/usePatchUser";
 import { getInitials } from "@/lib/utils";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useUserStore } from "@/store/useUserStore";
@@ -37,23 +38,21 @@ export const UserConfiguration = () => {
   const [userConfiguration, setUserConfiguration] = useUserStore(
     useShallow((state) => [state.userConfiguration, state.setUserConfiguration])
   );
-
   const handleResetForm = () => {
     form.reset({
       name: user?.name ?? "",
       lastname: user?.lastname ?? "",
-      theme: user?.theme ?? "light",
+      theme: user?.theme,
       avatar: user?.avatar ?? "",
-      email: user?.email ?? "",
     });
   };
+  const { mutate: onEditUser } = usePatchUser(handleResetForm);
 
   const userSchema = z.object({
     name: z.string().optional(),
     lastname: z.string().optional(),
     theme: z.string().optional(),
     avatar: z.string().optional(),
-    email: z.string().optional(),
   });
 
   const form = useForm<z.infer<typeof userSchema>>({
@@ -61,9 +60,8 @@ export const UserConfiguration = () => {
     defaultValues: {
       name: user?.name ?? "",
       lastname: user?.lastname ?? "",
-      theme: user?.theme ?? "light",
+      theme: user?.theme,
       avatar: user?.avatar ?? "",
-      email: user?.email ?? "",
     },
   });
 
@@ -84,7 +82,12 @@ export const UserConfiguration = () => {
     setEditUser(false);
   }, [userConfiguration]);
 
-  const onSubmit = async (values: z.infer<typeof userSchema>) => {};
+  const onSubmit = async (values: z.infer<typeof userSchema>) => {
+    if (!values) {
+      return;
+    }
+    onEditUser(values);
+  };
 
   const handleUserSettings = () => {
     setUserConfiguration(!userConfiguration);
@@ -161,23 +164,7 @@ export const UserConfiguration = () => {
                           )}
                         />
                       </div>
-                      <FormField
-                        control={form.control}
-                        name="email"
-                        render={({ field }) => (
-                          <FormItem className="mt-3 w-full">
-                            <FormControl>
-                              <Input
-                                {...field}
-                                type="email"
-                                placeholder={t("email")}
-                                className="user-edit-input w-full"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                      <h3 className={editUser ? "mt-3" : ""}>{user?.email}</h3>
                     </>
                   ) : (
                     <>
@@ -210,12 +197,12 @@ export const UserConfiguration = () => {
                             type="text"
                             placeholder={t("theme")}
                             className="user-edit-input w-full"
+                            disabled={!editUser}
                           />
                         ) : (
                           <Select
                             onValueChange={field.onChange}
                             defaultValue={field.value}
-                            disabled={!editUser}
                           >
                             <SelectTrigger>
                               <SelectValue placeholder={t("selectTheme")} />
