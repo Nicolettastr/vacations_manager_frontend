@@ -1,18 +1,18 @@
-import { getEmployee } from "@/api/employees/getEmployee";
+import { getEmployees } from "@/api/employees/getEmployees";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useQuery } from "@tanstack/react-query";
 
-export const useGetEmployee = (isLoggedIn: boolean, text: string) => {
+export const useGetEmployees = (isLoggedIn: boolean) => {
   const token = useAuthStore((state) => state.token);
 
   const { data, isFetching, error } = useQuery({
-    queryKey: ["getEmployee", token, text],
-    queryFn: () => getEmployee(token, text),
-    enabled: isLoggedIn && !!token && !!text,
+    queryKey: ["getEmployees", token],
+    queryFn: () => getEmployees(token),
+    enabled: isLoggedIn && !!token,
   });
 
   return {
-    employee: data ?? [],
+    employees: data ?? [],
     fetchingEmployee: isFetching,
     errorEmployee: error,
   };

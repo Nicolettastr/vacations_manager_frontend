@@ -11,7 +11,7 @@ import FullCalendar from "@fullcalendar/react";
 import { addDays } from "date-fns";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { useGetEmployees } from "@/hooks/employees/useGetEmployee";
+import { useGetEmployees } from "@/hooks/employees/useGetEmployees";
 import { useDeleteEmployeeLeave } from "@/hooks/leaves/useDeleteLeave";
 import { useGetEmployeesLeaves } from "@/hooks/leaves/useGetEmployeesLeaves";
 import { useGetLeavesTypes } from "@/hooks/leaves/useGetLeavesTypes";

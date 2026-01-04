@@ -18,9 +18,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useGetEmployeesUsedColors } from "@/hooks/employees/useGetEmployeesUsedColors";
+import { generateRandomColor } from "@/lib/utils";
+import { useAuthStore } from "@/store/useAuthStore";
 import { newEmployee } from "@/types/employees/employees.common";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect } from "react";
+import { HexColorPicker } from "react-colorful";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import * as z from "zod";
@@ -43,6 +47,8 @@ export const EmployeeModal = ({
   const { t } = useTranslation();
 
   const isEditMode = mode === "edit" || mode === "create";
+  const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
+  const { colors } = useGetEmployeesUsedColors(isLoggedIn);
 
   const employeeSchema = z.object({
     name: z.string({ required_error: t("formErrors.nameRequired") }),
@@ -50,7 +56,17 @@ export const EmployeeModal = ({
     email: z
       .string({ required_error: t("formErrors.emailRequired") })
       .email(t("formErrors.invalidEmailModal")),
-    color: z.string().optional(),
+    color: z
+      .string()
+      .optional()
+      .refine(
+        (color) => {
+          if (!color) return;
+          if (mode === "edit" && color === data?.color) return true;
+          return !colors.includes(color);
+        },
+        { message: t("formErrors.colorAlreadyUsed") }
+      ),
   });
 
   const form = useForm<z.infer<typeof employeeSchema>>({
@@ -65,7 +81,7 @@ export const EmployeeModal = ({
         name: "",
         surname: "",
         email: "",
-        color: "#000000",
+        color: generateRandomColor(),
       });
     }
   }, [data, form, isOpen]);
@@ -180,7 +196,19 @@ export const EmployeeModal = ({
                         <FormItem>
                           <FormLabel>{t("color")}</FormLabel>
                           <FormControl>
-                            <Input type="color" {...field} />
+                            <div className="space-y-2 flex gap-10 w-full rounded-sm border-[0.5px] border-[#d9d7d7a6] p-3">
+                              <HexColorPicker
+                                color={field.value || "#000000"}
+                                onChange={field.onChange}
+                              />
+                              <div className="flex flex-col items-center">
+                                <p>{t("preview")}</p>
+                                <span
+                                  className="w-20 h-20 rounded-full mt-5"
+                                  style={{ backgroundColor: `${field.value}` }}
+                                ></span>
+                              </div>
+                            </div>
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -199,10 +227,10 @@ export const EmployeeModal = ({
                       <strong>{t("email")}:</strong> {data?.email}
                     </p>
                     {data?.color && (
-                      <p>
+                      <p className="flex items-center">
                         <strong>{t("color")}:</strong>{" "}
                         <span
-                          className="inline-block w-4 h-4 rounded"
+                          className="inline-block w-6 h-6 rounded ml-2"
                           style={{ backgroundColor: data.color }}
                         />
                       </p>

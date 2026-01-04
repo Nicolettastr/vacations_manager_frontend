@@ -1,7 +1,9 @@
+import { useDebounce } from "@/hooks/debounce/useDebounce";
+import { useGetEmployee } from "@/hooks/employees/useGetEmployee";
 import { useEmployeeStore } from "@/store/useEmployeeStore";
 import { Employee } from "@/types/employees/employees.common";
 import { Pencil, Plus, Search, Settings, Trash2, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/shallow";
 import IconTooltip from "../icons/Tooltip";
@@ -23,6 +25,9 @@ export const Legend: React.FC<ILegendProps> = ({
 }) => {
   const { t } = useTranslation();
   const [text, setText] = useState<string>("");
+  const [callService, setCallService] = useState<boolean>(false);
+  const debounceText = useDebounce(text, 300);
+  const { employee } = useGetEmployee(callService, debounceText);
 
   const handleDeleteEmployee = (employee: Employee) => {
     setModalState({ isOpen: true, mode: "delete", data: employee });
@@ -37,26 +42,35 @@ export const Legend: React.FC<ILegendProps> = ({
       ])
     );
 
-  const handleSelectedEmployee = (employeeId: string) => {
+  useEffect(() => {
+    setCallService(debounceText.length > 0);
+  }, [debounceText.length]);
+
+  const handleSelectedEmployee = (
+    employeeId: string,
+    type: "edit" | "view"
+  ) => {
     handleId(employeeId);
     const employee = employees.find((emp) => emp.id === employeeId);
-    setModalState({ isOpen: true, mode: "edit", data: employee });
+    setModalState({ isOpen: true, mode: type, data: employee });
     return employees.find((employee) => employee.id === employeeId);
   };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    // const employeeSearched = employees.filter((employee) =>
-    //   employee.name.includes(text)
-    // );
-    console.log("employeeSearched", e.target.value);
-    // //
-    //
     setText(e.target.value);
   };
 
-  const employeeMenu = employees.map((employee) => {
+  const showEmployees = useMemo(() => {
+    return debounceText ? employee : employees;
+  }, [debounceText, employee, employees]);
+
+  const employeeMenu = showEmployees.map((employee) => {
     return (
-      <div key={employee.id} className="flex items-center gap-3">
+      <div
+        key={employee.id}
+        className="flex items-center gap-3 cursor-pointer legend"
+        onClick={() => handleSelectedEmployee(employee.id, "view")}
+      >
         <Avatar className="h-8 w-8">
           <AvatarFallback>
             {employee.name[0]}
@@ -73,7 +87,7 @@ export const Legend: React.FC<ILegendProps> = ({
         {configureEmployees && (
           <span className="flex flex-row gap-1 cursor-pointer">
             <Pencil
-              onClick={() => handleSelectedEmployee(employee.id)}
+              onClick={() => handleSelectedEmployee(employee.id, "edit")}
               size={17}
               color="#1570e0ff"
               className="icon"

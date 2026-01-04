@@ -4,8 +4,9 @@ import { useEmployeeStore } from "@/store/useEmployeeStore";
 import { useModalStore } from "@/store/useModalStore";
 import { useUserStore } from "@/store/useUserStore";
 import {
+  CalendarCheck,
   Calendar as CalendarIcon,
-  Plus,
+  NotebookPen,
   Settings,
   UserRound,
 } from "lucide-react";
@@ -60,24 +61,34 @@ export function Header() {
           )}
           {windowWidth >= 650 && (
             <>
-              <Button
-                onClick={() =>
-                  setModalState({ isOpen: true, mode: "create", type: "note" })
-                }
-                variant="outline"
-              >
-                <Plus className="mr-2 h-4 w-4" />
-                {t("newNote")}
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() =>
-                  setModalState({ isOpen: true, mode: "create", type: "leave" })
-                }
-              >
-                <Plus className="mr-2 h-4 w-4" />
-                {t("newLeave")}
-              </Button>
+              <IconTooltip content={t("newNote")}>
+                <Button
+                  onClick={() =>
+                    setModalState({
+                      isOpen: true,
+                      mode: "create",
+                      type: "note",
+                    })
+                  }
+                  variant="outline"
+                >
+                  <NotebookPen className=" h-4 w-4" />
+                </Button>
+              </IconTooltip>
+              <IconTooltip content={t("newLeave")}>
+                <Button
+                  variant="outline"
+                  onClick={() =>
+                    setModalState({
+                      isOpen: true,
+                      mode: "create",
+                      type: "leave",
+                    })
+                  }
+                >
+                  <CalendarCheck className=" h-4 w-4" />
+                </Button>
+              </IconTooltip>
             </>
           )}
           <Button

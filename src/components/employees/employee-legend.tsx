@@ -1,6 +1,6 @@
 "use client";
 import { useDeleteEmployee } from "@/hooks/employees/useDeleteEmployee";
-import { useGetEmployees } from "@/hooks/employees/useGetEmployee";
+import { useGetEmployees } from "@/hooks/employees/useGetEmployees";
 import { usePatchEmployee } from "@/hooks/employees/usePatchEmployee";
 import { usePostEmployee } from "@/hooks/employees/usePostEmployee";
 import { useToast } from "@/hooks/use-toast";
