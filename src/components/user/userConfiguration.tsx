@@ -204,22 +204,31 @@ export const UserConfiguration = () => {
                   render={({ field }) => (
                     <FormItem>
                       <FormControl>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                          disabled={!editUser}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder={t("selectTheme")} />
-                          </SelectTrigger>
-                          <SelectContent className="z-[80]">
-                            {["light", "dark", "system"].map((theme) => (
-                              <SelectItem key={theme} value={theme}>
-                                {t(theme)}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                        {!editUser ? (
+                          <Input
+                            {...field}
+                            type="text"
+                            placeholder={t("theme")}
+                            className="user-edit-input w-full"
+                          />
+                        ) : (
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                            disabled={!editUser}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder={t("selectTheme")} />
+                            </SelectTrigger>
+                            <SelectContent className="z-[80]">
+                              {["light", "dark", "system"].map((theme) => (
+                                <SelectItem key={theme} value={theme}>
+                                  {t(theme)}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        )}
                       </FormControl>
                       <FormMessage />
                     </FormItem>

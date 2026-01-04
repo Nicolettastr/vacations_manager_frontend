@@ -60,6 +60,15 @@ export const Legend: React.FC<ILegendProps> = ({
     setText(e.target.value);
   };
 
+  const handleClearSearch = () => {
+    setText("");
+  };
+
+  const handleCloseModal = () => {
+    handleConfigureEmployees();
+    handleClearSearch();
+  };
+
   const showEmployees = useMemo(() => {
     return debounceText ? employee : employees;
   }, [debounceText, employee, employees]);
@@ -125,10 +134,7 @@ export const Legend: React.FC<ILegendProps> = ({
             )}
           >
             {employeesSettingsMobileIcon ? (
-              <X
-                onClick={handleConfigureEmployees}
-                className="icon cursor-pointer"
-              />
+              <X onClick={handleCloseModal} className="icon cursor-pointer" />
             ) : (
               <Settings
                 onClick={handleConfigureEmployees}
@@ -146,6 +152,10 @@ export const Legend: React.FC<ILegendProps> = ({
           className="w-full rounded-lg bg-background pl-8"
           value={text}
           onChange={handleSearch}
+        />
+        <X
+          onClick={handleClearSearch}
+          className="w-5 h-5 icon cursor-pointer absolute right-2.5 top-2.5 text-muted-foreground"
         />
       </div>
       <div className="flex flex-col gap-4 h-[80vh] overflow-y-auto mt-2">
