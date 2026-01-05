@@ -27,7 +27,7 @@ const EventTypeModal: React.FC<EventTypeModalProps> = ({
       open={selectTypeModal}
       onOpenChange={() => setSelectTypeModal(false)}
     >
-      <DialogContent className="sm:max-w-[300px] flex-col justify-center align-center">
+      <DialogContent className="sm:max-w-[350px] flex-col justify-center align-center">
         <DialogHeader>
           <DialogTitle>{t("chooseWhatToCreate")}</DialogTitle>
         </DialogHeader>

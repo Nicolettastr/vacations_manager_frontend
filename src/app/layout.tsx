@@ -1,3 +1,4 @@
+import { ThemeSwitcher } from "@/components/ui/ThemeSwitcher";
 import { Toaster } from "@/components/ui/toaster";
 import type { Metadata } from "next";
 import i18n from "../../infrastructure/i18n";
@@ -30,6 +31,7 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased">
         <Providers>
+          <ThemeSwitcher />
           {children}
           <Toaster />
         </Providers>

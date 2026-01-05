@@ -1,9 +1,10 @@
+import { useGetThemes } from "@/hooks/themes/useGetThemes";
 import { usePatchUser } from "@/hooks/users/usePatchUser";
 import { getInitials } from "@/lib/utils";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useUserStore } from "@/store/useUserStore";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ChevronRight, Palette, User, X } from "lucide-react";
+import { ChevronRight, Palette, Settings, User, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -32,8 +33,8 @@ import {
 export const UserConfiguration = () => {
   const { t } = useTranslation();
   const [editUser, setEditUser] = useState<boolean>(false);
-  const [logout, user] = useAuthStore(
-    useShallow((state) => [state.logout, state.user])
+  const [logout, user, isLoggedIn] = useAuthStore(
+    useShallow((state) => [state.logout, state.user, state.isLoggedIn])
   );
   const [userConfiguration, setUserConfiguration] = useUserStore(
     useShallow((state) => [state.userConfiguration, state.setUserConfiguration])
@@ -47,6 +48,7 @@ export const UserConfiguration = () => {
     });
   };
   const { mutate: onEditUser } = usePatchUser(handleResetForm);
+  const { themes } = useGetThemes(isLoggedIn);
 
   const userSchema = z.object({
     name: z.string().optional(),
@@ -65,6 +67,14 @@ export const UserConfiguration = () => {
     },
   });
 
+  const resetTheme = () => {
+    document.documentElement.setAttribute("data-theme", user?.theme ?? "light");
+  };
+
+  const previewTheme = (theme: string) => {
+    document.documentElement.setAttribute("data-theme", theme);
+  };
+
   const handleEditUser = () => {
     setEditUser(!editUser);
   };
@@ -72,6 +82,7 @@ export const UserConfiguration = () => {
   const handleCancelEdit = () => {
     handleResetForm();
     handleEditUser();
+    resetTheme();
   };
 
   useEffect(() => {
@@ -80,6 +91,8 @@ export const UserConfiguration = () => {
 
   useEffect(() => {
     setEditUser(false);
+    handleResetForm();
+    resetTheme();
   }, [userConfiguration]);
 
   const onSubmit = async (values: z.infer<typeof userSchema>) => {
@@ -93,6 +106,8 @@ export const UserConfiguration = () => {
     setUserConfiguration(!userConfiguration);
     setEditUser(false);
   };
+
+  const handleAdvancedSettings = () => {};
 
   return (
     <Form {...form}>
@@ -198,19 +213,26 @@ export const UserConfiguration = () => {
                             placeholder={t("theme")}
                             className="user-edit-input w-full"
                             disabled={!editUser}
+                            onChange={() => {}}
                           />
                         ) : (
                           <Select
-                            onValueChange={field.onChange}
+                            onValueChange={(value) => {
+                              field.onChange(value);
+                              previewTheme(value);
+                            }}
                             defaultValue={field.value}
                           >
                             <SelectTrigger>
                               <SelectValue placeholder={t("selectTheme")} />
                             </SelectTrigger>
                             <SelectContent className="z-[80]">
-                              {["light", "dark", "system"].map((theme) => (
-                                <SelectItem key={theme} value={theme}>
-                                  {t(theme)}
+                              {themes.map((theme) => (
+                                <SelectItem
+                                  key={theme.theme}
+                                  value={theme.theme}
+                                >
+                                  {t(theme.theme)}
                                 </SelectItem>
                               ))}
                             </SelectContent>
@@ -226,18 +248,32 @@ export const UserConfiguration = () => {
 
             <div className="flex flex-col gap-2">
               {!editUser && (
-                <Button
-                  variant={"outline"}
-                  type="button"
-                  className="w-full justify-between"
-                  onClick={handleEditUser}
-                >
-                  <div className="flex items-center gap-3">
-                    <User className="h-5 w-5" />
-                    <span>{t("editProfile")}</span>
-                  </div>
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
+                <div>
+                  <Button
+                    variant={"outline"}
+                    type="button"
+                    className="w-full justify-between"
+                    onClick={handleEditUser}
+                  >
+                    <div className="flex items-center gap-3">
+                      <User className="h-5 w-5" />
+                      <span>{t("editProfile")}</span>
+                    </div>
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant={"outline"}
+                    type="button"
+                    className="w-full justify-between mt-3"
+                    onClick={handleAdvancedSettings}
+                  >
+                    <div className="flex items-center gap-3">
+                      <Settings className="h-5 w-5" />
+                      <span>{t("advancedSettings")}</span>
+                    </div>
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
               )}
             </div>
           </div>
