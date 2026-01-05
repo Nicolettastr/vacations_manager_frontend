@@ -1,12 +1,9 @@
 import { api } from "@/client";
+import { ITypes } from "@/types/common";
 
-export interface IThemes {
-  id: string;
-  theme: string;
-}
 export const getThemes = async (
   token: string | null
-): Promise<IThemes[] | undefined> => {
+): Promise<ITypes[] | undefined> => {
   if (!token) {
     return;
   }

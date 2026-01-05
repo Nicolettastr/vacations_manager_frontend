@@ -4,13 +4,14 @@ import { AuthCard } from "@/components/auth/auth-card";
 import CalendarView from "@/components/calendar/calendar-view";
 import { EmployeeLegend } from "@/components/employees/employee-legend";
 import { Header } from "@/components/layout/header";
+import { AdvancedSettings } from "@/components/user/advancedSettings";
 import { UserConfiguration } from "@/components/user/userConfiguration";
 import { useGetUser } from "@/hooks/users/useGetUser";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useCommonDataStore } from "@/store/useCommonDataStore";
 import { useEmployeeStore } from "@/store/useEmployeeStore";
 import { useUserStore } from "@/store/useUserStore";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/shallow";
 
@@ -20,6 +21,7 @@ export default function Home() {
   const [windowWidth, setWindowWidth] = useCommonDataStore(
     useShallow((state) => [state.windowWidth, state.setWindowWidth])
   );
+  const [advancedSettings, setAdvancedSettings] = useState<boolean>(false);
   const [isLoggedIn, isLoading, setIsLoading, setToken, setUser] = useAuthStore(
     useShallow((state) => [
       state.isLoggedIn,
@@ -88,6 +90,11 @@ export default function Home() {
   const handleConfigureEmployee = () => {
     setConfigureEmployees(false);
     setUserConfiguration(false);
+    setAdvancedSettings(false);
+  };
+
+  const handleAdvancedSettings = () => {
+    setAdvancedSettings(!advancedSettings);
   };
 
   if (isLoading) {
@@ -106,7 +113,14 @@ export default function Home() {
     <div className="flex h-screen w-full flex-col bg-background">
       <div className="flex flex-1 overflow-hidden">
         <EmployeeLegend />
-        <UserConfiguration />
+        {advancedSettings ? (
+          <AdvancedSettings
+            advancedSettings={advancedSettings}
+            handleAdvancedSettings={handleAdvancedSettings}
+          />
+        ) : (
+          <UserConfiguration handleAdvancedSettings={handleAdvancedSettings} />
+        )}
 
         <div className="relative flex-1 flex flex-col">
           <Header />

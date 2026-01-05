@@ -4,7 +4,7 @@ import { getInitials } from "@/lib/utils";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useUserStore } from "@/store/useUserStore";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ChevronRight, Palette, Settings, User, X } from "lucide-react";
+import { ChevronRight, Settings, User, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -22,15 +22,15 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
+import { ConfigurationDropdowns } from "./configurationDropdowns";
 
-export const UserConfiguration = () => {
+interface IUserConfiguration {
+  handleAdvancedSettings: () => void;
+}
+
+export const UserConfiguration: React.FC<IUserConfiguration> = ({
+  handleAdvancedSettings,
+}) => {
   const { t } = useTranslation();
   const [editUser, setEditUser] = useState<boolean>(false);
   const [logout, user, isLoggedIn] = useAuthStore(
@@ -71,10 +71,6 @@ export const UserConfiguration = () => {
     document.documentElement.setAttribute("data-theme", user?.theme ?? "light");
   };
 
-  const previewTheme = (theme: string) => {
-    document.documentElement.setAttribute("data-theme", theme);
-  };
-
   const handleEditUser = () => {
     setEditUser(!editUser);
   };
@@ -106,8 +102,6 @@ export const UserConfiguration = () => {
     setUserConfiguration(!userConfiguration);
     setEditUser(false);
   };
-
-  const handleAdvancedSettings = () => {};
 
   return (
     <Form {...form}>
@@ -193,58 +187,11 @@ export const UserConfiguration = () => {
               </CardContent>
             </Card>
 
-            <Card>
-              <CardContent className="pt-6">
-                <div className="flex items-center gap-3 mb-2">
-                  <Palette className="h-5 w-5 text-muted-foreground" />
-                  <span className="text-sm font-medium">{t("theme")}</span>
-                </div>
-
-                <FormField
-                  control={form.control}
-                  name="theme"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormControl>
-                        {!editUser ? (
-                          <Input
-                            {...field}
-                            type="text"
-                            placeholder={t("theme")}
-                            className="user-edit-input w-full"
-                            disabled={!editUser}
-                            onChange={() => {}}
-                          />
-                        ) : (
-                          <Select
-                            onValueChange={(value) => {
-                              field.onChange(value);
-                              previewTheme(value);
-                            }}
-                            defaultValue={field.value}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder={t("selectTheme")} />
-                            </SelectTrigger>
-                            <SelectContent className="z-[80]">
-                              {themes.map((theme) => (
-                                <SelectItem
-                                  key={theme.theme}
-                                  value={theme.theme}
-                                >
-                                  {t(theme.theme)}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        )}
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </CardContent>
-            </Card>
+            <ConfigurationDropdowns
+              name={"theme"}
+              editUser={editUser}
+              data={themes}
+            />
 
             <div className="flex flex-col gap-2">
               {!editUser && (

@@ -113,5 +113,7 @@
   "showPassword": "Show password",
   "employeeDataDescription": "New employee data",
   "preview": "Preview",
-  "viewEmployee": "View employee details"
+  "viewEmployee": "View employee details",
+  "english": "English",
+  "spanish": "Spanish"
 }
