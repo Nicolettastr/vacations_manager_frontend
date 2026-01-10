@@ -9,7 +9,9 @@ interface EmployeeStore {
   setModalState: <T extends ModalState>(state: T) => void;
   employeesSettingsMobileIcon: boolean;
   setEmployeesSettingsMobileIcon: (settings: boolean) => void;
+  resetStore: () => void;
 }
+
 export const useEmployeeStore = create<EmployeeStore>()(
   persist(
     (set) => ({
@@ -24,6 +26,12 @@ export const useEmployeeStore = create<EmployeeStore>()(
       employeesSettingsMobileIcon: false,
       setEmployeesSettingsMobileIcon: (settings) =>
         set(() => ({ employeesSettingsMobileIcon: settings })),
+      resetStore: () =>
+        set({
+          configureEmployees: false,
+          modalState: { isOpen: false, mode: "create" },
+          employeesSettingsMobileIcon: false,
+        }),
     }),
     { name: "employee-storage" }
   )

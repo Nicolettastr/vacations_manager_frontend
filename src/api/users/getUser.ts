@@ -8,7 +8,7 @@ export const getUser = async (
     return;
   }
 
-  const { data } = await api.get("api/user", {
+  const { data } = await api.get("api/users", {
     headers: { Authorization: `Bearer ${token}` },
   });
   return data;

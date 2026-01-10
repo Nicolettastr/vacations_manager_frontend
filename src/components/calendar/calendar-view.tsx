@@ -48,7 +48,7 @@ export default function CalendarView() {
     useShallow((state) => [
       state.modalState,
       state.setModalState,
-      state.clearModal,
+      state.resetStore,
     ])
   );
   const setSelectedDate = useCommonDataStore((state) => state.setSelectedDate);

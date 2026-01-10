@@ -2,6 +2,8 @@ import { useGetThemes } from "@/hooks/themes/useGetThemes";
 import { usePatchUser } from "@/hooks/users/usePatchUser";
 import { getInitials } from "@/lib/utils";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useEmployeeStore } from "@/store/useEmployeeStore";
+import { useModalStore } from "@/store/useModalStore";
 import { useUserStore } from "@/store/useUserStore";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ChevronRight, Settings, User, X } from "lucide-react";
@@ -39,6 +41,10 @@ export const UserConfiguration: React.FC<IUserConfiguration> = ({
   const [userConfiguration, setUserConfiguration] = useUserStore(
     useShallow((state) => [state.userConfiguration, state.setUserConfiguration])
   );
+
+  const resetEmployeesConfig = useEmployeeStore((state) => state.resetStore);
+  const resetModalConfiguration = useModalStore((state) => state.resetStore);
+
   const handleResetForm = () => {
     form.reset({
       name: user?.name ?? "",
@@ -67,6 +73,16 @@ export const UserConfiguration: React.FC<IUserConfiguration> = ({
     },
   });
 
+  useEffect(() => {
+    handleResetForm();
+  }, [user, form]);
+
+  useEffect(() => {
+    setEditUser(false);
+    handleResetForm();
+    resetTheme();
+  }, [userConfiguration]);
+
   const resetTheme = () => {
     document.documentElement.setAttribute("data-theme", user?.theme ?? "light");
   };
@@ -81,16 +97,6 @@ export const UserConfiguration: React.FC<IUserConfiguration> = ({
     resetTheme();
   };
 
-  useEffect(() => {
-    handleResetForm();
-  }, [user, form]);
-
-  useEffect(() => {
-    setEditUser(false);
-    handleResetForm();
-    resetTheme();
-  }, [userConfiguration]);
-
   const onSubmit = async (values: z.infer<typeof userSchema>) => {
     if (!values) {
       return;
@@ -101,6 +107,15 @@ export const UserConfiguration: React.FC<IUserConfiguration> = ({
   const handleUserSettings = () => {
     setUserConfiguration(!userConfiguration);
     setEditUser(false);
+  };
+
+  const resetStores = () => {
+    resetEmployeesConfig();
+    resetModalConfiguration();
+  };
+
+  const handleLogout = () => {
+    logout(resetStores);
   };
 
   return (
@@ -246,7 +261,7 @@ export const UserConfiguration: React.FC<IUserConfiguration> = ({
             type="button"
             variant="destructive"
             className="w-full"
-            onClick={logout}
+            onClick={handleLogout}
           >
             {t("logout")}
           </Button>

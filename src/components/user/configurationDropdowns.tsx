@@ -29,7 +29,9 @@ export const ConfigurationDropdowns: React.FC<IConfigurationDropdowns> = ({
     document.documentElement.setAttribute("data-theme", theme);
   };
   const form = useFormContext();
-  const handleEditTheme = () => {};
+  const handleEditTheme = () => {
+    console.log("editing theme");
+  };
 
   return (
     <Card>

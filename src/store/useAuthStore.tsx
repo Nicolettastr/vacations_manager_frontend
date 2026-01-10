@@ -11,14 +11,15 @@ interface AuthState {
   isLoading: boolean;
   setIsLoading: (isLoading: boolean) => void;
   login: (token: string) => void;
-  logout: () => void;
+  logout: (resetAll: () => void) => void;
   forgotPassword: boolean;
   setForgotPassword: (forgotPassword: boolean) => void;
+  resetState: () => void;
 }
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       user: null,
       token: null,
       isLoggedIn: false,
@@ -32,18 +33,22 @@ export const useAuthStore = create<AuthState>()(
         localStorage.setItem("token", token);
       },
 
-      logout: () => {
-        set({
-          user: null,
-          token: null,
-          isLoggedIn: false,
-          forgotPassword: false,
-        });
+      logout: (resetAll) => {
+        get().resetState();
+        resetAll();
         localStorage.removeItem("token");
       },
 
       forgotPassword: false,
       setForgotPassword: (forgotPassword) => set({ forgotPassword }),
+      resetState: () =>
+        set({
+          user: null,
+          token: null,
+          isLoggedIn: false,
+          isLoading: true,
+          forgotPassword: false,
+        }),
     }),
     { name: "auth-storage" }
   )
