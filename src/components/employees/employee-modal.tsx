@@ -18,16 +18,20 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useDeleteEmployee } from "@/hooks/employees/useDeleteEmployee";
 import { useGetEmployeesUsedColors } from "@/hooks/employees/useGetEmployeesUsedColors";
 import { generateRandomColor } from "@/lib/utils";
 import { useAuthStore } from "@/store/useAuthStore";
+import { useEmployeeStore } from "@/store/useEmployeeStore";
 import { newEmployee } from "@/types/employees/employees.common";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Pencil, Trash2 } from "lucide-react";
 import { useEffect } from "react";
 import { HexColorPicker } from "react-colorful";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import * as z from "zod";
+import { useShallow } from "zustand/shallow";
 
 export type EmployeeModalProps = {
   isOpen: boolean;
@@ -40,7 +44,6 @@ export type EmployeeModalProps = {
 export const EmployeeModal = ({
   isOpen,
   mode,
-  data,
   onClose,
   onSave,
 }: EmployeeModalProps) => {
@@ -49,6 +52,10 @@ export const EmployeeModal = ({
   const isEditMode = mode === "edit" || mode === "create";
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const { colors } = useGetEmployeesUsedColors(isLoggedIn);
+  const [setModalState, selectedEmployee] = useEmployeeStore(
+    useShallow((state) => [state.setModalState, state.selectedEmployee])
+  );
+  const { mutate: deleteEmployee } = useDeleteEmployee();
 
   const employeeSchema = z.object({
     name: z.string({ required_error: t("formErrors.nameRequired") }),
@@ -62,7 +69,7 @@ export const EmployeeModal = ({
       .refine(
         (color) => {
           if (!color) return;
-          if (mode === "edit" && color === data?.color) return true;
+          if (mode === "edit" && color === selectedEmployee?.color) return true;
           return !colors.includes(color);
         },
         { message: t("formErrors.colorAlreadyUsed") }
@@ -74,8 +81,8 @@ export const EmployeeModal = ({
   });
 
   useEffect(() => {
-    if (data) {
-      form.reset(data as newEmployee);
+    if (selectedEmployee) {
+      form.reset(selectedEmployee as newEmployee);
     } else {
       form.reset({
         name: "",
@@ -84,10 +91,26 @@ export const EmployeeModal = ({
         color: generateRandomColor(),
       });
     }
-  }, [data, form, isOpen]);
+  }, [selectedEmployee, form, isOpen]);
 
   const onSubmit = (values: z.infer<typeof employeeSchema>) => {
     onSave(values as newEmployee);
+  };
+
+  const handleDeleteEmployee = () => {
+    if (!selectedEmployee) return;
+    setModalState({ isOpen: true, mode: "delete" });
+  };
+
+  const handleConfirmDeleteEmployee = () => {
+    if (!selectedEmployee) return;
+    deleteEmployee(selectedEmployee?.id);
+    setModalState({ isOpen: false, mode: "view" });
+  };
+
+  const handleEditEmployee = () => {
+    if (!selectedEmployee) return;
+    setModalState({ isOpen: true, mode: "edit" });
   };
 
   return (
@@ -100,15 +123,19 @@ export const EmployeeModal = ({
                 <DialogHeader>
                   <DialogTitle>
                     {t("deleteEmployeeRecords", {
-                      name: data?.name,
-                      surname: data?.surname,
+                      name: selectedEmployee?.name,
+                      surname: selectedEmployee?.surname,
                     })}
                   </DialogTitle>
                   <DialogDescription>
                     {t("deleteEmployeeWarning")}
                   </DialogDescription>
                   <DialogFooter>
-                    <Button variant={"destructive"} type="submit">
+                    <Button
+                      variant={"destructive"}
+                      type="submit"
+                      onClick={handleConfirmDeleteEmployee}
+                    >
                       {t("delete")}
                     </Button>
                     <Button
@@ -129,8 +156,8 @@ export const EmployeeModal = ({
                     {mode === "edit" && t("editEmployee")}
                     {mode === "view" &&
                       t("viewEmployee", {
-                        name: data?.name,
-                        surname: data?.surname,
+                        name: selectedEmployee?.name,
+                        surname: selectedEmployee?.surname,
                       })}
                   </DialogTitle>
 
@@ -218,28 +245,49 @@ export const EmployeeModal = ({
                 ) : (
                   <div className="space-y-2 text-sm">
                     <p>
-                      <strong>{t("name")}:</strong> {data?.name}
+                      <strong>{t("name")}:</strong> {selectedEmployee?.name}
                     </p>
                     <p>
-                      <strong>{t("surname")}:</strong> {data?.surname}
+                      <strong>{t("surname")}:</strong>{" "}
+                      {selectedEmployee?.surname}
                     </p>
                     <p>
-                      <strong>{t("email")}:</strong> {data?.email}
+                      <strong>{t("email")}:</strong> {selectedEmployee?.email}
                     </p>
-                    {data?.color && (
+                    {selectedEmployee?.color && (
                       <p className="flex items-center">
                         <strong>{t("color")}:</strong>{" "}
                         <span
                           className="inline-block w-6 h-6 rounded ml-2"
-                          style={{ backgroundColor: data.color }}
+                          style={{ backgroundColor: selectedEmployee.color }}
                         />
                       </p>
                     )}
+                    <Button
+                      type="button"
+                      onClick={handleEditEmployee}
+                      className="flex justify-self-end"
+                      variant={"secondary"}
+                    >
+                      <Pencil style={{ color: "hsl(var(--primary))" }} />
+                      {t("edit")}
+                    </Button>
                   </div>
                 )}
 
                 {isEditMode && (
-                  <DialogFooter>
+                  <DialogFooter className="flex-row justify-self-end gap-2">
+                    <Button
+                      type="button"
+                      onClick={handleDeleteEmployee}
+                      className="flex justify-self-end"
+                      variant={"destructive"}
+                    >
+                      <Trash2
+                        style={{ color: "hsl(var(--destructive-foreground))" }}
+                      />
+                      {t("delete")}
+                    </Button>
                     <Button type="submit">{t("save")}</Button>
                   </DialogFooter>
                 )}

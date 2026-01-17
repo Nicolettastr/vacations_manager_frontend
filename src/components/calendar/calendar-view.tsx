@@ -1,16 +1,5 @@
 "use client";
 
-import type {
-  DateSelectArg,
-  EventClickArg,
-  EventInput,
-} from "@fullcalendar/core";
-import dayGridPlugin from "@fullcalendar/daygrid";
-import interactionPlugin from "@fullcalendar/interaction";
-import FullCalendar from "@fullcalendar/react";
-import { addDays } from "date-fns";
-import { useCallback, useEffect, useMemo, useState } from "react";
-
 import { useGetEmployees } from "@/hooks/employees/useGetEmployees";
 import { useDeleteEmployeeLeave } from "@/hooks/leaves/useDeleteLeave";
 import { useGetEmployeesLeaves } from "@/hooks/leaves/useGetEmployeesLeaves";
@@ -26,8 +15,21 @@ import { useCommonDataStore } from "@/store/useCommonDataStore";
 import { useModalStore } from "@/store/useModalStore";
 import { LeaveRequest, LeaveResponse } from "@/types/leaves/leaves.common";
 import { NoteCreateRequest, NoteResponse } from "@/types/notes/notes.common";
+import type {
+  DateSelectArg,
+  EventClickArg,
+  EventInput,
+} from "@fullcalendar/core";
+import dayGridPlugin from "@fullcalendar/daygrid";
+import interactionPlugin from "@fullcalendar/interaction";
+import multiMonthPlugin from "@fullcalendar/multimonth";
+import FullCalendar from "@fullcalendar/react";
+import timeGridPlugin from "@fullcalendar/timegrid";
+import { addDays } from "date-fns";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/shallow";
+import i18n from "../../../infrastructure/i18n";
 import { EventModalForm } from "./event-modal";
 import { NoteModal } from "./note-modal";
 import EventTypeModal from "./select-event-type-modal";
@@ -265,12 +267,17 @@ export default function CalendarView() {
     <>
       <div className="h-full rounded-lg border bg-card text-card-foreground shadow-sm p-4">
         <FullCalendar
-          plugins={[dayGridPlugin, interactionPlugin]}
+          plugins={[
+            dayGridPlugin,
+            interactionPlugin,
+            timeGridPlugin,
+            multiMonthPlugin,
+          ]}
           initialView="dayGridMonth"
           headerToolbar={{
             left: "prev,next today",
             center: "title",
-            right: "dayGridMonth,dayGridWeek",
+            right: "timeGridDay,timeGridWeek,dayGridMonth,multiMonthYear",
           }}
           events={events}
           selectable={true}
@@ -280,7 +287,7 @@ export default function CalendarView() {
           select={handleDateSelect}
           eventClick={handleEventClick}
           editable={true}
-          locale="en"
+          locale={i18n.language}
           buttonText={{
             today: t("today"),
             month: t("month"),

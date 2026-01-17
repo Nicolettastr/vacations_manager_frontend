@@ -15,6 +15,8 @@ interface AuthState {
   forgotPassword: boolean;
   setForgotPassword: (forgotPassword: boolean) => void;
   resetState: () => void;
+  previewTheme: string | null;
+  setPreviewTheme: (t: string | null) => void;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -41,12 +43,15 @@ export const useAuthStore = create<AuthState>()(
 
       forgotPassword: false,
       setForgotPassword: (forgotPassword) => set({ forgotPassword }),
+
+      previewTheme: null,
+      setPreviewTheme: (previewTheme) => set({ previewTheme }),
+
       resetState: () =>
         set({
           user: null,
           token: null,
           isLoggedIn: false,
-          isLoading: true,
           forgotPassword: false,
         }),
     }),

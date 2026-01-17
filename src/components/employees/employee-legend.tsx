@@ -7,7 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useEmployeeStore } from "@/store/useEmployeeStore";
 import { newEmployee } from "@/types/employees/employees.common";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/shallow";
 import { EmployeeModal } from "./employee-modal";
@@ -23,6 +23,7 @@ export function EmployeeLegend() {
     modalState,
     setModalState,
     employeesSettingsMobileIcon,
+    selectedEmployee,
   ] = useEmployeeStore(
     useShallow((state) => [
       state.configureEmployees,
@@ -30,6 +31,7 @@ export function EmployeeLegend() {
       state.modalState,
       state.setModalState,
       state.employeesSettingsMobileIcon,
+      state.selectedEmployee,
     ])
   );
 
@@ -38,12 +40,6 @@ export function EmployeeLegend() {
   const { mutate: onAddEmployee } = usePostEmployee();
   const { mutate: onDeleteEmployee } = useDeleteEmployee();
   const { mutate: onEditEmployee } = usePatchEmployee();
-
-  const [id, setId] = useState<string>("");
-
-  const handleId = (id: string) => {
-    setId(id);
-  };
 
   useEffect(() => {
     if (errorEmployee) {
@@ -60,15 +56,16 @@ export function EmployeeLegend() {
   };
 
   const handleSaveEmployeeChanges = (employee: newEmployee) => {
+    if (!selectedEmployee) return;
     switch (modalState.mode) {
       case "create":
         onAddEmployee(employee);
         break;
       case "edit":
-        onEditEmployee({ id, data: employee });
+        onEditEmployee({ id: selectedEmployee.id, data: employee });
         break;
       case "delete":
-        onDeleteEmployee(id);
+        onDeleteEmployee(selectedEmployee.id);
         break;
       default:
         break;
@@ -94,7 +91,6 @@ export function EmployeeLegend() {
         >
           <Legend
             employees={employees}
-            handleId={handleId}
             handleSetModal={handleSetModal}
             handleConfigureEmployees={handleConfigureEmployees}
           />
@@ -103,7 +99,6 @@ export function EmployeeLegend() {
         <aside className="hidden min-[965px]:flex w-64 flex-col border-r bg-card p-4 relative z-[60]">
           <Legend
             employees={employees}
-            handleId={handleId}
             handleSetModal={handleSetModal}
             handleConfigureEmployees={handleConfigureEmployees}
           />
@@ -121,7 +116,6 @@ export function EmployeeLegend() {
 
       <EmployeeModal
         isOpen={modalState.isOpen}
-        data={modalState.data as newEmployee}
         mode={modalState.mode}
         onClose={() => setModalState({ isOpen: false, mode: modalState.mode })}
         onSave={handleSaveEmployeeChanges}

@@ -13,7 +13,7 @@ export const usePatchUser = (handleResetForm: () => void) => {
       queryClient.invalidateQueries({ queryKey: ["getUser"] });
       toast({
         title: "User edited",
-        description: "The user has been successfully edited.",
+        description: "The user data has been successfully edited.",
         variant: "success",
       });
     },

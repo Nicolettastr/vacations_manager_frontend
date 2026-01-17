@@ -9,6 +9,7 @@ export const useGetThemes = (isLoggedIn: boolean) => {
     queryKey: ["getThemes", token],
     queryFn: () => getThemes(token),
     enabled: isLoggedIn && !!token,
+    staleTime: Infinity,
   });
 
   return {

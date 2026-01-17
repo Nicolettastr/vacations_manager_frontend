@@ -1,16 +1,16 @@
+import { usePatchUser } from "@/hooks/users/usePatchUser";
 import { usePatchUserEmail } from "@/hooks/users/usePatchUserEmail";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useEmployeeStore } from "@/store/useEmployeeStore";
 import { useModalStore } from "@/store/useModalStore";
-import { useUserStore } from "@/store/useUserStore";
 import { ITypes } from "@/types/common";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Mail, X } from "lucide-react";
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { useShallow } from "zustand/shallow";
+import i18n from "../../../infrastructure/i18n";
 import IconTooltip from "../icons/Tooltip";
 import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
@@ -35,21 +35,17 @@ export const AdvancedSettings: React.FC<IAdvancedSettings> = ({
   handleAdvancedSettings,
 }) => {
   const { t } = useTranslation();
-  const [user, isLoggedIn, logout] = useAuthStore(
-    useShallow((state) => [state.user, state.isLoggedIn, state.logout])
+  const [user, logout] = useAuthStore(
+    useShallow((state) => [state.user, state.logout])
   );
 
-  const [language, setLanguage] = useState("");
-  const [userConfiguration, setUserConfiguration] = useUserStore(
-    useShallow((state) => [state.userConfiguration, state.setUserConfiguration])
-  );
   const resetEmployeesConfig = useEmployeeStore((state) => state.resetStore);
   const resetModalConfiguration = useModalStore((state) => state.resetStore);
 
   const handleResetForm = () => {
     form.reset({
       email: user?.email ?? "",
-      language: language ?? "",
+      language: user?.extra?.lang ?? "",
     });
   };
 
@@ -66,11 +62,7 @@ export const AdvancedSettings: React.FC<IAdvancedSettings> = ({
     handleResetForm,
     handleLogout
   );
-
-  const handleUserSettings = () => {
-    setUserConfiguration(!userConfiguration);
-    //cancelar advanced settings
-  };
+  const { mutate: onEditUser } = usePatchUser(handleResetForm);
 
   const userSchemaAdvanced = z.object({
     email: z.string().optional(),
@@ -81,7 +73,7 @@ export const AdvancedSettings: React.FC<IAdvancedSettings> = ({
     resolver: zodResolver(userSchemaAdvanced),
     defaultValues: {
       email: user?.email ?? "",
-      language: language ?? "",
+      language: user?.extra?.lang ?? "",
     },
   });
 
@@ -90,14 +82,14 @@ export const AdvancedSettings: React.FC<IAdvancedSettings> = ({
       return;
     }
 
-    if (values.email) {
+    if (values.email && values.email !== user?.email) {
       const email = values.email.trim().toLocaleLowerCase();
       onEditUserEmail(email);
     }
 
-    if (values.language) {
-      console.log("Changing language to:", values.language);
-      setLanguage(values.language);
+    if (values.language && values.language !== user?.extra?.lang) {
+      i18n.changeLanguage(values.language);
+      onEditUser({ extra: { ...user?.extra, lang: values.language } });
     }
   };
 
@@ -106,8 +98,8 @@ export const AdvancedSettings: React.FC<IAdvancedSettings> = ({
   };
 
   const lang: ITypes[] = [
-    { id: "1", name: "english" },
-    { id: "2", name: "spanish" },
+    { id: "1", name: "en" },
+    { id: "2", name: "es" },
   ];
 
   return (

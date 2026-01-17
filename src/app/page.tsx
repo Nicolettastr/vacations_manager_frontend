@@ -14,6 +14,7 @@ import { useUserStore } from "@/store/useUserStore";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/shallow";
+import i18n from "../../infrastructure/i18n";
 
 export default function Home() {
   const { t } = useTranslation();
@@ -55,6 +56,12 @@ export default function Home() {
       setUserConfiguration(false);
     }
   }, [userFetching]);
+
+  useEffect(() => {
+    if (!user?.extra?.lang) return;
+
+    i18n.changeLanguage(user?.extra?.lang);
+  }, [user?.extra?.lang]);
 
   useEffect(() => {
     setIsLoading(true);

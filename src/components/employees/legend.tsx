@@ -2,7 +2,7 @@ import { useDebounce } from "@/hooks/debounce/useDebounce";
 import { useGetEmployee } from "@/hooks/employees/useGetEmployee";
 import { useEmployeeStore } from "@/store/useEmployeeStore";
 import { Employee } from "@/types/employees/employees.common";
-import { Pencil, Plus, Search, Settings, Trash2, X } from "lucide-react";
+import { Plus, Search, X } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/shallow";
@@ -14,33 +14,28 @@ interface ILegendProps {
   handleSetModal: () => void;
   handleConfigureEmployees: () => void;
   employees: Employee[];
-  handleId: (id: string) => void;
 }
 
 export const Legend: React.FC<ILegendProps> = ({
   handleSetModal,
   handleConfigureEmployees,
   employees,
-  handleId,
 }) => {
   const { t } = useTranslation();
   const [text, setText] = useState<string>("");
   const [callService, setCallService] = useState<boolean>(false);
   const debounceText = useDebounce(text, 300);
   const { employee } = useGetEmployee(callService, debounceText);
+  const setSelectedEmployee = useEmployeeStore(
+    (state) => state.setSelectedEmployee
+  );
 
-  const handleDeleteEmployee = (employee: Employee) => {
-    setModalState({ isOpen: true, mode: "delete", data: employee });
-    handleId(employee.id);
-  };
-  const [configureEmployees, setModalState, employeesSettingsMobileIcon] =
-    useEmployeeStore(
-      useShallow((state) => [
-        state.configureEmployees,
-        state.setModalState,
-        state.employeesSettingsMobileIcon,
-      ])
-    );
+  const [setModalState, employeesSettingsMobileIcon] = useEmployeeStore(
+    useShallow((state) => [
+      state.setModalState,
+      state.employeesSettingsMobileIcon,
+    ])
+  );
 
   useEffect(() => {
     setCallService(debounceText.length > 0);
@@ -50,10 +45,10 @@ export const Legend: React.FC<ILegendProps> = ({
     employeeId: string,
     type: "edit" | "view"
   ) => {
-    handleId(employeeId);
     const employee = employees.find((emp) => emp.id === employeeId);
+    setSelectedEmployee(employee ?? null);
     setModalState({ isOpen: true, mode: type, data: employee });
-    return employees.find((employee) => employee.id === employeeId);
+    return employee;
   };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -93,22 +88,6 @@ export const Legend: React.FC<ILegendProps> = ({
           className="ml-auto h-3 w-3 shrink-0 rounded-full"
           style={{ backgroundColor: employee.color ?? "#000000" }}
         />
-        {configureEmployees && (
-          <span className="flex flex-row gap-1 cursor-pointer">
-            <Pencil
-              onClick={() => handleSelectedEmployee(employee.id, "edit")}
-              size={17}
-              color="#1570e0ff"
-              className="icon"
-            />
-            <Trash2
-              onClick={() => handleDeleteEmployee(employee)}
-              size={17}
-              color="#DC143C"
-              className="icon"
-            />
-          </span>
-        )}
       </div>
     );
   });
@@ -133,13 +112,8 @@ export const Legend: React.FC<ILegendProps> = ({
                 : "employeesSettings"
             )}
           >
-            {employeesSettingsMobileIcon ? (
+            {employeesSettingsMobileIcon && (
               <X onClick={handleCloseModal} className="icon cursor-pointer" />
-            ) : (
-              <Settings
-                onClick={handleConfigureEmployees}
-                className="icon cursor-pointer"
-              />
             )}
           </IconTooltip>
         </span>

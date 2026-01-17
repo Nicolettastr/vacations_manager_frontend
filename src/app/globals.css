@@ -43,6 +43,25 @@
     --chart-5: 27 87% 67%;
 
     --radius: 0.5rem;
+
+    --fc-page-bg-color: hsl(var(--background));
+    --fc-neutral-bg-color: hsl(var(--background));
+
+    --fc-border-color: hsl(var(--border));
+
+    --fc-small-font-size: 0.85rem;
+
+    --fc-button-bg-color: hsl(var(--primary));
+    --fc-button-border-color: hsl(var(--primary));
+    --fc-button-text-color: hsl(var(--primary-foreground));
+    --fc-button-hover-bg-color: hsl(var(--primary) / 0.9);
+    --fc-button-active-bg-color: hsl(var(--primary));
+
+    --fc-event-bg-color: hsl(var(--accent));
+    --fc-event-border-color: hsl(var(--accent));
+    --fc-event-text-color: hsl(var(--accent-foreground));
+
+    --fc-today-bg-color: hsl(var(--accent) / 0.15);
   }
 
   [data-theme="dark"] {
@@ -63,6 +82,14 @@
     --ring: 243 76% 68%;
     --muted: 215 27% 17%;
     --muted-foreground: 215 20% 65%;
+    --fc-page-bg-color: hsl(var(--background));
+    --fc-neutral-bg-color: hsl(var(--card));
+    --fc-border-color: hsl(var(--border));
+
+    --fc-button-bg-color: hsl(var(--secondary));
+    --fc-button-text-color: hsl(var(--foreground));
+
+    --fc-today-bg-color: hsl(var(--primary) / 0.25);
   }
 
   [data-theme="system"] {
@@ -86,6 +113,8 @@
     --chart-3: 187 29% 63%;
     --chart-4: 35 66% 92%;
     --chart-5: 30 50% 70%;
+    --fc-event-bg-color: hsl(var(--primary));
+    --fc-event-text-color: hsl(var(--primary-foreground));
   }
 
   [data-theme="classic"] {
@@ -113,6 +142,9 @@
     --border: 35 25% 85%;
     --input: 35 25% 85%;
     --ring: 20 45% 45%;
+    --fc-button-bg-color: hsl(var(--primary));
+    --fc-event-bg-color: hsl(var(--accent));
+    --fc-today-bg-color: hsl(var(--accent) / 0.2);
   }
 
   [data-theme="ocean"] {
@@ -140,6 +172,9 @@
     --border: 200 30% 85%;
     --input: 200 30% 85%;
     --ring: 200 90% 45%;
+    --fc-event-bg-color: hsl(var(--primary));
+    --fc-event-border-color: hsl(var(--accent));
+    --fc-today-bg-color: hsl(var(--accent) / 0.25);
   }
 
   [data-theme="forest"] {
@@ -167,6 +202,8 @@
     --border: 120 20% 85%;
     --input: 120 20% 85%;
     --ring: 140 45% 35%;
+    --fc-event-bg-color: hsl(var(--primary));
+    --fc-event-text-color: hsl(var(--primary-foreground));
   }
 
   [data-theme="sunset"] {
@@ -194,6 +231,9 @@
     --border: 30 40% 85%;
     --input: 30 40% 85%;
     --ring: 15 85% 55%;
+    --fc-event-bg-color: hsl(var(--primary));
+    --fc-event-text-color: hsl(var(--primary-foreground));
+    --fc-today-bg-color: hsl(var(--accent) / 0.3);
   }
 
   [data-theme="midnight"] {
@@ -221,6 +261,13 @@
     --border: 255 20% 22%;
     --input: 255 20% 22%;
     --ring: 270 80% 65%;
+    --fc-page-bg-color: hsl(var(--background));
+    --fc-neutral-bg-color: hsl(var(--card));
+
+    --fc-event-bg-color: hsl(var(--accent));
+    --fc-event-text-color: hsl(var(--accent-foreground));
+
+    --fc-button-bg-color: hsl(var(--secondary));
   }
 
   .user-edit-input {
@@ -234,6 +281,18 @@
     box-shadow: 0 0 0 1px hsl(var(--primary) / 0.4);
   }
 
+  .fc-event.note-high {
+    background-color: var(--note-high-color);
+  }
+
+  .fc-event.note-medium {
+    background-color: var(--note-medium-color);
+  }
+
+  .fc-event.note-low {
+    background-color: var(--note-low-color);
+  }
+
   /* Global styles */
   * {
     @apply border-border;
@@ -241,5 +300,9 @@
 
   body {
     @apply bg-[hsl(var(--background))] text-[hsl(var(--foreground))];
+  }
+
+  .icon {
+    font-size: 2rem !important;
   }
 }

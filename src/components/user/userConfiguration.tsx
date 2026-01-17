@@ -35,8 +35,13 @@ export const UserConfiguration: React.FC<IUserConfiguration> = ({
 }) => {
   const { t } = useTranslation();
   const [editUser, setEditUser] = useState<boolean>(false);
-  const [logout, user, isLoggedIn] = useAuthStore(
-    useShallow((state) => [state.logout, state.user, state.isLoggedIn])
+  const [logout, user, isLoggedIn, setPreviewTheme] = useAuthStore(
+    useShallow((state) => [
+      state.logout,
+      state.user,
+      state.isLoggedIn,
+      state.setPreviewTheme,
+    ])
   );
   const [userConfiguration, setUserConfiguration] = useUserStore(
     useShallow((state) => [state.userConfiguration, state.setUserConfiguration])
@@ -74,27 +79,17 @@ export const UserConfiguration: React.FC<IUserConfiguration> = ({
   });
 
   useEffect(() => {
-    handleResetForm();
-  }, [user, form]);
-
-  useEffect(() => {
     setEditUser(false);
-    handleResetForm();
-    resetTheme();
   }, [userConfiguration]);
-
-  const resetTheme = () => {
-    document.documentElement.setAttribute("data-theme", user?.theme ?? "light");
-  };
 
   const handleEditUser = () => {
     setEditUser(!editUser);
   };
 
   const handleCancelEdit = () => {
+    setPreviewTheme(null);
     handleResetForm();
     handleEditUser();
-    resetTheme();
   };
 
   const onSubmit = async (values: z.infer<typeof userSchema>) => {
@@ -105,6 +100,9 @@ export const UserConfiguration: React.FC<IUserConfiguration> = ({
   };
 
   const handleUserSettings = () => {
+    if (userConfiguration && editUser) {
+      setPreviewTheme(null);
+    }
     setUserConfiguration(!userConfiguration);
     setEditUser(false);
   };

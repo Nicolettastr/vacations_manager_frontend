@@ -114,6 +114,17 @@
   "employeeDataDescription": "New employee data",
   "preview": "Preview",
   "viewEmployee": "View employee details",
-  "english": "English",
-  "spanish": "Spanish"
+  "en": "English",
+  "es": "Spanish",
+  "light": "Light",
+  "dark": "Dark",
+  "system": "System",
+  "classic": "Classic",
+  "ocean": "Ocean",
+  "forest": "Forest",
+  "sunset": "Sunset",
+  "midnight": "Midnight",
+  "view": "View",
+  "next": "Next",
+  "previous": "Previous"
 }
