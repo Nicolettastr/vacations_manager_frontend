@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeClosed, Lock, Mail } from "lucide-react";
+import { Eye, EyeClosed, Lock, Mail, User } from "lucide-react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
 
@@ -20,50 +20,95 @@ import { useLogin } from "@/hooks/auth/useLogin";
 import { useRegister } from "@/hooks/auth/useRegister";
 import { useToast } from "@/hooks/use-toast";
 import { useAuthStore } from "@/store/useAuthStore";
-import { useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import IconTooltip from "../icons/Tooltip";
 
-export const LoginForm = () => {
-  const { t } = useTranslation();
-  const { toast } = useToast();
-  const { mutate: register } = useRegister();
-  const { mutate: login } = useLogin();
-  const [showPassword, setShowPassword] = useState(false);
-  const submitType = useRef<"login" | "register" | null>(null);
-  const setForgotPassword = useAuthStore((state) => state.setForgotPassword);
+interface ILoginForm {
+  resetRegisterForm: (register: boolean) => void;
+  registerForm: boolean;
+  handleRegisterModal: (modal: boolean) => void;
+}
 
-  const formSchema = z.object({
-    email: z.string().email({ message: t("formErrors.invalidEmail") }),
-    password: z
-      .string()
-      .min(8, { message: t("formErrors.passwordMin") })
-      .max(32, { message: t("formErrors.passwordMax") })
-      .regex(new RegExp('[!@#$%^&*(),.?/":{}|<>_\\-]'), {
-        message: t("formErrors.passwordSpecial"),
-      })
-      .regex(/[A-Z]/, { message: t("formErrors.passwordUpper") })
-      .regex(/[a-z]/, { message: t("formErrors.passwordLower") })
-      .regex(/\d/, { message: t("formErrors.passwordNumber") }),
-  });
+export const LoginForm: React.FC<ILoginForm> = ({
+  resetRegisterForm,
+  registerForm,
+  handleRegisterModal,
+}) => {
+  const { t } = useTranslation();
+  const formSchema = useMemo(
+    () =>
+      z.object({
+        email: z.string().email({ message: t("formErrors.invalidEmail") }),
+        password: z
+          .string()
+          .min(8, { message: t("formErrors.passwordMin") })
+          .max(32, { message: t("formErrors.passwordMax") })
+          .regex(new RegExp('[!@#$%^&*(),.?/":{}|<>_\\-]'), {
+            message: t("formErrors.passwordSpecial"),
+          })
+          .regex(/[A-Z]/, { message: t("formErrors.passwordUpper") })
+          .regex(/[a-z]/, { message: t("formErrors.passwordLower") })
+          .regex(/\d/, { message: t("formErrors.passwordNumber") }),
+        ...(registerForm && {
+          name: z
+            .string()
+            .min(2, { message: t("formErrors.nameMinLength") })
+            .max(50, { message: t("formErrors.nameMaxLength") })
+            .regex(
+              /^[a-zA-ZÀ-ÿ\u00f1\u00d1]+([' -][a-zA-ZÀ-ÿ\u00f1\u00d1]+)*$/,
+              {
+                message: t("formErrors.nameInvalidCharacters"),
+              }
+            ),
+          lastname: z
+            .string()
+            .min(2, { message: t("formErrors.surnameMinLength") })
+            .max(50, { message: t("formErrors.surnameMaxLength") })
+            .regex(
+              /^[a-zA-ZÀ-ÿ\u00f1\u00d1]+([' -][a-zA-ZÀ-ÿ\u00f1\u00d1]+)*$/,
+              {
+                message: t("formErrors.surnameInvalidCharacters"),
+              }
+            ),
+        }),
+      }),
+    [registerForm, t]
+  );
+
+  const defaultValues = {
+    email: "",
+    password: "",
+    name: "",
+    lastname: "",
+  };
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
+    defaultValues,
   });
 
+  const { toast } = useToast();
+  const { mutate: register } = useRegister(handleRegisterModal, form);
+  const { mutate: login } = useLogin();
+  const [showPassword, setShowPassword] = useState(false);
+  const setForgotPassword = useAuthStore((state) => state.setForgotPassword);
+
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    switch (submitType.current) {
-      case "login":
-        login(values);
-        break;
-      case "register":
-        register(values);
-        break;
+    if (registerForm) {
+      register(values);
+    } else {
+      const { name, lastname, ...loginData } = values;
+      login(loginData);
     }
+  };
+
+  const handleRegisterForm = () => {
+    if (!registerForm) {
+      form.reset(defaultValues);
+    }
+
+    resetRegisterForm(!registerForm);
   };
 
   const handleGoogleSignIn = () => {
@@ -85,6 +130,54 @@ export const LoginForm = () => {
     <div className="space-y-6">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          {registerForm && (
+            <>
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t("name")}</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                        <Input
+                          type="text"
+                          placeholder="Name"
+                          className="pl-10"
+                          {...field}
+                          value={field.value as string}
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="lastname"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t("lastname")}</FormLabel>
+                    <FormControl>
+                      <div className="relative">
+                        <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                        <Input
+                          type="text"
+                          placeholder="Lastname"
+                          className="pl-10"
+                          {...field}
+                          value={field.value as string}
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </>
+          )}
           <FormField
             control={form.control}
             name="email"
@@ -142,30 +235,28 @@ export const LoginForm = () => {
               </FormItem>
             )}
           />
-          <div className="text-sm text-right">
-            <Button
-              variant={"ghost"}
-              onClick={handleForgotPassword}
-              className="text-blue-600 hover:text-blue-500 hover:underline"
-              type="button"
-            >
-              Forgot your password?
-            </Button>
-          </div>
-          <Button
-            type="submit"
-            className="w-full"
-            onClick={() => (submitType.current = "login")}
-          >
-            {t("signIn")}
+          {!registerForm && (
+            <div className="text-sm text-right">
+              <Button
+                variant={"ghost"}
+                onClick={handleForgotPassword}
+                className="text-blue-600 hover:text-blue-500 hover:underline"
+                type="button"
+              >
+                Forgot your password?
+              </Button>
+            </div>
+          )}
+          <Button type="submit" className="w-full">
+            {registerForm ? t("register") : t("signIn")}
           </Button>
           <Button
-            type="submit"
+            type="button"
             variant={"secondary"}
-            onClick={() => (submitType.current = "register")}
+            onClick={handleRegisterForm}
             className="w-full"
           >
-            {t("register")}
+            {registerForm ? t("cancel") : t("register")}
           </Button>
         </form>
       </Form>

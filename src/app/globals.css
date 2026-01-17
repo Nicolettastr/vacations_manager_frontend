@@ -305,4 +305,14 @@
   .icon {
     font-size: 2rem !important;
   }
+
+  [role="dialog"],
+  [data-radix-popper-content-wrapper] {
+    z-index: 9999 !important;
+  }
+
+  [data-radix-select-content],
+  [data-radix-popover-content] {
+    z-index: 10000 !important;
+  }
 }

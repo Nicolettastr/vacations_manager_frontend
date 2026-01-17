@@ -126,5 +126,6 @@
   "midnight": "Midnight",
   "view": "View",
   "next": "Next",
-  "previous": "Previous"
+  "previous": "Previous",
+  "registerMessage": "Your account has been successfully created. You can now log in and start using TeamTracker."
 }
