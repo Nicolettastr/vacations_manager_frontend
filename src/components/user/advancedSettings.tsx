@@ -44,7 +44,7 @@ export const AdvancedSettings: React.FC<IAdvancedSettings> = ({
   const resetEmployeesConfig = useEmployeeStore((state) => state.resetStore);
   const resetModalConfiguration = useModalStore((state) => state.resetStore);
   const [changeEmail, setChangeEmail] = useState<boolean>(false);
-  const [changeEmailModal, setChangeEmailModal] = useState<boolean>(false);
+  //const [changeEmailModal, setChangeEmailModal] = useState<boolean>(false);
   const [email, setEmail] = useState<string>("");
 
   const handleResetForm = () => {
