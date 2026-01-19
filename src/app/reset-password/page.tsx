@@ -22,7 +22,7 @@ import { Input } from "@/components/ui/input";
 import { useResetPassword } from "@/hooks/auth/useResetPassword";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeClosed, Lock } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import * as z from "zod";
@@ -31,10 +31,19 @@ const ResetPassword = () => {
   const { t } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
 
-  const hash = window.location.hash.substring(1);
-  const params = new URLSearchParams(hash);
-  const token = params.get("access_token");
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const hash = window.location.hash.substring(1);
+      const params = new URLSearchParams(hash);
+      const token = params.get("access_token");
+
+      if (token) {
+        setAccessToken(token);
+      }
+    }
+  }, []);
 
   const { mutate: onResetPassword } = useResetPassword();
 
@@ -66,13 +75,13 @@ const ResetPassword = () => {
   });
 
   const onSubmit = async (values: z.infer<typeof resetPasswordSchema>) => {
-    if (!token) {
+    if (!accessToken) {
       return;
     }
     //SEND NEW PASSWORD
     onResetPassword({
       password: values.password,
-      access_token: token,
+      access_token: accessToken,
     });
   };
 
