@@ -34,6 +34,7 @@ const ForgotPasswordForm = () => {
 
   const onSubmit = async (values: z.infer<typeof forgotSchema>) => {
     forgotPasswordaLink(values.email);
+    setForgotPassword(false);
   };
 
   const handleCancelForgot = () => {

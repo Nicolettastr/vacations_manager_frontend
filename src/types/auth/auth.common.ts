@@ -71,3 +71,8 @@ export interface RegisterResponse {
   message: string;
   user: SupabaseUser;
 }
+
+export interface IResetPassword {
+  password: string;
+  access_token: string;
+}

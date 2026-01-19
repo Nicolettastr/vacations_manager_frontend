@@ -127,5 +127,10 @@
   "view": "Ver",
   "next": "Siguiente",
   "previous": "Anterior",
-  "registerMessage": "Tu cuenta ha sido creada correctamente. Ya puedes iniciar sesión y comenzar a usar TeamTracker."
+  "registerMessage": "Tu cuenta ha sido creada correctamente. Ya puedes iniciar sesión y comenzar a usar TeamTracker.",
+  "changeEmail": "Cambiar dirección de correo",
+  "changeEmailMesssage": "Estás a punto de cambiar el correo electrónico asociado a tu cuenta. A partir de ahora, deberás usar el nuevo correo para iniciar sesión y recibir notificaciones importantes. Asegúrate de que el correo introducido sea correcto antes de continuar.",
+  "confirmPassword": "Confirmar contraseña",
+  "resetPassword": "Restablecer contraseña",
+  "changePassword": "Cambiar contraseña"
 }

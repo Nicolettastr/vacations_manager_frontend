@@ -127,5 +127,10 @@
   "view": "View",
   "next": "Next",
   "previous": "Previous",
-  "registerMessage": "Your account has been successfully created. You can now log in and start using TeamTracker."
+  "registerMessage": "Your account has been successfully created. You can now log in and start using TeamTracker.",
+  "changeEmail": "Change email address",
+  "changeEmailMessage": "You are about to change the email address associated with your account.From now on, you will need to use the new email to sign in and receive important notifications.Please make sure the email you entered is correct before continuing.",
+  "confirmPassword": "Confirm password",
+  "resetPassword": "Reset password",
+  "changePassword": "Change password"
 }
