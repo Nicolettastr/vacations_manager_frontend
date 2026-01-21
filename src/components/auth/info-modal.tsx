@@ -27,7 +27,7 @@ export const InfoModal: React.FC<IInfoModal> = ({
   const { t } = useTranslation();
 
   return (
-    <Dialog open={open} onOpenChange={() => handler(false)}>
+    <Dialog open={open}>
       <DialogContent className="relative sm:max-w-[420px] rounded-2xl p-0 overflow-hidden bg-background shadow-xl">
         <X
           onClick={() => handler(false, "close")}

@@ -129,8 +129,11 @@
   "previous": "Anterior",
   "registerMessage": "Tu cuenta ha sido creada correctamente. Ya puedes iniciar sesión y comenzar a usar TeamTracker.",
   "changeEmail": "Cambiar dirección de correo",
-  "changeEmailMesssage": "Estás a punto de cambiar el correo electrónico asociado a tu cuenta. A partir de ahora, deberás usar el nuevo correo para iniciar sesión y recibir notificaciones importantes. Asegúrate de que el correo introducido sea correcto antes de continuar.",
+  "changeEmailMesssage": "Estás a punto de cambiar el correo de tu cuenta. Necesitarás usar el nuevo correo para iniciar sesión. Asegúrate de que sea correcto. Se cerrará la sesión tras el cambio.",
   "confirmPassword": "Confirmar contraseña",
   "resetPassword": "Restablecer contraseña",
-  "changePassword": "Cambiar contraseña"
+  "changePassword": "Cambiar contraseña",
+  "confirmNewEmail": "Confirmar nuevo correo electrónico",
+  "confirmNewEmailMessage": "Reingresa tu correo para confirmar",
+  "emailsDoNotMatch": "Los correos no coinciden"
 }

@@ -20,7 +20,7 @@ export default function Home() {
   const { t } = useTranslation();
 
   const [windowWidth, setWindowWidth] = useCommonDataStore(
-    useShallow((state) => [state.windowWidth, state.setWindowWidth])
+    useShallow((state) => [state.windowWidth, state.setWindowWidth]),
   );
   const [advancedSettings, setAdvancedSettings] = useState<boolean>(false);
   const [isLoggedIn, isLoading, setIsLoading, setToken, setUser] = useAuthStore(
@@ -30,7 +30,7 @@ export default function Home() {
       state.setIsLoading,
       state.setToken,
       state.setUser,
-    ])
+    ]),
   );
 
   const [
@@ -42,12 +42,15 @@ export default function Home() {
       state.configureEmployees,
       state.setConfigureEmployees,
       state.setEmployeesSettingsMobileIcon,
-    ])
+    ]),
   );
   const { user, userFetching } = useGetUser(isLoggedIn);
 
   const [userConfiguration, setUserConfiguration] = useUserStore(
-    useShallow((state) => [state.userConfiguration, state.setUserConfiguration])
+    useShallow((state) => [
+      state.userConfiguration,
+      state.setUserConfiguration,
+    ]),
   );
 
   useEffect(() => {
@@ -123,7 +126,7 @@ export default function Home() {
         {advancedSettings ? (
           <AdvancedSettings
             advancedSettings={advancedSettings}
-            handleAdvancedSettings={handleAdvancedSettings}
+            handleConfigureEmployee={handleConfigureEmployee}
           />
         ) : (
           <UserConfiguration handleAdvancedSettings={handleAdvancedSettings} />

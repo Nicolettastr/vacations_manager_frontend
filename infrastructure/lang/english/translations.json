@@ -129,8 +129,15 @@
   "previous": "Previous",
   "registerMessage": "Your account has been successfully created. You can now log in and start using TeamTracker.",
   "changeEmail": "Change email address",
-  "changeEmailMessage": "You are about to change the email address associated with your account.From now on, you will need to use the new email to sign in and receive important notifications.Please make sure the email you entered is correct before continuing.",
+  "changeEmailMesssage": "You are about to change your account email. You will need to use the new email to sign in. Make sure it is correct. You will be logged out after the change.",
   "confirmPassword": "Confirm password",
   "resetPassword": "Reset password",
-  "changePassword": "Change password"
+  "changePassword": "Change password",
+  "forgotPasswordSendError": "Could not send password reset email",
+  "forgotPasswordSend": "Password reset email sent",
+  "forgotPasswordMail": "Please check your email for the reset link.",
+  "forgotPasswordSendMessage": "If your email is registered, we’ve sent you a link to reset your password.",
+  "confirmNewEmail": "Confirm new email address",
+  "confirmNewEmailMessage": "Please re-enter your new email to confirm",
+  "emailsDoNotMatch": "The emails do not match"
 }

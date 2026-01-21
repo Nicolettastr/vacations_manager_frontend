@@ -12,7 +12,7 @@ export const useForgotPassword = () => {
 
     onSuccess: () => {
       toast({
-        title: t("forgotPassword"),
+        title: t("forgotPasswordSend"),
         description: t("forgotPasswordMail"),
         variant: "success",
       });
@@ -23,7 +23,7 @@ export const useForgotPassword = () => {
         error.response?.data?.error || "Something went wrong.";
 
       toast({
-        title: t("forgotPassword"),
+        title: t("forgotPasswordSendError"),
         description: errorMessage,
         variant: "destructive",
       });

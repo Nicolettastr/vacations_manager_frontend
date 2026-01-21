@@ -3,6 +3,7 @@ import { usePatchUserEmail } from "@/hooks/users/usePatchUserEmail";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useEmployeeStore } from "@/store/useEmployeeStore";
 import { useModalStore } from "@/store/useModalStore";
+import { useUserStore } from "@/store/useUserStore";
 import { ITypes } from "@/types/common";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Mail, X } from "lucide-react";
@@ -12,6 +13,7 @@ import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { useShallow } from "zustand/shallow";
 import i18n from "../../../infrastructure/i18n";
+import { ConfirmEmailForm } from "../auth/confirm-email";
 import { InfoModal } from "../auth/info-modal";
 import IconTooltip from "../icons/Tooltip";
 import { Button } from "../ui/button";
@@ -29,22 +31,23 @@ import { ConfigurationDropdowns } from "./configurationDropdowns";
 
 interface IAdvancedSettings {
   advancedSettings: boolean;
-  handleAdvancedSettings: () => void;
+  handleConfigureEmployee: () => void;
 }
 
 export const AdvancedSettings: React.FC<IAdvancedSettings> = ({
   advancedSettings,
-  handleAdvancedSettings,
+  handleConfigureEmployee,
 }) => {
   const { t } = useTranslation();
   const [user, logout] = useAuthStore(
-    useShallow((state) => [state.user, state.logout])
+    useShallow((state) => [state.user, state.logout]),
   );
-
+  const [changeEmail, setChangeEmail] = useUserStore(
+    useShallow((state) => [state.changeEmail, state.setChangeEmail]),
+  );
   const resetEmployeesConfig = useEmployeeStore((state) => state.resetStore);
   const resetModalConfiguration = useModalStore((state) => state.resetStore);
-  const [changeEmail, setChangeEmail] = useState<boolean>(false);
-  //const [changeEmailModal, setChangeEmailModal] = useState<boolean>(false);
+  const [confirmChangeEmail, setConfirmChangeEmail] = useState<boolean>(false);
   const [email, setEmail] = useState<string>("");
 
   const handleResetForm = () => {
@@ -65,7 +68,7 @@ export const AdvancedSettings: React.FC<IAdvancedSettings> = ({
 
   const { mutate: onEditUserEmail } = usePatchUserEmail(
     handleResetForm,
-    handleLogout
+    handleLogout,
   );
   const { mutate: onEditUser } = usePatchUser(handleResetForm);
 
@@ -89,26 +92,33 @@ export const AdvancedSettings: React.FC<IAdvancedSettings> = ({
 
     if (values.email && values.email !== user?.email) {
       const email = values.email.trim().toLocaleLowerCase();
-      setChangeEmail(true);
+      setConfirmChangeEmail(true);
       setEmail(email);
     }
 
     if (values.language && values.language !== user?.extra?.lang) {
       i18n.changeLanguage(values.language);
       onEditUser({ extra: { ...user?.extra, lang: values.language } });
+      handleConfigureEmployee();
     }
   };
 
-  const submitChangeEmail = (modal: boolean, type?: string) => {
+  const onConfirmChangeEmail = (modal: boolean, type?: string) => {
     if (!type) {
       onEditUserEmail(email);
     }
     setChangeEmail(modal);
     form.reset();
+    handleConfigureEmployee();
+  };
+
+  const onConfirmNewEmailAddress = () => {
+    setConfirmChangeEmail(false);
+    setChangeEmail(true);
   };
 
   const handleCancelEdit = () => {
-    handleAdvancedSettings();
+    handleConfigureEmployee();
   };
 
   const lang: ITypes[] = [
@@ -199,10 +209,19 @@ export const AdvancedSettings: React.FC<IAdvancedSettings> = ({
         <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50">
           <InfoModal
             open={changeEmail}
-            handler={submitChangeEmail}
+            handler={onConfirmChangeEmail}
             title={"changeEmail"}
             message={"changeEmailMesssage"}
             type={"warning"}
+          />
+        </div>
+      )}
+      {confirmChangeEmail && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50">
+          <ConfirmEmailForm
+            onCancel={handleCancelEdit}
+            onConfirm={onConfirmNewEmailAddress}
+            originalEmail={email}
           />
         </div>
       )}

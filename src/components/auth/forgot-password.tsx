@@ -14,14 +14,21 @@ import { useForgotPassword } from "@/hooks/auth/useForgotPassword";
 import { useAuthStore } from "@/store/useAuthStore";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Mail } from "lucide-react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import * as z from "zod";
 
-const ForgotPasswordForm = () => {
+interface ForgotPassword {
+  handleForgotPassword: (modal: boolean) => void;
+}
+
+const ForgotPasswordForm: React.FC<ForgotPassword> = ({
+  handleForgotPassword,
+}) => {
   const { t } = useTranslation();
   const setForgotPassword = useAuthStore((state) => state.setForgotPassword);
-  const { mutate: forgotPasswordaLink } = useForgotPassword();
+  const { mutate: forgotPasswordaLink, isSuccess } = useForgotPassword();
 
   const forgotSchema = z.object({
     email: z.string().email({ message: t("formErrors.invalidEmail") }),
@@ -34,8 +41,14 @@ const ForgotPasswordForm = () => {
 
   const onSubmit = async (values: z.infer<typeof forgotSchema>) => {
     forgotPasswordaLink(values.email);
-    setForgotPassword(false);
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      handleForgotPassword(true);
+      setForgotPassword(false);
+    }
+  }, [isSuccess]);
 
   const handleCancelForgot = () => {
     setForgotPassword(false);
