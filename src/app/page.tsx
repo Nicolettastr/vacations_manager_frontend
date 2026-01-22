@@ -1,6 +1,7 @@
 "use client";
 
 import { AuthCard } from "@/components/auth/auth-card";
+import { ResetPasswordCard } from "@/components/auth/reset-password";
 import CalendarView from "@/components/calendar/calendar-view";
 import { EmployeeLegend } from "@/components/employees/employee-legend";
 import { Header } from "@/components/layout/header";
@@ -23,6 +24,7 @@ export default function Home() {
     useShallow((state) => [state.windowWidth, state.setWindowWidth]),
   );
   const [advancedSettings, setAdvancedSettings] = useState<boolean>(false);
+  const [changePassword, setChangePassword] = useState<boolean>(false);
   const [isLoggedIn, isLoading, setIsLoading, setToken, setUser] = useAuthStore(
     useShallow((state) => [
       state.isLoggedIn,
@@ -107,6 +109,10 @@ export default function Home() {
     setAdvancedSettings(!advancedSettings);
   };
 
+  const handleChangePassword = () => {
+    setChangePassword(!changePassword);
+  };
+
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
@@ -127,9 +133,20 @@ export default function Home() {
           <AdvancedSettings
             advancedSettings={advancedSettings}
             handleConfigureEmployee={handleConfigureEmployee}
+            handleAdvancedSettings={handleAdvancedSettings}
+            handleChangePassword={handleChangePassword}
           />
         ) : (
           <UserConfiguration handleAdvancedSettings={handleAdvancedSettings} />
+        )}
+
+        {changePassword && (
+          <div className="relative">
+            <ResetPasswordCard
+              advancedSettings={advancedSettings}
+              handleCancel={handleChangePassword}
+            />
+          </div>
         )}
 
         <div className="relative flex-1 flex flex-col">

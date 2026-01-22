@@ -131,6 +131,7 @@
   "changeEmail": "Change email address",
   "changeEmailMesssage": "You are about to change your account email. You will need to use the new email to sign in. Make sure it is correct. You will be logged out after the change.",
   "confirmPassword": "Confirm password",
+  "currentPassword": "Contraseña actual",
   "resetPassword": "Reset password",
   "changePassword": "Change password",
   "forgotPasswordSendError": "Could not send password reset email",

@@ -6,7 +6,7 @@ import { useModalStore } from "@/store/useModalStore";
 import { useUserStore } from "@/store/useUserStore";
 import { ITypes } from "@/types/common";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Mail, X } from "lucide-react";
+import { ChevronRight, KeySquare, Mail, X } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -32,11 +32,15 @@ import { ConfigurationDropdowns } from "./configurationDropdowns";
 interface IAdvancedSettings {
   advancedSettings: boolean;
   handleConfigureEmployee: () => void;
+  handleAdvancedSettings: () => void;
+  handleChangePassword: () => void;
 }
 
 export const AdvancedSettings: React.FC<IAdvancedSettings> = ({
   advancedSettings,
   handleConfigureEmployee,
+  handleAdvancedSettings,
+  handleChangePassword,
 }) => {
   const { t } = useTranslation();
   const [user, logout] = useAuthStore(
@@ -189,6 +193,19 @@ export const AdvancedSettings: React.FC<IAdvancedSettings> = ({
               />
             </div>
 
+            <Button
+              variant={"outline"}
+              type="button"
+              className="w-full justify-between mt-3"
+              onClick={handleChangePassword}
+            >
+              <div className="flex items-center gap-3">
+                <KeySquare className="h-5 w-5" />
+                <span>{t("changePassword")}</span>
+              </div>
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+
             <div className="mb-6 flex gap-2">
               <Button type="submit" className="flex-1">
                 {t("save")}
@@ -197,7 +214,7 @@ export const AdvancedSettings: React.FC<IAdvancedSettings> = ({
                 type="button"
                 variant="outline"
                 className="flex-1"
-                onClick={handleCancelEdit}
+                onClick={handleAdvancedSettings}
               >
                 {t("cancel")}
               </Button>

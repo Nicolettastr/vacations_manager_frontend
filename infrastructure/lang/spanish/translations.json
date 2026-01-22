@@ -131,6 +131,7 @@
   "changeEmail": "Cambiar dirección de correo",
   "changeEmailMesssage": "Estás a punto de cambiar el correo de tu cuenta. Necesitarás usar el nuevo correo para iniciar sesión. Asegúrate de que sea correcto. Se cerrará la sesión tras el cambio.",
   "confirmPassword": "Confirmar contraseña",
+  "currentPassword": "Current password",
   "resetPassword": "Restablecer contraseña",
   "changePassword": "Cambiar contraseña",
   "confirmNewEmail": "Confirmar nuevo correo electrónico",
