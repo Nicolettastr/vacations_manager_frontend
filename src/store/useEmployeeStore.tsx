@@ -1,7 +1,6 @@
 import { Employee } from "@/types/employees/employees.common";
 import { ModalState } from "@/types/global";
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
 
 interface EmployeeStore {
   configureEmployees: boolean;
@@ -15,30 +14,25 @@ interface EmployeeStore {
   setSelectedEmployee: (employee: Employee | null) => void;
 }
 
-export const useEmployeeStore = create<EmployeeStore>()(
-  persist(
-    (set) => ({
+export const useEmployeeStore = create<EmployeeStore>()((set) => ({
+  configureEmployees: false,
+  setConfigureEmployees: (configure) =>
+    set(() => ({ configureEmployees: configure })),
+  modalState: { isOpen: false, mode: "create" },
+  setModalState: (newState) =>
+    set((state) => ({
+      modalState: { ...state.modalState, ...newState },
+    })),
+  employeesSettingsMobileIcon: false,
+  setEmployeesSettingsMobileIcon: (settings) =>
+    set(() => ({ employeesSettingsMobileIcon: settings })),
+  selectedEmployee: null,
+  setSelectedEmployee: (selectedEmployee) => set({ selectedEmployee }),
+  resetStore: () =>
+    set({
       configureEmployees: false,
-      setConfigureEmployees: (configure) =>
-        set(() => ({ configureEmployees: configure })),
       modalState: { isOpen: false, mode: "create" },
-      setModalState: (newState) =>
-        set((state) => ({
-          modalState: { ...state.modalState, ...newState },
-        })),
       employeesSettingsMobileIcon: false,
-      setEmployeesSettingsMobileIcon: (settings) =>
-        set(() => ({ employeesSettingsMobileIcon: settings })),
       selectedEmployee: null,
-      setSelectedEmployee: (selectedEmployee) => set({ selectedEmployee }),
-      resetStore: () =>
-        set({
-          configureEmployees: false,
-          modalState: { isOpen: false, mode: "create" },
-          employeesSettingsMobileIcon: false,
-          selectedEmployee: null,
-        }),
     }),
-    { name: "employee-storage" }
-  )
-);
+}));

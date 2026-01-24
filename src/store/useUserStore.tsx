@@ -1,5 +1,4 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
 
 interface UserStore {
   userConfiguration: boolean;
@@ -7,15 +6,10 @@ interface UserStore {
   changeEmail: boolean;
   setChangeEmail: (changeEmail: boolean) => void;
 }
-export const useUserStore = create<UserStore>()(
-  persist(
-    (set) => ({
-      userConfiguration: false,
-      setUserConfiguration: (userConfiguration: boolean) =>
-        set({ userConfiguration }),
-      changeEmail: false,
-      setChangeEmail: (changeEmail) => set({ changeEmail }),
-    }),
-    { name: "user-configuration-storage" },
-  ),
-);
+export const useUserStore = create<UserStore>()((set) => ({
+  userConfiguration: false,
+  setUserConfiguration: (userConfiguration: boolean) =>
+    set({ userConfiguration }),
+  changeEmail: false,
+  setChangeEmail: (changeEmail) => set({ changeEmail }),
+}));

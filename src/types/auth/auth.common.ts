@@ -76,3 +76,8 @@ export interface IResetPassword {
   password: string;
   access_token: string;
 }
+
+export interface IChangePassword {
+  currentPassword: string;
+  newPassword: string;
+}

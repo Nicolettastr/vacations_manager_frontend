@@ -11,6 +11,7 @@ import { useGetUser } from "@/hooks/users/useGetUser";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useCommonDataStore } from "@/store/useCommonDataStore";
 import { useEmployeeStore } from "@/store/useEmployeeStore";
+import { useModalStore } from "@/store/useModalStore";
 import { useUserStore } from "@/store/useUserStore";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -25,25 +26,36 @@ export default function Home() {
   );
   const [advancedSettings, setAdvancedSettings] = useState<boolean>(false);
   const [changePassword, setChangePassword] = useState<boolean>(false);
-  const [isLoggedIn, isLoading, setIsLoading, setToken, setUser] = useAuthStore(
-    useShallow((state) => [
-      state.isLoggedIn,
-      state.isLoading,
-      state.setIsLoading,
-      state.setToken,
-      state.setUser,
-    ]),
-  );
+  const resetModalConfiguration = useModalStore((state) => state.resetStore);
+
+  const resetStores = () => {
+    resetEmployeesConfig();
+    resetModalConfiguration();
+  };
+
+  const [isLoggedIn, isLoading, setIsLoading, setToken, setUser, logout] =
+    useAuthStore(
+      useShallow((state) => [
+        state.isLoggedIn,
+        state.isLoading,
+        state.setIsLoading,
+        state.setToken,
+        state.setUser,
+        state.logout,
+      ]),
+    );
 
   const [
     configureEmployees,
     setConfigureEmployees,
     setEmployeesSettingsMobileIcon,
+    resetEmployeesConfig,
   ] = useEmployeeStore(
     useShallow((state) => [
       state.configureEmployees,
       state.setConfigureEmployees,
       state.setEmployeesSettingsMobileIcon,
+      state.resetStore,
     ]),
   );
   const { user, userFetching } = useGetUser(isLoggedIn);
@@ -58,8 +70,8 @@ export default function Home() {
   useEffect(() => {
     if (user) {
       setUser(user);
-      setUserConfiguration(false);
     }
+    setUserConfiguration(false);
   }, [userFetching]);
 
   useEffect(() => {
@@ -113,6 +125,10 @@ export default function Home() {
     setChangePassword(!changePassword);
   };
 
+  const handleLogout = () => {
+    logout(resetStores);
+  };
+
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
@@ -136,8 +152,10 @@ export default function Home() {
             handleAdvancedSettings={handleAdvancedSettings}
             handleChangePassword={handleChangePassword}
           />
-        ) : (
+        ) : userConfiguration ? (
           <UserConfiguration handleAdvancedSettings={handleAdvancedSettings} />
+        ) : (
+          []
         )}
 
         {changePassword && (
@@ -145,6 +163,7 @@ export default function Home() {
             <ResetPasswordCard
               advancedSettings={advancedSettings}
               handleCancel={handleChangePassword}
+              handleLogout={handleLogout}
             />
           </div>
         )}

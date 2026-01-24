@@ -1,6 +1,7 @@
+import { useChangePassword } from "@/hooks/auth/useChangePassword";
 import { useResetPassword } from "@/hooks/auth/useResetPassword";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Eye, EyeClosed, Lock, LogOut } from "lucide-react";
+import { Eye, EyeClosed, Lock, LogOut, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
@@ -23,21 +24,25 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
+import { InfoModal } from "./info-modal";
 
 interface IResetPassword {
   advancedSettings?: boolean;
   handleCancel?: () => void;
+  handleLogout: () => void;
 }
 
 export const ResetPasswordCard: React.FC<IResetPassword> = ({
   advancedSettings,
   handleCancel,
+  handleLogout,
 }) => {
   const { t } = useTranslation();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [changePasswordModal, setChangePasswordModal] = useState(false);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -52,6 +57,7 @@ export const ResetPasswordCard: React.FC<IResetPassword> = ({
   }, []);
 
   const { mutate: onResetPassword } = useResetPassword();
+  const { mutate: onChangePassword } = useChangePassword(handleLogout);
 
   const resetPasswordSchema = z
     .object({
@@ -89,14 +95,19 @@ export const ResetPasswordCard: React.FC<IResetPassword> = ({
   });
 
   const onSubmit = async (values: z.infer<typeof resetPasswordSchema>) => {
-    if (!accessToken) {
-      return;
+    if (!advancedSettings) {
+      if (!accessToken) {
+        return;
+      }
+      onResetPassword({
+        password: values.password,
+        access_token: accessToken,
+      });
+    } else {
+      if (values.currentPassword) {
+        setChangePasswordModal(true);
+      }
     }
-    //SEND NEW PASSWORD
-    onResetPassword({
-      password: values.password,
-      access_token: accessToken,
-    });
   };
 
   const handleShowPassword = () => {
@@ -137,6 +148,19 @@ export const ResetPasswordCard: React.FC<IResetPassword> = ({
     },
   ];
 
+  const onConfirmChangePassword = (modal: boolean, type?: string) => {
+    if (type) {
+      form.reset();
+    } else {
+      onChangePassword({
+        currentPassword: form.getValues().currentPassword as string,
+        newPassword: form.getValues().password,
+      });
+    }
+
+    setChangePasswordModal(modal);
+  };
+
   return (
     <>
       <Card
@@ -150,13 +174,31 @@ export const ResetPasswordCard: React.FC<IResetPassword> = ({
         }
       >
         <CardHeader className="items-center text-center space-y-4 p-6">
-          <div className="flex items-center gap-3">
-            <LogOut />
-            <CardTitle className="text-3xl font-bold tracking-tight font-headline">
-              TeamTracker
-            </CardTitle>
-          </div>
-          <CardDescription>{t("resetPassword")}</CardDescription>
+          {!advancedSettings ? (
+            <div className="flex items-center gap-3">
+              <LogOut />
+              <CardTitle className="text-3xl font-bold tracking-tight font-headline">
+                TeamTracker
+              </CardTitle>
+            </div>
+          ) : (
+            <div className="w-full flex flex-row justify-between items-center">
+              <h2 className="mb-6 text-lg font-semibold tracking-tight">
+                {t("changePassword")}
+              </h2>
+              <span className="flex flex-row mb-6">
+                <IconTooltip content={t("closeSettings")}>
+                  <X
+                    onClick={onCancelChangePassword}
+                    className="icon cursor-pointer"
+                  />
+                </IconTooltip>
+              </span>
+            </div>
+          )}
+          <CardDescription>
+            {t(advancedSettings ? "changePasswordMessage" : "resetPassword")}
+          </CardDescription>
         </CardHeader>
         <CardContent className="p-6 pt-0">
           <Form {...form}>
@@ -222,6 +264,17 @@ export const ResetPasswordCard: React.FC<IResetPassword> = ({
           </Form>
         </CardContent>
       </Card>
+      {changePasswordModal && (
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50">
+          <InfoModal
+            open={changePasswordModal}
+            handler={onConfirmChangePassword}
+            title={"changePassword"}
+            message={"confirmChangePassword"}
+            type={"warning"}
+          />
+        </div>
+      )}
     </>
   );
 };
