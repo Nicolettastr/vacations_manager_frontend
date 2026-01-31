@@ -66,7 +66,7 @@ export function NoteModal({
   const { notestypes } = useGetNotesTypes(isLoggedIn);
   const isEditMode = mode === "edit" || mode === "create";
   const [modalState, setModalState] = useModalStore(
-    useShallow((state) => [state.modalState, state.setModalState])
+    useShallow((state) => [state.modalState, state.setModalState]),
   );
   const selectedDate = useCommonDataStore((state) => state.selectedDate);
 
@@ -79,8 +79,8 @@ export function NoteModal({
     date: z.date({
       required_error: t("formErrors.dateRequired"),
     }),
-    content: z.string({ required_error: t("formErrors.noteContentRequired") }),
-    title: z.string({ required_error: t("formErrors.noteTitleRequired") }),
+    content: z.string().trim().min(1, t("formErrors.noteContentRequired")),
+    title: z.string().trim().min(1, t("formErrors.noteTitleRequired")),
   });
 
   const defaultValues = {
@@ -126,7 +126,7 @@ export function NoteModal({
 
   const currentNote = data as NoteResponse;
   const employee = employees?.find(
-    (emp) => emp.id === currentNote?.employee_id
+    (emp) => emp.id === currentNote?.employee_id,
   );
 
   const handleSetModal = () => {
@@ -204,7 +204,7 @@ export function NoteModal({
                               variant="outline"
                               className={cn(
                                 "w-full pl-3 text-left font-normal",
-                                !field.value && "text-muted-foreground"
+                                !field.value && "text-muted-foreground",
                               )}
                             >
                               {field.value ? (

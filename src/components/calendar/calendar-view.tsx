@@ -1,6 +1,7 @@
 "use client";
 
 import { useGetEmployees } from "@/hooks/employees/useGetEmployees";
+import useGetExtraDays from "@/hooks/extraDays/useGetExtraDays";
 import { useDeleteEmployeeLeave } from "@/hooks/leaves/useDeleteLeave";
 import { useGetEmployeesLeaves } from "@/hooks/leaves/useGetEmployeesLeaves";
 import { useGetLeavesTypes } from "@/hooks/leaves/useGetLeavesTypes";
@@ -13,6 +14,7 @@ import { usePostNote } from "@/hooks/notes/usePostNote";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useCommonDataStore } from "@/store/useCommonDataStore";
 import { useModalStore } from "@/store/useModalStore";
+import { ExtraDayWithEmployee } from "@/types/extraDays/extraDays.common";
 import { LeaveRequest, LeaveResponse } from "@/types/leaves/leaves.common";
 import { NoteCreateRequest, NoteResponse } from "@/types/notes/notes.common";
 import type {
@@ -31,6 +33,7 @@ import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/shallow";
 import i18n from "../../../infrastructure/i18n";
 import { EventModalForm } from "./event-modal";
+import { ExtraDayModal } from "./extra-day-modal";
 import { NoteModal } from "./note-modal";
 import EventTypeModal from "./select-event-type-modal";
 
@@ -51,13 +54,14 @@ export default function CalendarView() {
       state.modalState,
       state.setModalState,
       state.resetStore,
-    ])
+    ]),
   );
   const setSelectedDate = useCommonDataStore((state) => state.setSelectedDate);
 
   const { employees } = useGetEmployees(isLoggedIn);
   const { leavesTypes } = useGetLeavesTypes(isLoggedIn);
   const { leaves } = useGetEmployeesLeaves(isLoggedIn);
+  const { extradays } = useGetExtraDays(isLoggedIn);
   const { mutate: onCreateEmployeeLeave } = usePostEmployeeLeave();
   const { mutate: onEditEmployeeLeave } = usePatchEmployeeLeave();
   const { mutate: onDeleteEmployeeLeave } = useDeleteEmployeeLeave();
@@ -86,7 +90,7 @@ export default function CalendarView() {
       return {
         id: leave.id,
         title: employee
-          ? `${employee.name} ${employee.surname}`
+          ? `${employee.name} ${employee.surname} - ${leave.type}`
           : t("unknownEmployee"),
         start: leave.start_date,
         end: endDate,
@@ -126,17 +130,41 @@ export default function CalendarView() {
     });
   }, [notes, t]);
 
+  const generateExtraDaysEvents = useCallback(() => {
+    return extradays.map((days) => {
+      const employee = employeesMap.get(days.employee_id);
+
+      return {
+        id: days.id,
+        title: `${t("extraDay")}: ${days.employees?.name} ${days.employees?.surname}`,
+        start: days.date,
+        end: days.date,
+        allDay: true,
+        backgroundColor: employee?.color || "#888",
+        borderColor: employee?.color || "#888",
+        extendedProps: {
+          type: "extraDays",
+          employeeId: days.employee_id,
+          reason: days.reason,
+        },
+      };
+    });
+  }, [extradays, employeesMap, t]);
+
   useEffect(() => {
     const leaveEvents = generateLeaveEvents();
     const noteEvents = generateNoteEvents();
-    const combined = [...leaveEvents, ...noteEvents];
+    const extraDaysEvents = generateExtraDaysEvents();
+
+    console.log("extraDaysEvents", extraDaysEvents);
+    const combined = [...leaveEvents, ...noteEvents, ...extraDaysEvents];
 
     setEvents((prev) => {
       const prevStr = JSON.stringify(prev);
       const newStr = JSON.stringify(combined);
       return prevStr === newStr ? prev : combined;
     });
-  }, [generateLeaveEvents, generateNoteEvents]);
+  }, [generateLeaveEvents, generateNoteEvents, generateExtraDaysEvents]);
 
   const handleDateSelect = useCallback((selectInfo: DateSelectArg) => {
     const startDate = selectInfo.startStr;
@@ -148,29 +176,43 @@ export default function CalendarView() {
     (clickInfo: EventClickArg) => {
       const eventType = clickInfo.event.extendedProps.type;
 
-      if (eventType === "leave") {
-        const leave = leaves.find((l) => l.id === clickInfo.event.id);
-        if (leave) {
-          setModalState({
-            isOpen: true,
-            mode: "view",
-            type: "leave",
-            data: leave,
-          });
-        }
-      } else if (eventType === "note") {
-        const note = notes.find((n) => n.id === clickInfo.event.id);
-        if (note) {
-          setModalState({
-            isOpen: true,
-            mode: "view",
-            type: "note",
-            data: note,
-          });
-        }
+      switch (eventType) {
+        case "leave":
+          const leave = leaves.find((l) => l.id === clickInfo.event.id);
+          if (leave) {
+            setModalState({
+              isOpen: true,
+              mode: "view",
+              type: "leave",
+              data: leave,
+            });
+          }
+          break;
+        case "note":
+          const note = notes.find((n) => n.id === clickInfo.event.id);
+          if (note) {
+            setModalState({
+              isOpen: true,
+              mode: "view",
+              type: "note",
+              data: note,
+            });
+          }
+          break;
+        case "extraDays":
+          const extraDay = extradays.find((n) => n.id === clickInfo.event.id);
+          if (extraDay) {
+            setModalState({
+              isOpen: true,
+              mode: "view",
+              type: "extraDays",
+              data: extraDay,
+            });
+          }
+          break;
       }
     },
-    [leaves, notes, t]
+    [leaves, notes, t],
   );
 
   const handleDelete = (id: string, type: "note" | "leave") => {
@@ -248,8 +290,8 @@ export default function CalendarView() {
             event.backgroundColor === "#ff4d4d"
               ? "high"
               : event.backgroundColor === "#ffd633"
-              ? "medium"
-              : "low",
+                ? "medium"
+                : "low",
         };
 
         try {
@@ -260,7 +302,7 @@ export default function CalendarView() {
         }
       }
     },
-    [onEditEmployeeLeave, onEditNote, t]
+    [onEditEmployeeLeave, onEditNote, t],
   );
 
   return (
@@ -310,6 +352,17 @@ export default function CalendarView() {
             setModalState({ isOpen: false, mode: modalState.mode })
           }
           onSave={handleSaveNoteChanges}
+          onDelete={handleDelete}
+          mode={modalState.mode}
+          employees={employees}
+        />
+      ) : modalState.type === "extraDays" ? (
+        <ExtraDayModal
+          isOpen={modalState.isOpen}
+          data={modalState.data as ExtraDayWithEmployee}
+          onClose={() =>
+            setModalState({ isOpen: false, mode: modalState.mode })
+          }
           onDelete={handleDelete}
           mode={modalState.mode}
           employees={employees}

@@ -32,7 +32,7 @@ export function EmployeeLegend() {
       state.setModalState,
       state.employeesSettingsMobileIcon,
       state.selectedEmployee,
-    ])
+    ]),
   );
 
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
@@ -56,15 +56,16 @@ export function EmployeeLegend() {
   };
 
   const handleSaveEmployeeChanges = (employee: newEmployee) => {
-    if (!selectedEmployee) return;
     switch (modalState.mode) {
       case "create":
         onAddEmployee(employee);
         break;
       case "edit":
+        if (!selectedEmployee) return;
         onEditEmployee({ id: selectedEmployee.id, data: employee });
         break;
       case "delete":
+        if (!selectedEmployee) return;
         onDeleteEmployee(selectedEmployee.id);
         break;
       default:

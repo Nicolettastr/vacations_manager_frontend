@@ -7,6 +7,8 @@ export interface Employee extends User {
   color: string | undefined;
   user_id: string;
   avatar: string;
+  vacation_days: number;
+  available_vacation_days: number;
 }
 
 export type newEmployee = Omit<Employee, "user_id" | "id" | "avatar">;

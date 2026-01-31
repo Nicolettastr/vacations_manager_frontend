@@ -25,13 +25,14 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { useEmployeeStore } from "@/store/useEmployeeStore";
 import { newEmployee } from "@/types/employees/employees.common";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Pencil, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { useEffect } from "react";
 import { HexColorPicker } from "react-colorful";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import * as z from "zod";
 import { useShallow } from "zustand/shallow";
+import EmployeeDetailsModal from "./employee-view-details";
 
 export type EmployeeModalProps = {
   isOpen: boolean;
@@ -53,26 +54,27 @@ export const EmployeeModal = ({
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const { colors } = useGetEmployeesUsedColors(isLoggedIn);
   const [setModalState, selectedEmployee] = useEmployeeStore(
-    useShallow((state) => [state.setModalState, state.selectedEmployee])
+    useShallow((state) => [state.setModalState, state.selectedEmployee]),
   );
   const { mutate: deleteEmployee } = useDeleteEmployee();
 
   const employeeSchema = z.object({
-    name: z.string({ required_error: t("formErrors.nameRequired") }),
-    surname: z.string({ required_error: t("formErrors.surnameRequired") }),
+    name: z.string().min(1, { message: t("formErrors.nameRequired") }),
+    surname: z.string().min(1, { message: t("formErrors.surnameRequired") }),
     email: z
-      .string({ required_error: t("formErrors.emailRequired") })
+      .string()
+      .min(1, { message: t("formErrors.emailRequired") })
       .email(t("formErrors.invalidEmailModal")),
     color: z
       .string()
-      .optional()
+      .min(1, { message: t("formErrors.colorRequired") })
       .refine(
         (color) => {
-          if (!color) return;
+          if (!color) return false;
           if (mode === "edit" && color === selectedEmployee?.color) return true;
           return !colors.includes(color);
         },
-        { message: t("formErrors.colorAlreadyUsed") }
+        { message: t("formErrors.colorAlreadyUsed") },
       ),
   });
 
@@ -133,7 +135,7 @@ export const EmployeeModal = ({
                   <DialogFooter>
                     <Button
                       variant={"destructive"}
-                      type="submit"
+                      type="button"
                       onClick={handleConfirmDeleteEmployee}
                     >
                       {t("delete")}
@@ -243,36 +245,10 @@ export const EmployeeModal = ({
                     />
                   </div>
                 ) : (
-                  <div className="space-y-2 text-sm">
-                    <p>
-                      <strong>{t("name")}:</strong> {selectedEmployee?.name}
-                    </p>
-                    <p>
-                      <strong>{t("surname")}:</strong>{" "}
-                      {selectedEmployee?.surname}
-                    </p>
-                    <p>
-                      <strong>{t("email")}:</strong> {selectedEmployee?.email}
-                    </p>
-                    {selectedEmployee?.color && (
-                      <p className="flex items-center">
-                        <strong>{t("color")}:</strong>{" "}
-                        <span
-                          className="inline-block w-6 h-6 rounded ml-2"
-                          style={{ backgroundColor: selectedEmployee.color }}
-                        />
-                      </p>
-                    )}
-                    <Button
-                      type="button"
-                      onClick={handleEditEmployee}
-                      className="flex justify-self-end"
-                      variant={"secondary"}
-                    >
-                      <Pencil style={{ color: "hsl(var(--primary))" }} />
-                      {t("edit")}
-                    </Button>
-                  </div>
+                  <EmployeeDetailsModal
+                    onClose={onClose}
+                    onEdit={handleEditEmployee}
+                  />
                 )}
 
                 {isEditMode && (

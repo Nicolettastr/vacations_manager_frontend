@@ -25,6 +25,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Popover,
   PopoverContent,
@@ -41,21 +42,21 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { useCommonDataStore } from "@/store/useCommonDataStore";
 import { useModalStore } from "@/store/useModalStore";
-import { EventModalProps } from "@/types/common";
-import { LeaveRequest, LeaveResponse } from "@/types/leaves/leaves.common";
+import {
+  ExtraDayModalProps,
+  ExtraDayWithEmployee,
+} from "@/types/extraDays/extraDays.common";
 import { useEffect } from "react";
 import { useShallow } from "zustand/shallow";
 
-export const EventModalForm = ({
+export const ExtraDayModal = ({
   isOpen,
   mode,
   data,
   employees,
-  leaveTypes,
   onClose,
-  onSave,
   onDelete,
-}: EventModalProps) => {
+}: ExtraDayModalProps) => {
   const { t } = useTranslation();
   const isEditMode = mode === "edit" || mode === "create";
 
@@ -64,31 +65,24 @@ export const EventModalForm = ({
   );
   const selectedDate = useCommonDataStore((state) => state.selectedDate);
 
-  const leaveSchema = z
-    .object({
-      id: z.string().optional(),
-      employeeId: z.string().min(1, t("formErrors.employeeRequired")),
-      type: z.string().min(1, t("formErrors.leaveTypeRequired")),
-      startDate: z.date({ required_error: t("formErrors.startDateRequired") }),
-      endDate: z.date({ required_error: t("formErrors.endDateRequired") }),
-      note: z.string().trim().optional(),
-    })
-    .refine((data) => data.endDate >= data.startDate, {
-      message: t("formErrors.endDateAfterStartDate"),
-      path: ["endDate"],
-    });
+  const extraDaySchema = z.object({
+    id: z.string().optional(),
+    employeeId: z.string().min(1, t("formErrors.employeeRequired")),
+    date: z.date({ required_error: t("formErrors.startDateRequired") }),
+    days: z.number({ required_error: t("formErrors.endDateRequired") }),
+    reason: z.string().trim().optional(),
+  });
 
   const defaultValues = {
     id: undefined,
     employeeId: "",
-    type: "",
-    startDate: selectedDate ? new Date(selectedDate) : new Date(),
-    endDate: selectedDate ? new Date(selectedDate) : new Date(),
-    note: "",
+    date: selectedDate ? new Date(selectedDate) : new Date(),
+    days: 0,
+    reason: "",
   };
 
-  const form = useForm<z.infer<typeof leaveSchema>>({
-    resolver: zodResolver(leaveSchema),
+  const form = useForm<z.infer<typeof extraDaySchema>>({
+    resolver: zodResolver(extraDaySchema),
     defaultValues,
   });
 
@@ -97,30 +91,21 @@ export const EventModalForm = ({
       form.reset({
         id: data.id,
         employeeId: data.employee_id,
-        startDate: data.start_date ? new Date(data.start_date) : new Date(),
-        endDate: data.end_date ? new Date(data.end_date) : new Date(),
-        type: data.type,
-        note: data.note || "",
+        date: data.date ? new Date(data.date) : new Date(),
+        days: data.days,
+        reason: data.reason,
       });
     } else {
       form.reset(defaultValues);
     }
   }, [isOpen, data]);
 
-  function onSubmit(values: z.infer<typeof leaveSchema>) {
-    const leaveData: LeaveRequest = {
-      id: values.id ?? "",
-      employee_id: values.employeeId,
-      type: values.type,
-      start_date: format(values.startDate, "yyyy-MM-dd"),
-      end_date: format(values.endDate, "yyyy-MM-dd"),
-      note: values.note || "",
-    };
-    onSave(leaveData);
-  }
+  function onSubmit(values: z.infer<typeof extraDaySchema>) {}
 
-  const currentLeave = data as LeaveResponse;
-  const employee = employees?.find((e) => e.id === currentLeave?.employee_id);
+  const currentExtraDay = data as ExtraDayWithEmployee;
+  const employee = employees?.find(
+    (e) => e.id === currentExtraDay?.employee_id,
+  );
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -171,38 +156,10 @@ export const EventModalForm = ({
                   )}
                 />
 
-                <FormField
-                  control={form.control}
-                  name="type"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>{t("leaveType")}</FormLabel>
-                      <Select
-                        value={field.value}
-                        onValueChange={field.onChange}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder={t("selectLeaveType")} />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {leaveTypes.map((type) => (
-                            <SelectItem key={type.id} value={type.name}>
-                              {type.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
                 <div className="flex gap-4">
                   <FormField
                     control={form.control}
-                    name="startDate"
+                    name="date"
                     render={({ field }) => (
                       <FormItem className="flex flex-col flex-1">
                         <FormLabel>{t("startDate")}</FormLabel>
@@ -235,37 +192,23 @@ export const EventModalForm = ({
                       </FormItem>
                     )}
                   />
+
                   <FormField
                     control={form.control}
-                    name="endDate"
+                    name="days"
                     render={({ field }) => (
                       <FormItem className="flex flex-col flex-1">
-                        <FormLabel>{t("endDate")}</FormLabel>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <FormControl>
-                              <Button
-                                variant="outline"
-                                className={cn(
-                                  !field.value && "text-muted-foreground",
-                                )}
-                              >
-                                {field.value
-                                  ? format(field.value, "PPP")
-                                  : t("chooseDate")}
-                                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                              </Button>
-                            </FormControl>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-auto p-0" align="start">
-                            <Calendar
-                              mode="single"
-                              selected={field.value}
-                              onSelect={field.onChange}
-                              initialFocus
-                            />
-                          </PopoverContent>
-                        </Popover>
+                        <FormLabel>{t("days")}</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            placeholder="0"
+                            {...field}
+                            onChange={(e) =>
+                              field.onChange(Number(e.target.value))
+                            }
+                          />
+                        </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -274,12 +217,12 @@ export const EventModalForm = ({
 
                 <FormField
                   control={form.control}
-                  name="note"
+                  name="reason"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t("note")}</FormLabel>
+                      <FormLabel>{t("reason")}</FormLabel>
                       <FormControl>
-                        <Textarea placeholder={t("addNote")} {...field} />
+                        <Textarea placeholder={t("addReason")} {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -293,28 +236,23 @@ export const EventModalForm = ({
                   {employee?.surname}
                 </p>
                 <p>
-                  <strong>{t("leaveType")}:</strong> {currentLeave?.type}
+                  <strong>{t("days")}:</strong> {currentExtraDay?.days}
                 </p>
                 <p>
                   <strong>{t("startDate")}:</strong>{" "}
-                  {currentLeave?.start_date &&
-                    format(new Date(currentLeave.start_date), "PPP")}
+                  {currentExtraDay?.date &&
+                    format(new Date(currentExtraDay.date), "PPP")}
                 </p>
-                <p>
-                  <strong>{t("endDate")}:</strong>{" "}
-                  {currentLeave?.end_date &&
-                    format(new Date(currentLeave.end_date), "PPP")}
-                </p>
-                {currentLeave?.note && (
+                {currentExtraDay?.reason && (
                   <p>
-                    <strong>{t("note")}:</strong> {currentLeave.note}
+                    <strong>{t("note")}:</strong> {currentExtraDay.reason}
                   </p>
                 )}
               </div>
             )}
 
             <DialogFooter>
-              {mode === "view" && currentLeave?.id && (
+              {mode === "view" && currentExtraDay?.id && (
                 <>
                   <Button
                     variant="outline"
@@ -322,7 +260,7 @@ export const EventModalForm = ({
                       setModalState({
                         ...modalState,
                         mode: "edit",
-                        data: currentLeave,
+                        data: currentExtraDay,
                       })
                     }
                   >
@@ -330,7 +268,7 @@ export const EventModalForm = ({
                   </Button>
                   <Button
                     variant="destructive"
-                    onClick={() => onDelete(currentLeave.id, "leave")}
+                    onClick={() => onDelete(currentExtraDay.id, "leave")}
                   >
                     <Trash2 className="mr-2 h-4 w-4" /> {t("delete")}
                   </Button>

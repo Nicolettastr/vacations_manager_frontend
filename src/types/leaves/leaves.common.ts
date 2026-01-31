@@ -9,7 +9,6 @@ export interface LeaveResponse {
   updated_at: string;
   user_id: string;
 }
-//TODO REFACTOR TYPE USE OMIT
 export type LeaveRequest = Omit<
   LeaveResponse,
   "created_at" | "updated_at" | "user_id"

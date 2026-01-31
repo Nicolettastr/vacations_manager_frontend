@@ -137,5 +137,15 @@
   "confirmNewEmail": "Confirmar nuevo correo electrónico",
   "confirmNewEmailMessage": "Reingresa tu correo para confirmar",
   "emailsDoNotMatch": "Los correos no coinciden",
-  "changePasswordMessage": "Ingresa tu contraseña actual y elige una nueva."
+  "changePasswordMessage": "Ingresa tu contraseña actual y elige una nueva.",
+  "employeeDetails": "Detalles del empleado",
+  "vacationDays": "Días de vacaciones",
+  "totalAnnual": "Total anual",
+  "daysPerYear": "días por año",
+  "available": "Disponibles",
+  "daysLeft": "días restantes",
+  "used": "Usados",
+  "days": "días",
+  "remaining": "restantes",
+  "extraDay": "Día extra"
 }

@@ -9,8 +9,11 @@ export const usePostEmployeeLeave = () => {
 
   const mutation = useMutation<LeaveResponse, Error, LeaveRequest>({
     mutationFn: (data) => createEmployeeLeave(data),
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["getLeaves"] });
+      if (data.type === "vacation") {
+        queryClient.invalidateQueries({ queryKey: ["getEmployees"] });
+      }
       toast({
         title: "Leave created",
         description: "The employee leave has been successfully created.",
