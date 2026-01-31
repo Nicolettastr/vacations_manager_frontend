@@ -3,8 +3,8 @@ import { ExtraDayWithEmployee } from "@/types/extraDays/extraDays.common";
 import { LeaveResponse } from "@/types/leaves/leaves.common";
 import { NoteResponse } from "@/types/notes/notes.common";
 import { addDays } from "date-fns";
-import { t } from "i18next";
 import { useCallback, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
 const NOTE_TYPE_COLORS = {
   high: "var(--note-high-color, #ff4d4d)",
@@ -12,7 +12,7 @@ const NOTE_TYPE_COLORS = {
   low: "var(--note-low-color, #4da6ff)",
 } as const;
 
-interface GenerateViewEvents {
+export interface GenerateViewEvents {
   employees: Employee[];
   leaves: LeaveResponse[];
   notes: NoteResponse[];
@@ -25,6 +25,7 @@ export const useGenerateViewEvents = ({
   notes,
   extradays,
 }: GenerateViewEvents) => {
+  const { t } = useTranslation();
   const employeesMap = useMemo(() => {
     return new Map(employees.map((emp) => [emp.id, emp]));
   }, [employees]);
