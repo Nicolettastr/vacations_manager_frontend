@@ -1,5 +1,6 @@
 "use client";
 
+import { useGenerateViewEvents } from "@/hooks/calendar/useGenerateViewEvents";
 import { useGetEmployees } from "@/hooks/employees/useGetEmployees";
 import useGetExtraDays from "@/hooks/extraDays/useGetExtraDays";
 import { useDeleteEmployeeLeave } from "@/hooks/leaves/useDeleteLeave";
@@ -28,7 +29,7 @@ import multiMonthPlugin from "@fullcalendar/multimonth";
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import { addDays } from "date-fns";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useShallow } from "zustand/shallow";
 import i18n from "../../../infrastructure/i18n";
@@ -36,12 +37,6 @@ import { EventModalForm } from "./event-modal";
 import { ExtraDayModal } from "./extra-day-modal";
 import { NoteModal } from "./note-modal";
 import EventTypeModal from "./select-event-type-modal";
-
-const NOTE_TYPE_COLORS = {
-  high: "var(--note-high-color, #ff4d4d)",
-  medium: "var(--note-medium-color, #ffd633)",
-  low: "var(--note-low-color, #4da6ff)",
-} as const;
 
 export default function CalendarView() {
   const { t } = useTranslation();
@@ -71,92 +66,18 @@ export default function CalendarView() {
   const { mutate: onEditNote } = usePatchNotes();
   const { mutate: onDeleteNote } = useDeleteNotes();
 
-  const employeesMap = useMemo(() => {
-    return new Map(employees.map((emp) => [emp.id, emp]));
-  }, [employees]);
+  const { generateExtraDaysEvents, generateLeaveEvents, generateNoteEvents } =
+    useGenerateViewEvents({ employees, leaves, notes, extradays });
 
   useEffect(() => {
     clearModal();
   }, []);
-
-  const generateLeaveEvents = useCallback(() => {
-    return leaves.map((leave) => {
-      const employee = employeesMap.get(leave.employee_id);
-
-      const endDate = addDays(new Date(leave.end_date), 1)
-        .toISOString()
-        .split("T")[0];
-
-      return {
-        id: leave.id,
-        title: employee
-          ? `${employee.name} ${employee.surname} - ${leave.type}`
-          : t("unknownEmployee"),
-        start: leave.start_date,
-        end: endDate,
-        allDay: true,
-        backgroundColor: employee?.color || "#888",
-        borderColor: employee?.color || "#888",
-        extendedProps: {
-          type: "leave",
-          employeeId: leave.employee_id,
-          leaveType: leave.type,
-          note: leave.note || "",
-        },
-      };
-    });
-  }, [leaves, employeesMap, t]);
-
-  const generateNoteEvents = useCallback(() => {
-    return notes.map((note) => {
-      const color =
-        NOTE_TYPE_COLORS[note.type as keyof typeof NOTE_TYPE_COLORS] ||
-        NOTE_TYPE_COLORS.low;
-
-      return {
-        id: note.id,
-        title: note.title || t("untitled"),
-        start: note.date,
-        end: note.date,
-        allDay: true,
-        backgroundColor: color,
-        borderColor: color,
-        extendedProps: {
-          type: "note",
-          content: note.content,
-          employeeId: note.employee_id,
-        },
-      };
-    });
-  }, [notes, t]);
-
-  const generateExtraDaysEvents = useCallback(() => {
-    return extradays.map((days) => {
-      const employee = employeesMap.get(days.employee_id);
-
-      return {
-        id: days.id,
-        title: `${t("extraDay")}: ${days.employees?.name} ${days.employees?.surname}`,
-        start: days.date,
-        end: days.date,
-        allDay: true,
-        backgroundColor: employee?.color || "#888",
-        borderColor: employee?.color || "#888",
-        extendedProps: {
-          type: "extraDays",
-          employeeId: days.employee_id,
-          reason: days.reason,
-        },
-      };
-    });
-  }, [extradays, employeesMap, t]);
 
   useEffect(() => {
     const leaveEvents = generateLeaveEvents();
     const noteEvents = generateNoteEvents();
     const extraDaysEvents = generateExtraDaysEvents();
 
-    console.log("extraDaysEvents", extraDaysEvents);
     const combined = [...leaveEvents, ...noteEvents, ...extraDaysEvents];
 
     setEvents((prev) => {
