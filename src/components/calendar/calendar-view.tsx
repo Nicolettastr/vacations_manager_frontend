@@ -4,6 +4,7 @@ import { useFullCalendarHandlers } from "@/hooks/calendar/useFullCalendarHandler
 import { useGenerateViewEvents } from "@/hooks/calendar/useGenerateViewEvents";
 import { useGetEmployees } from "@/hooks/employees/useGetEmployees";
 import useGetExtraDays from "@/hooks/extraDays/useGetExtraDays";
+import { usePatchExtraDay } from "@/hooks/extraDays/usePatchExtraDay";
 import { useGetEmployeesLeaves } from "@/hooks/leaves/useGetEmployeesLeaves";
 import { usePatchEmployeeLeave } from "@/hooks/leaves/usePatchEmployeeLeave";
 import { useGetNotes } from "@/hooks/notes/useGetNotes";
@@ -39,6 +40,7 @@ export default function CalendarView() {
 
   const { notes } = useGetNotes(isLoggedIn);
   const { mutate: onEditNote } = usePatchNotes();
+  const { mutate: onEditExtraDay } = usePatchExtraDay();
 
   const { generateExtraDaysEvents, generateLeaveEvents, generateNoteEvents } =
     useGenerateViewEvents({ employees, leaves, notes, extradays });
@@ -48,6 +50,7 @@ export default function CalendarView() {
     extradays,
     onEditNote,
     onEditEmployeeLeave,
+    onEditExtraDay,
   });
 
   useEffect(() => {
@@ -117,6 +120,7 @@ export default function CalendarView() {
         employees={employees}
         onEditNote={onEditNote}
         onEditEmployeeLeave={onEditEmployeeLeave}
+        onEditExtraDay={onEditExtraDay}
       />
     </>
   );

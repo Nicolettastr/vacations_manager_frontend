@@ -136,7 +136,7 @@ export const EventModalForm = ({
               </DialogTitle>
               {mode !== "view" && (
                 <DialogDescription>
-                  {t("modal.completeDetails")}
+                  {t("modal.completeDetailsLeave")}
                 </DialogDescription>
               )}
             </DialogHeader>

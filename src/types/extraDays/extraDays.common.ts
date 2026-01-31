@@ -2,7 +2,7 @@ import { ModalProps } from "../common";
 
 export interface ExtraDayBase {
   employee_id: string;
-  days: number;
+  extra_hours: number;
   reason: string;
   date: string;
 }
@@ -28,13 +28,7 @@ export interface ExtraDayWithEmployee extends ExtraDay {
 export interface UpdateExtraDayParams {
   id: string;
 }
-
-export type UpdateExtraDayBody = Partial<Omit<ExtraDayBase, "employee_id">> & {
-  employee_id?: string;
-};
-
-export type UpdateExtraDayResponse = ExtraDay;
-
 export interface ExtraDayModalProps extends ModalProps {
   data?: ExtraDayWithEmployee;
+  onSave: (extraDay: ExtraDayBase) => void;
 }

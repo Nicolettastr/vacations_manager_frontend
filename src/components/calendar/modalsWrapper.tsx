@@ -22,14 +22,19 @@ export const ModalsWrapper = ({
   employees,
   onEditNote,
   onEditEmployeeLeave,
+  onEditExtraDay,
 }: TypeModalsWrapperProps) => {
   const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
   const { leavesTypes } = useGetLeavesTypes(isLoggedIn);
   const [modalState, setModalState] = useModalStore(
     useShallow((state) => [state.modalState, state.setModalState]),
   );
-  const { handleDelete, handleSaveLeaveChanges, handleSaveNoteChanges } =
-    useModalHandlers({ onEditNote, onEditEmployeeLeave });
+  const {
+    handleDelete,
+    handleSaveLeaveChanges,
+    handleSaveNoteChanges,
+    handleSaveExtraDaysChanges,
+  } = useModalHandlers({ onEditNote, onEditEmployeeLeave, onEditExtraDay });
 
   return (
     <>
@@ -52,6 +57,7 @@ export const ModalsWrapper = ({
           onClose={() =>
             setModalState({ isOpen: false, mode: modalState.mode })
           }
+          onSave={handleSaveExtraDaysChanges}
           onDelete={handleDelete}
           mode={modalState.mode}
           employees={employees}

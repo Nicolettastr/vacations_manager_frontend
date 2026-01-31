@@ -13,7 +13,7 @@ export type ModalProps = {
   mode: "create" | "edit" | "view" | "delete";
   onClose: () => void;
   employees: Employee[] | undefined;
-  onDelete: (id: string, type: "note" | "leave") => void;
+  onDelete: (id: string, type: "note" | "leave" | "extraDay") => void;
 };
 
 export type EventModalProps = ModalProps & {

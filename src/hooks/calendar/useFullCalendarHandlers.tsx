@@ -1,5 +1,5 @@
 import { useModalStore } from "@/store/useModalStore";
-import { UpdateExtraDayBody } from "@/types/extraDays/extraDays.common";
+import { ExtraDayBase } from "@/types/extraDays/extraDays.common";
 import { LeaveRequest } from "@/types/leaves/leaves.common";
 import { NoteCreateRequest } from "@/types/notes/notes.common";
 import { EventClickArg } from "@fullcalendar/core/index.js";
@@ -118,17 +118,16 @@ export const useFullCalendarHandlers = ({
           info.revert();
         }
       } else if (eventType === "extraDays") {
-        const updatedExtraDay: UpdateExtraDayBody & { id: string } = {
+        const updatedExtraDay: ExtraDayBase & { id: string } = {
           id: event.id,
-          employee_id: event.extendedProps.employeeId, // editable
-          days: event.extendedProps.days, // editable
-          reason: event.extendedProps.reason, // editable
-          date: newStart!, // editable
+          employee_id: event.extendedProps.employeeId,
+          days: event.extendedProps.days,
+          reason: event.extendedProps.reason,
+          date: newStart!,
         };
 
         try {
-          // Llamamos a la función de actualización que maneja el PATCH
-          //onEditExtraDay(updatedExtraDay);
+          onEditExtraDay(updatedExtraDay);
         } catch (error) {
           console.error(t("errorUpdatingExtraDay"), error);
           info.revert();

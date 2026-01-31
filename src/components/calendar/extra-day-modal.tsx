@@ -43,6 +43,7 @@ import { cn } from "@/lib/utils";
 import { useCommonDataStore } from "@/store/useCommonDataStore";
 import { useModalStore } from "@/store/useModalStore";
 import {
+  ExtraDayBase,
   ExtraDayModalProps,
   ExtraDayWithEmployee,
 } from "@/types/extraDays/extraDays.common";
@@ -53,6 +54,7 @@ export const ExtraDayModal = ({
   isOpen,
   mode,
   data,
+  onSave,
   employees,
   onClose,
   onDelete,
@@ -67,17 +69,17 @@ export const ExtraDayModal = ({
 
   const extraDaySchema = z.object({
     id: z.string().optional(),
-    employeeId: z.string().min(1, t("formErrors.employeeRequired")),
+    employee_id: z.string().min(1, t("formErrors.employeeRequired")),
     date: z.date({ required_error: t("formErrors.startDateRequired") }),
-    days: z.number({ required_error: t("formErrors.endDateRequired") }),
+    extra_hours: z.number({ required_error: t("formErrors.endDateRequired") }),
     reason: z.string().trim().optional(),
   });
 
   const defaultValues = {
     id: undefined,
-    employeeId: "",
+    employee_id: "",
     date: selectedDate ? new Date(selectedDate) : new Date(),
-    days: 0,
+    extra_hours: 0,
     reason: "",
   };
 
@@ -90,9 +92,9 @@ export const ExtraDayModal = ({
     if (data && isOpen) {
       form.reset({
         id: data.id,
-        employeeId: data.employee_id,
+        employee_id: data.employee_id,
         date: data.date ? new Date(data.date) : new Date(),
-        days: data.days,
+        extra_hours: data.extra_hours,
         reason: data.reason,
       });
     } else {
@@ -100,7 +102,15 @@ export const ExtraDayModal = ({
     }
   }, [isOpen, data]);
 
-  function onSubmit(values: z.infer<typeof extraDaySchema>) {}
+  function onSubmit(values: z.infer<typeof extraDaySchema>) {
+    const extraDay: ExtraDayBase = {
+      employee_id: values.employee_id,
+      extra_hours: values.extra_hours,
+      date: format(values.date, "yyyy-MM-dd"),
+      reason: values.reason || "",
+    };
+    onSave(extraDay);
+  }
 
   const currentExtraDay = data as ExtraDayWithEmployee;
   const employee = employees?.find(
@@ -115,13 +125,13 @@ export const ExtraDayModal = ({
             <DialogHeader>
               <DialogTitle>
                 {mode === "create" && t("modal.createLeave")}
-                {mode === "edit" && t("modal.editLeave")}
+                {mode === "edit" && t("modal.extraDayEdit")}
                 {mode === "view" &&
-                  `${t("modal.leaveOf")} ${employee?.name || ""}`}
+                  `${t("modal.extraDay")} ${employee?.name || ""}`}
               </DialogTitle>
               {mode !== "view" && (
                 <DialogDescription>
-                  {t("modal.completeDetails")}
+                  {t("modal.completeDetailsExtraDay")}
                 </DialogDescription>
               )}
             </DialogHeader>
@@ -130,7 +140,7 @@ export const ExtraDayModal = ({
               <div className="space-y-4 px-1 py-2">
                 <FormField
                   control={form.control}
-                  name="employeeId"
+                  name="employee_id"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>{t("employee")}</FormLabel>
@@ -162,7 +172,7 @@ export const ExtraDayModal = ({
                     name="date"
                     render={({ field }) => (
                       <FormItem className="flex flex-col flex-1">
-                        <FormLabel>{t("startDate")}</FormLabel>
+                        <FormLabel>{t("date")}</FormLabel>
                         <Popover>
                           <PopoverTrigger asChild>
                             <FormControl>
@@ -195,10 +205,10 @@ export const ExtraDayModal = ({
 
                   <FormField
                     control={form.control}
-                    name="days"
+                    name="extra_hours"
                     render={({ field }) => (
                       <FormItem className="flex flex-col flex-1">
-                        <FormLabel>{t("days")}</FormLabel>
+                        <FormLabel>{t("extraHours")}</FormLabel>
                         <FormControl>
                           <Input
                             type="number"
@@ -236,16 +246,17 @@ export const ExtraDayModal = ({
                   {employee?.surname}
                 </p>
                 <p>
-                  <strong>{t("days")}:</strong> {currentExtraDay?.days}
+                  <strong>{t("extraHours")}:</strong>{" "}
+                  {currentExtraDay?.extra_hours}
                 </p>
                 <p>
-                  <strong>{t("startDate")}:</strong>{" "}
+                  <strong>{t("date")}:</strong>{" "}
                   {currentExtraDay?.date &&
                     format(new Date(currentExtraDay.date), "PPP")}
                 </p>
                 {currentExtraDay?.reason && (
                   <p>
-                    <strong>{t("note")}:</strong> {currentExtraDay.reason}
+                    <strong>{t("reason")}:</strong> {currentExtraDay.reason}
                   </p>
                 )}
               </div>
@@ -268,7 +279,7 @@ export const ExtraDayModal = ({
                   </Button>
                   <Button
                     variant="destructive"
-                    onClick={() => onDelete(currentExtraDay.id, "leave")}
+                    onClick={() => onDelete(currentExtraDay.id, "extraDay")}
                   >
                     <Trash2 className="mr-2 h-4 w-4" /> {t("delete")}
                   </Button>

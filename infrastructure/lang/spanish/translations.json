@@ -61,8 +61,15 @@
     "createLeave": "Crear ausencia",
     "createNote": "Crear nota",
     "editNote": "Editar nota",
-    "noteOf": "Nota de",
-    "completeDetails": "Completa los detalles de la nota"
+    "noteOf": "Nota",
+    "completeDetails": "Completa los detalles de la nota",
+    "leaveOf": "Baja de",
+    "extraDay": "Día extra de",
+    "createExtraDay": "Crear día extra",
+    "completeDetailsExtraDay": "Completa los detalles del día extra",
+    "createLeaveDescription": "Agregar nueva baja",
+    "createNoteDescription": "Agregar nueva nota",
+    "createExtraDaysDescription": "Agregar nuevo día extra"
   },
   "errors": {
     "errorUpdatingLeave": "Error al actualizar la ausencia:",
@@ -147,5 +154,9 @@
   "used": "Usados",
   "days": "días",
   "remaining": "restantes",
-  "extraDay": "Día extra"
+  "extraDay": "Día extra",
+  "extraHours": "Horas extras",
+  "reason": "Razón",
+  "createExtraDays": "Crear día extra",
+  "addReason": "Agregar razón de día extra"
 }

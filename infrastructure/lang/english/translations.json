@@ -61,8 +61,17 @@
     "createLeave": "Create Leave",
     "createNote": "Create Note",
     "editNote": "Edit Note",
-    "noteOf": "Note of",
-    "completeDetails": "Complete the note details"
+    "noteOf": "Note",
+    "completeDetails": "Complete the note details",
+    "leaveOf": "Leave of",
+    "editLeave": "Edit leave",
+    "createExtraDay": "Create extra day",
+    "extraDayEdit": "Edit extra day",
+    "extraDay": "Extra day of",
+    "completeDetailsExtraDay": "Complete the extra day details",
+    "createLeaveDescription": "Add new leave",
+    "createNoteDescription": "Add new note",
+    "createExtraDaysDescription": "Add new extra day"
   },
   "errors": {
     "errorUpdatingLeave": "Error updating leave:",
@@ -151,5 +160,9 @@
   "used": "Used",
   "days": "days",
   "remaining": "remaining",
-  "extraDay": "Extra day"
+  "extraDay": "Extra day",
+  "extraHours": "Extra hours",
+  "reason": "Reason",
+  "createExtraDays": "Create extra day",
+  "addReason": "Add extra day reason"
 }

@@ -44,9 +44,11 @@ const EventTypeModal: React.FC<EventTypeModalProps> = ({
           >
             <Calendar className="w-5 h-5" />
             <div className="text-left flex-1">
-              <div className="font-semibold text-sm">{t("createLeave")}</div>
+              <div className="font-semibold text-sm">
+                {t("modal.createLeave")}
+              </div>
               <div className="text-xs text-muted-foreground">
-                {t("createLeaveDescription")}
+                {t("modal.createLeaveDescription")}
               </div>
             </div>
           </Button>
@@ -70,7 +72,7 @@ const EventTypeModal: React.FC<EventTypeModalProps> = ({
                 {t("modal.createNote")}
               </div>
               <div className="text-xs text-muted-foreground">
-                {t("createNoteDescription")}
+                {t("modal.createNoteDescription")}
               </div>
             </div>
           </Button>
@@ -94,7 +96,7 @@ const EventTypeModal: React.FC<EventTypeModalProps> = ({
                 {t("createExtraDays")}
               </div>
               <div className="text-xs text-muted-foreground">
-                {t("createExtraDaysDescription")}
+                {t("modal.createExtraDaysDescription")}
               </div>
             </div>
           </Button>
