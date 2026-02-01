@@ -2,6 +2,7 @@ import { registerUser } from "@/api/auth/register";
 import { RegisterResponse, userParams } from "@/types/auth/auth.common";
 import { useMutation } from "@tanstack/react-query";
 import { UseFormReturn } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { useToast } from "../use-toast";
 
 export const useRegister = (
@@ -20,14 +21,15 @@ export const useRegister = (
       name?: unknown;
       lastname?: unknown;
     }
-  >
+  >,
 ) => {
   const { toast } = useToast();
+  const { t } = useTranslation();
   const mutation = useMutation<RegisterResponse, Error, userParams>({
     mutationFn: (data) => registerUser(data),
     onSuccess: (data) => {
       toast({
-        title: `Registered successfully`,
+        title: t("registeredSuccessfully"),
         description: data.message,
         variant: "success",
       });
@@ -36,7 +38,7 @@ export const useRegister = (
     },
     onError: (data) => {
       toast({
-        title: `Registered unsuccessfull`,
+        title: t("registeredUnsuccessful"),
         description: data.message,
         variant: "destructive",
       });

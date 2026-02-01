@@ -1,9 +1,11 @@
 import { deleteExtraDay } from "@/api/extraDays/deleteExtraDay";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { useToast } from "../use-toast";
 
 export const useDeleteExtraDay = () => {
   const { toast } = useToast();
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   const mutation = useMutation({
@@ -13,16 +15,16 @@ export const useDeleteExtraDay = () => {
       queryClient.invalidateQueries({ queryKey: ["getExtraDays"] });
 
       toast({
-        title: "Extra day deleted",
-        description: "The employee extra day has been successfully deleted.",
+        title: t("extraDayHook.deletedTitle"),
+        description: t("extraDayHook.deletedDesc"),
         variant: "success",
       });
     },
     onError: (error) => {
       console.error("Error deleting employee extra day:", error);
       toast({
-        title: "Employee extra day deletion Failed",
-        description: "There was an error deleting the employee extra day.",
+        title: t("extraDayHook.deleteErrorTitle"),
+        description: t("extraDayHook.deleteErrorDesc"),
         variant: "destructive",
       });
     },

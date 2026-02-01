@@ -164,5 +164,70 @@
   "extraHours": "Extra hours",
   "reason": "Reason",
   "createExtraDays": "Create extra day",
-  "addReason": "Add extra day reason"
+  "addReason": "Add extra day reason",
+  "somethingWrong": "Something went wrong.",
+  "registeredSuccessfully": "Registered successfully",
+  "registeredUnsuccessful": "Registration unsuccessful",
+  "employeesHooks": {
+    "deletedTitle": "Employee deleted",
+    "deletedDesc": "The employee has been successfully deleted.",
+    "deleteErrorTitle": "Employee deletion failed",
+    "deleteErrorDesc": "There was an error deleting the employee.",
+    "editedTitle": "Employee edited",
+    "editedDesc": "The employee has been edited successfully.",
+    "editErrorTitle": "Employee editing failed",
+    "editErrorDesc": "There was an error editing the employee.",
+    "createdTitle": "Employee created",
+    "createdDesc": "The employee has been created successfully.",
+    "createErrorTitle": "Employee creation failed",
+    "createErrorDesc": "There was an error creating the employee."
+  },
+  "extraDayHook": {
+    "createdTitle": "Extra day created",
+    "createdDesc": "The employee extra day has been successfully created.",
+    "createErrorTitle": "Extra day creation failed",
+    "createErrorDesc": "The employee extra day creation has failed.",
+
+    "editedTitle": "Extra day edited",
+    "editedDesc": "The employee extra day has been successfully edited.",
+    "editErrorTitle": "Extra day edition failed",
+    "editErrorDesc": "The employee extra day edition has failed.",
+
+    "deletedTitle": "Extra day deleted",
+    "deletedDesc": "The employee extra day has been successfully deleted.",
+    "deleteErrorTitle": "Employee extra day deletion failed",
+    "deleteErrorDesc": "There was an error deleting the employee extra day."
+  },
+  "leavesHook": {
+    "createdTitle": "Leave created",
+    "createdDesc": "The employee leave has been successfully created.",
+    "createErrorTitle": "Leave creation failed",
+    "createErrorDesc": "The employee leave creation has failed.",
+
+    "editedTitle": "Leave edited",
+    "editedDesc": "The employee leave has been successfully edited.",
+    "editErrorTitle": "Leave edition failed",
+    "editErrorDesc": "The employee leave edition has failed.",
+
+    "deletedTitle": "Leave deleted",
+    "deletedDesc": "The employee leave has been successfully deleted.",
+    "deleteErrorTitle": "Employee leave deletion failed",
+    "deleteErrorDesc": "There was an error deleting the employee leave."
+  },
+  "notesHook": {
+    "createdTitle": "Note created",
+    "createdDesc": "The note has been successfully created.",
+    "createErrorTitle": "Note creation failed",
+    "createErrorDesc": "The note creation has failed.",
+
+    "editedTitle": "Note edited",
+    "editedDesc": "The note has been successfully edited.",
+    "editErrorTitle": "Note edition failed",
+    "editErrorDesc": "The note edition has failed.",
+
+    "deletedTitle": "Note deleted",
+    "deletedDesc": "The note has been successfully deleted.",
+    "deleteErrorTitle": "Note deletion failed",
+    "deleteErrorDesc": "There was an error deleting the note."
+  }
 }

@@ -19,8 +19,7 @@ export const useForgotPassword = () => {
     },
 
     onError: (error: any) => {
-      const errorMessage =
-        error.response?.data?.error || "Something went wrong.";
+      const errorMessage = error.response?.data?.error || t("SomethingWrong");
 
       toast({
         title: t("forgotPasswordSendError"),

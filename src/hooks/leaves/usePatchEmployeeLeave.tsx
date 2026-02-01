@@ -1,10 +1,12 @@
 import { editEmployeeeLeave } from "@/api/leaves/patchEmployeeLeave";
 import { LeaveRequest, LeaveResponse } from "@/types/leaves/leaves.common";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { useToast } from "../use-toast";
 
 export const usePatchEmployeeLeave = () => {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
   const { toast } = useToast();
 
   const mutation = useMutation<LeaveResponse, Error, LeaveRequest>({
@@ -15,16 +17,16 @@ export const usePatchEmployeeLeave = () => {
         queryClient.invalidateQueries({ queryKey: ["getEmployees"] });
       }
       toast({
-        title: "Leave edited",
-        description: "The employee leave has been successfully edited.",
+        title: t("leavesHook.editedTitle"),
+        description: t("leavesHook.editedDesc"),
         variant: "success",
       });
     },
     onError: (error) => {
       console.error("Leave edition failed", error);
       toast({
-        title: "Leave edition failed",
-        description: "The employee leave edition has failed.",
+        title: t("leavesHook.editErrorTitle"),
+        description: t("leavesHook.editErrorDesc"),
         variant: "destructive",
       });
     },

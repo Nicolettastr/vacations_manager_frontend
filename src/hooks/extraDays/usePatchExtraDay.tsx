@@ -4,10 +4,12 @@ import {
   ExtraDayWithEmployee,
 } from "@/types/extraDays/extraDays.common";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { useToast } from "../use-toast";
 
 export const usePatchExtraDay = () => {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
   const { toast } = useToast();
 
   const mutation = useMutation<
@@ -19,16 +21,16 @@ export const usePatchExtraDay = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["getExtraDays"] });
       toast({
-        title: "Extra day edited",
-        description: "The employee extra day has been successfully edited.",
+        title: t("extraDayHook.editedTitle"),
+        description: t("extraDayHook.editedDesc"),
         variant: "success",
       });
     },
     onError: (error) => {
       console.error("Extra day edition failed", error);
       toast({
-        title: "Extra day edition failed",
-        description: "The employee extra day edition has failed.",
+        title: t("extraDayHook.editErrorTitle"),
+        description: t("extraDayHook.editErrorDesc"),
         variant: "destructive",
       });
     },

@@ -4,10 +4,12 @@ import {
   ExtraDayWithEmployee,
 } from "@/types/extraDays/extraDays.common";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { useToast } from "../use-toast";
 
 export const usePostExtraDay = () => {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
   const { toast } = useToast();
 
   const mutation = useMutation<ExtraDayWithEmployee, Error, ExtraDayBase>({
@@ -15,16 +17,16 @@ export const usePostExtraDay = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["getExtraDays"] });
       toast({
-        title: "Extra day created",
-        description: "The employee extra day has been successfully created.",
+        title: t("extraDayHook.createdTitle"),
+        description: t("extraDayHook.createdDesc"),
         variant: "success",
       });
     },
     onError: (error) => {
       console.error("Extra day creation failed", error);
       toast({
-        title: "Extra day created failed",
-        description: "The employee Extra day creation has failed.",
+        title: t("extraDayHook.createErrorTitle"),
+        description: t("extraDayHook.createErrorDesc"),
         variant: "destructive",
       });
     },

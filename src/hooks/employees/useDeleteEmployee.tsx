@@ -1,13 +1,15 @@
 import { deleteEmployee } from "@/api/employees/deleteEmployee";
 import { useEmployeeStore } from "@/store/useEmployeeStore";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { useToast } from "../use-toast";
 
 export const useDeleteEmployee = () => {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const setConfigureEmployees = useEmployeeStore(
-    (state) => state.setConfigureEmployees
+    (state) => state.setConfigureEmployees,
   );
 
   const mutation = useMutation({
@@ -17,16 +19,16 @@ export const useDeleteEmployee = () => {
       queryClient.invalidateQueries({ queryKey: ["getLeaves"] });
       setConfigureEmployees(false);
       toast({
-        title: "Employee deleted",
-        description: "The employee has been successfully deleted.",
+        title: t("employeesHooks.deletedTitle"),
+        description: t("employeesHooks.deletedDesc"),
         variant: "success",
       });
     },
     onError: (error) => {
       console.error("Error deleting employee:", error);
       toast({
-        title: "Employee deletion Failed",
-        description: "There was an error deleting the employee.",
+        title: t("employeesHooks.deleteErrorTitle"),
+        description: t("employeesHooks.deleteErrorDesc"),
         variant: "destructive",
       });
     },

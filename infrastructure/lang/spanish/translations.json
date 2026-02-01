@@ -63,11 +63,11 @@
     "editNote": "Editar nota",
     "noteOf": "Nota",
     "completeDetails": "Completa los detalles de la nota",
-    "leaveOf": "Baja de",
+    "leaveOf": "Permiso de",
     "extraDay": "Día extra de",
     "createExtraDay": "Crear día extra",
     "completeDetailsExtraDay": "Completa los detalles del día extra",
-    "createLeaveDescription": "Agregar nueva baja",
+    "createLeaveDescription": "Agregar nuevo permiso",
     "createNoteDescription": "Agregar nueva nota",
     "createExtraDaysDescription": "Agregar nuevo día extra"
   },
@@ -158,5 +158,72 @@
   "extraHours": "Horas extras",
   "reason": "Razón",
   "createExtraDays": "Crear día extra",
-  "addReason": "Agregar razón de día extra"
+  "addReason": "Agregar razón de día extra",
+  "somethingWrong": "Ha ocurrido un error.",
+  "registeredSuccessfully": "Registro exitoso",
+  "registeredUnsuccessful": "Registro fallido",
+  "employeesHooks": {
+    "deletedTitle": "Employee deleted",
+    "deletedDesc": "The employee has been successfully deleted.",
+    "deleteErrorTitle": "Employee deletion failed",
+    "deleteErrorDesc": "There was an error deleting the employee.",
+
+    "editedTitle": "Employee edited",
+    "editedDesc": "The employee has been edited successfully.",
+    "editErrorTitle": "Employee editing failed",
+    "editErrorDesc": "There was an error editing the employee.",
+
+    "createdTitle": "Employee created",
+    "createdDesc": "The employee has been created successfully.",
+    "createErrorTitle": "Employee creation failed",
+    "createErrorDesc": "There was an error creating the employee."
+  },
+  "extraDayHook": {
+    "createdTitle": "Día extra creado",
+    "createdDesc": "El día extra del empleado ha sido creado correctamente.",
+    "createErrorTitle": "Error al crear el día extra",
+    "createErrorDesc": "Ocurrió un error al crear el día extra del empleado.",
+
+    "editedTitle": "Día extra editado",
+    "editedDesc": "El día extra del empleado ha sido editado correctamente.",
+    "editErrorTitle": "Error al editar el día extra",
+    "editErrorDesc": "Ocurrió un error al editar el día extra del empleado.",
+
+    "deletedTitle": "Día extra eliminado",
+    "deletedDesc": "El día extra del empleado ha sido eliminado correctamente.",
+    "deleteErrorTitle": "Error al eliminar el día extra",
+    "deleteErrorDesc": "Ocurrió un error al eliminar el día extra del empleado."
+  },
+  "leavesHook": {
+    "createdTitle": "Permiso creado",
+    "createdDesc": "El permiso del empleado ha sido creado correctamente.",
+    "createErrorTitle": "Error al crear el permiso",
+    "createErrorDesc": "Ocurrió un error al crear el permiso del empleado.",
+
+    "editedTitle": "Permiso editado",
+    "editedDesc": "El permiso del empleado ha sido editado correctamente.",
+    "editErrorTitle": "Error al editar el permiso",
+    "editErrorDesc": "Ocurrió un error al editar el permiso del empleado.",
+
+    "deletedTitle": "Permiso eliminado",
+    "deletedDesc": "El permiso del empleado ha sido eliminado correctamente.",
+    "deleteErrorTitle": "Error al eliminar el permiso",
+    "deleteErrorDesc": "Ocurrió un error al eliminar el permiso del empleado."
+  },
+  "notesHook": {
+    "createdTitle": "Nota creada",
+    "createdDesc": "La nota ha sido creada correctamente.",
+    "createErrorTitle": "Error al crear la nota",
+    "createErrorDesc": "Ocurrió un error al crear la nota.",
+
+    "editedTitle": "Nota editada",
+    "editedDesc": "La nota ha sido editada correctamente.",
+    "editErrorTitle": "Error al editar la nota",
+    "editErrorDesc": "Ocurrió un error al editar la nota.",
+
+    "deletedTitle": "Nota eliminada",
+    "deletedDesc": "La nota ha sido eliminada correctamente.",
+    "deleteErrorTitle": "Error al eliminar la nota",
+    "deleteErrorDesc": "Ocurrió un error al eliminar la nota."
+  }
 }

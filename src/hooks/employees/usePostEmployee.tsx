@@ -1,9 +1,11 @@
 import { postEmployee } from "@/api/employees/postEmployee";
 import { Employee, newEmployee } from "@/types/employees/employees.common";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { useToast } from "../use-toast";
 
 export const usePostEmployee = () => {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -12,16 +14,16 @@ export const usePostEmployee = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["getEmployees"] });
       toast({
-        title: "Employee Created",
-        description: "The employee has been created successfully.",
+        title: t("employeesHooks.createdTitle"),
+        description: t("employeesHooks.createdDesc"),
         variant: "success",
       });
     },
     onError: (error) => {
       console.error("Error creating employee:", error);
       toast({
-        title: "Employee Creation Failed",
-        description: "There was an error creating the employee.",
+        title: t("employeesHooks.createErrorTitle"),
+        description: t("employeesHooks.createErrorDesc"),
         variant: "destructive",
       });
     },

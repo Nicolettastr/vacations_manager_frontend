@@ -20,8 +20,7 @@ export const useResetPassword = () => {
     },
 
     onError: (error: any) => {
-      const errorMessage =
-        error.response?.data?.error || "Something went wrong.";
+      const errorMessage = error.response?.data?.error || t("somethingWrong");
 
       toast({
         title: t("resetPassword"),
