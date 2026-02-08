@@ -2,7 +2,7 @@
   "common": {
     "loading": "Cargando sesión..."
   },
-  "signInMessage": "Inicia sesión para planificar tu próxima aventura",
+  "signInMessage": "Inicia sesión para planificar",
   "email": "Correo electrónico",
   "password": "Contraseña",
   "signIn": "Iniciar sesión",
@@ -225,5 +225,8 @@
     "deletedDesc": "La nota ha sido eliminada correctamente.",
     "deleteErrorTitle": "Error al eliminar la nota",
     "deleteErrorDesc": "Ocurrió un error al eliminar la nota."
-  }
+  },
+  "forgotPassword": "¿Olvidaste tu contraseña?",
+  "cancelRegisterModal": "¿Cancelar registro?",
+  "cancelRegisterMessage": "Has ingresado información en el formulario. Si cancelas ahora, se borrarán todos los datos y serás redirigido a la pantalla de inicio de sesión. ¿Deseas continuar?"
 }

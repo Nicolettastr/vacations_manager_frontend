@@ -20,7 +20,7 @@ import { useLogin } from "@/hooks/auth/useLogin";
 import { useRegister } from "@/hooks/auth/useRegister";
 import { useToast } from "@/hooks/use-toast";
 import { useAuthStore } from "@/store/useAuthStore";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import IconTooltip from "../icons/Tooltip";
 
@@ -28,12 +28,14 @@ interface ILoginForm {
   resetRegisterForm: (register: boolean) => void;
   registerForm: boolean;
   handleRegisterModal: (modal: boolean) => void;
+  handleCancelAction: (modal: boolean) => void;
 }
 
 export const LoginForm: React.FC<ILoginForm> = ({
   resetRegisterForm,
   registerForm,
   handleRegisterModal,
+  handleCancelAction,
 }) => {
   const { t } = useTranslation();
   const formSchema = useMemo(
@@ -59,7 +61,7 @@ export const LoginForm: React.FC<ILoginForm> = ({
               /^[a-zA-ZÀ-ÿ\u00f1\u00d1]+([' -][a-zA-ZÀ-ÿ\u00f1\u00d1]+)*$/,
               {
                 message: t("formErrors.nameInvalidCharacters"),
-              }
+              },
             ),
           lastname: z
             .string()
@@ -69,11 +71,11 @@ export const LoginForm: React.FC<ILoginForm> = ({
               /^[a-zA-ZÀ-ÿ\u00f1\u00d1]+([' -][a-zA-ZÀ-ÿ\u00f1\u00d1]+)*$/,
               {
                 message: t("formErrors.surnameInvalidCharacters"),
-              }
+              },
             ),
         }),
       }),
-    [registerForm, t]
+    [registerForm, t],
   );
 
   const defaultValues = {
@@ -88,11 +90,20 @@ export const LoginForm: React.FC<ILoginForm> = ({
     defaultValues,
   });
 
+  const formHasChanges = Object.values(form.getValues()).some((value) => {
+    return value !== undefined && value !== "";
+  });
+
   const { toast } = useToast();
   const { mutate: register } = useRegister(handleRegisterModal, form);
   const { mutate: login } = useLogin();
   const [showPassword, setShowPassword] = useState(false);
+  const [cancelRegisterModal, setCancelRegisterModal] = useState(false);
   const setForgotPassword = useAuthStore((state) => state.setForgotPassword);
+
+  useEffect(() => {
+    setCancelRegisterModal(formHasChanges);
+  }, [formHasChanges]);
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     if (registerForm) {
@@ -107,7 +118,10 @@ export const LoginForm: React.FC<ILoginForm> = ({
     if (!registerForm) {
       form.reset(defaultValues);
     }
-
+    if (cancelRegisterModal) {
+      handleCancelAction(cancelRegisterModal);
+      return;
+    }
     resetRegisterForm(!registerForm);
   };
 
@@ -243,7 +257,7 @@ export const LoginForm: React.FC<ILoginForm> = ({
                 className="text-blue-600 hover:text-blue-500 hover:underline"
                 type="button"
               >
-                Forgot your password?
+                {t("forgotPassword")}
               </Button>
             </div>
           )}

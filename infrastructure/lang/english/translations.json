@@ -229,5 +229,8 @@
     "deletedDesc": "The note has been successfully deleted.",
     "deleteErrorTitle": "Note deletion failed",
     "deleteErrorDesc": "There was an error deleting the note."
-  }
+  },
+  "forgotPassword": "  Forgot your password?",
+  "cancelRegisterModal": "Cancel registration?",
+  "cancelRegisterMessage": "You have entered information in the form. If you cancel now, all entered data will be discarded and you will be redirected to the login screen. Do you want to continue?"
 }
