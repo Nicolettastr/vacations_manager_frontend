@@ -234,5 +234,6 @@
   "medium": "Media",
   "high": "Alta",
   "extraDays": "Días extras",
-  "totalExtraHours": "Total horas extras"
+  "totalExtraHours": "Total horas extras",
+  "vacationDaysMessage": "El número de días de vacaciones asignados por defecto a un nuevo empleado es 22. Se puede cambiar si es necesario."
 }

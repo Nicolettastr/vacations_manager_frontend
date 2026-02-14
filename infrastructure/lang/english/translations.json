@@ -238,5 +238,6 @@
   "medium": "Medium",
   "high": "High",
   "extraDays": "Extra days",
-  "totalExtraHours": "Total extra hours"
+  "totalExtraHours": "Total extra hours",
+  "vacationDaysMessage": "The default number of vacation days assigned to a new employee is 22. You can change this if needed."
 }

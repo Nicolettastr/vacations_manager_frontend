@@ -25,13 +25,15 @@ import { useAuthStore } from "@/store/useAuthStore";
 import { useEmployeeStore } from "@/store/useEmployeeStore";
 import { newEmployee } from "@/types/employees/employees.common";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Trash2 } from "lucide-react";
+import { Info, Trash2 } from "lucide-react";
 import { useEffect } from "react";
 import { HexColorPicker } from "react-colorful";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import * as z from "zod";
 import { useShallow } from "zustand/shallow";
+import IconTooltip from "../icons/Tooltip";
+import { FormLabelRequired } from "../ui/formLabelRequired";
 import EmployeeDetailsModal from "./employee-view-details";
 
 export type EmployeeModalProps = {
@@ -174,40 +176,48 @@ export const EmployeeModal = ({
 
                 {isEditMode ? (
                   <div className="space-y-4">
-                    <FormField
-                      control={form.control}
-                      name="name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>{t("name")}</FormLabel>
-                          <FormControl>
-                            <Input placeholder={t("name")} {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                    <div className="flex">
+                      <FormField
+                        control={form.control}
+                        name="name"
+                        render={({ field }) => (
+                          <FormItem className="mr-3">
+                            <FormLabelRequired required={true}>
+                              {t("name")}
+                            </FormLabelRequired>
+                            <FormControl>
+                              <Input placeholder={t("name")} {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                    <FormField
-                      control={form.control}
-                      name="surname"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>{t("surname")}</FormLabel>
-                          <FormControl>
-                            <Input placeholder={t("surname")} {...field} />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                      <FormField
+                        control={form.control}
+                        name="surname"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabelRequired required={true}>
+                              {t("surname")}
+                            </FormLabelRequired>
+                            <FormControl>
+                              <Input placeholder={t("surname")} {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
 
                     <FormField
                       control={form.control}
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>{t("email")}</FormLabel>
+                          <FormLabelRequired required={true}>
+                            {t("email")}
+                          </FormLabelRequired>
                           <FormControl>
                             <Input
                               type="email"
@@ -225,9 +235,18 @@ export const EmployeeModal = ({
                       name="vacation_days"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>{t("vacationDays")}</FormLabel>
+                          <span className="flex">
+                            <FormLabel>{t("vacationDays")}</FormLabel>
+                            <IconTooltip content={t("vacationDaysMessage")}>
+                              <Info className="ml-2 cursor-pointer" size={15} />
+                            </IconTooltip>
+                          </span>
                           <FormControl>
-                            <Input type="number" {...field} />
+                            <Input
+                              className="w-[5rem]"
+                              type="number"
+                              {...field}
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
