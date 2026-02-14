@@ -4,11 +4,13 @@ export interface Employee extends User {
   id: string;
   name: string;
   surname: string;
-  color: string | undefined;
-  user_id: string;
-  avatar: string;
+  email: string;
+  color: string;
   vacation_days: number;
   available_vacation_days: number;
+  total_extra_days: number;
+  total_extra_hours: number;
+  total_days_with_extra: number;
 }
 
 export type newEmployee = Omit<Employee, "user_id" | "id" | "avatar">;

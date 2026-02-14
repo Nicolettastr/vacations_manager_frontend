@@ -1,6 +1,7 @@
 import { registerUser } from "@/api/auth/register";
 import { RegisterResponse, userParams } from "@/types/auth/auth.common";
 import { useMutation } from "@tanstack/react-query";
+import Error from "next/error";
 import { UseFormReturn } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useToast } from "../use-toast";
@@ -33,13 +34,15 @@ export const useRegister = (
         description: data.message,
         variant: "success",
       });
+
       handleRegisterModal(true);
       form.reset();
     },
-    onError: (data) => {
+    onError: (error: any) => {
+      console.log("error", error);
       toast({
         title: t("registeredUnsuccessful"),
-        description: data.message,
+        description: error?.error || t("unknownError"),
         variant: "destructive",
       });
     },

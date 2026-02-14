@@ -49,6 +49,7 @@ import {
 } from "@/types/extraDays/extraDays.common";
 import { useEffect } from "react";
 import { useShallow } from "zustand/shallow";
+import { FormLabelRequired } from "../ui/formLabelRequired";
 
 export const ExtraDayModal = ({
   isOpen,
@@ -143,7 +144,9 @@ export const ExtraDayModal = ({
                   name="employee_id"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t("employee")}</FormLabel>
+                      <FormLabelRequired required={true}>
+                        {t("employee")}
+                      </FormLabelRequired>
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
@@ -172,7 +175,9 @@ export const ExtraDayModal = ({
                     name="date"
                     render={({ field }) => (
                       <FormItem className="flex flex-col flex-1">
-                        <FormLabel>{t("date")}</FormLabel>
+                        <FormLabelRequired required={true}>
+                          {t("date")}
+                        </FormLabelRequired>
                         <Popover>
                           <PopoverTrigger asChild>
                             <FormControl>
@@ -208,7 +213,9 @@ export const ExtraDayModal = ({
                     name="extra_hours"
                     render={({ field }) => (
                       <FormItem className="flex flex-col flex-1">
-                        <FormLabel>{t("extraHours")}</FormLabel>
+                        <FormLabelRequired required={true}>
+                          {t("extraHours")}
+                        </FormLabelRequired>
                         <FormControl>
                           <Input
                             type="number"

@@ -91,7 +91,7 @@ export default function CalendarView() {
           headerToolbar={{
             left: "prev,next today",
             center: "title",
-            right: "timeGridDay,timeGridWeek,dayGridMonth,multiMonthYear",
+            right: "dayGridDay,dayGridWeek,dayGridMonth,multiMonthYear",
           }}
           events={events}
           selectable={true}
@@ -107,6 +107,7 @@ export default function CalendarView() {
             month: t("month"),
             week: t("week"),
             day: t("day"),
+            year: t("year"),
           }}
           height="100%"
           eventDrop={handleEventDrop}

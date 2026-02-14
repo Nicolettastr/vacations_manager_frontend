@@ -228,5 +228,11 @@
   },
   "forgotPassword": "¿Olvidaste tu contraseña?",
   "cancelRegisterModal": "¿Cancelar registro?",
-  "cancelRegisterMessage": "Has ingresado información en el formulario. Si cancelas ahora, se borrarán todos los datos y serás redirigido a la pantalla de inicio de sesión. ¿Deseas continuar?"
+  "cancelRegisterMessage": "Has ingresado información en el formulario. Si cancelas ahora, se borrarán todos los datos y serás redirigido a la pantalla de inicio de sesión. ¿Deseas continuar?",
+  "year": "Año",
+  "low": "Baja",
+  "medium": "Media",
+  "high": "Alta",
+  "extraDays": "Días extras",
+  "totalExtraHours": "Total horas extras"
 }

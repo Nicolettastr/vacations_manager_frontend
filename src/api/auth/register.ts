@@ -2,17 +2,21 @@ import { api } from "@/client";
 import { RegisterResponse, userParams } from "@/types/auth/auth.common";
 
 export const registerUser = async (
-  data: userParams
+  data: userParams,
 ): Promise<RegisterResponse> => {
   try {
     const res = await api.post("api/auth/register", data);
 
     if (res.data?.error) {
-      throw new Error(res.data.error);
+      throw res.data;
     }
 
     return res.data;
   } catch (err: any) {
-    throw new Error(err.response);
+    if (err.response?.data) {
+      throw err.response.data;
+    }
+
+    throw { error: err.message || "Error de conexión" };
   }
 };

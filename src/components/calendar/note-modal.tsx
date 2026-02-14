@@ -14,7 +14,6 @@ import {
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -51,6 +50,7 @@ import { useTranslation } from "react-i18next";
 import { z } from "zod";
 import { useShallow } from "zustand/shallow";
 import { Calendar } from "../ui/calendar";
+import { FormLabelRequired } from "../ui/formLabelRequired";
 
 export function NoteModal({
   isOpen,
@@ -160,9 +160,12 @@ export function NoteModal({
                 <FormField
                   control={form.control}
                   name="title"
+                  rules={{ required: true }}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t("title")}</FormLabel>
+                      <FormLabelRequired required={true}>
+                        {t("title")}
+                      </FormLabelRequired>
                       <FormControl>
                         <Input
                           placeholder={t("noteTitlePlaceholder")}
@@ -179,7 +182,9 @@ export function NoteModal({
                   name="content"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t("description")}</FormLabel>
+                      <FormLabelRequired required={true}>
+                        {t("description")}
+                      </FormLabelRequired>
                       <FormControl>
                         <Textarea
                           placeholder={t("noteContentPlaceholder")}
@@ -196,7 +201,9 @@ export function NoteModal({
                   name="date"
                   render={({ field }) => (
                     <FormItem className="flex flex-col">
-                      <FormLabel>{t("date")}</FormLabel>
+                      <FormLabelRequired required={true}>
+                        {t("date")}
+                      </FormLabelRequired>
                       <Popover>
                         <PopoverTrigger asChild>
                           <FormControl>
@@ -235,7 +242,9 @@ export function NoteModal({
                   name="type"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t("noteImportance")}</FormLabel>
+                      <FormLabelRequired required={true}>
+                        {t("noteImportance")}
+                      </FormLabelRequired>
                       <FormControl>
                         <Select
                           value={field.value}
@@ -245,9 +254,9 @@ export function NoteModal({
                             <SelectValue placeholder={t("selectNoteType")} />
                           </SelectTrigger>
                           <SelectContent>
-                            {notestypes.map((t) => (
-                              <SelectItem key={t.id} value={t.name}>
-                                {t.name}
+                            {notestypes.map((type) => (
+                              <SelectItem key={type.id} value={type.name}>
+                                {t(type.name)}
                               </SelectItem>
                             ))}
                           </SelectContent>

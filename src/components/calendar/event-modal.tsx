@@ -45,6 +45,7 @@ import { EventModalProps } from "@/types/common";
 import { LeaveRequest, LeaveResponse } from "@/types/leaves/leaves.common";
 import { useEffect } from "react";
 import { useShallow } from "zustand/shallow";
+import { FormLabelRequired } from "../ui/formLabelRequired";
 
 export const EventModalForm = ({
   isOpen,
@@ -148,7 +149,9 @@ export const EventModalForm = ({
                   name="employeeId"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t("employee")}</FormLabel>
+                      <FormLabelRequired required={true}>
+                        {t("employee")}
+                      </FormLabelRequired>
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
@@ -176,7 +179,9 @@ export const EventModalForm = ({
                   name="type"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>{t("leaveType")}</FormLabel>
+                      <FormLabelRequired required={true}>
+                        {t("leaveType")}
+                      </FormLabelRequired>
                       <Select
                         value={field.value}
                         onValueChange={field.onChange}
@@ -205,7 +210,9 @@ export const EventModalForm = ({
                     name="startDate"
                     render={({ field }) => (
                       <FormItem className="flex flex-col flex-1">
-                        <FormLabel>{t("startDate")}</FormLabel>
+                        <FormLabelRequired required={true}>
+                          {t("startDate")}
+                        </FormLabelRequired>
                         <Popover>
                           <PopoverTrigger asChild>
                             <FormControl>
@@ -240,7 +247,9 @@ export const EventModalForm = ({
                     name="endDate"
                     render={({ field }) => (
                       <FormItem className="flex flex-col flex-1">
-                        <FormLabel>{t("endDate")}</FormLabel>
+                        <FormLabelRequired required={true}>
+                          {t("endDate")}
+                        </FormLabelRequired>
                         <Popover>
                           <PopoverTrigger asChild>
                             <FormControl>

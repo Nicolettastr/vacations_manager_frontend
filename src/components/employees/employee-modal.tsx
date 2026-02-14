@@ -76,6 +76,7 @@ export const EmployeeModal = ({
         },
         { message: t("formErrors.colorAlreadyUsed") },
       ),
+    vacation_days: z.number().optional(),
   });
 
   const form = useForm<z.infer<typeof employeeSchema>>({
@@ -91,6 +92,7 @@ export const EmployeeModal = ({
         surname: "",
         email: "",
         color: generateRandomColor(),
+        vacation_days: 22,
       });
     }
   }, [selectedEmployee, form, isOpen]);
@@ -212,6 +214,20 @@ export const EmployeeModal = ({
                               placeholder={t("emailPlaceholder")}
                               {...field}
                             />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={form.control}
+                      name="vacation_days"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>{t("vacationDays")}</FormLabel>
+                          <FormControl>
+                            <Input type="number" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>

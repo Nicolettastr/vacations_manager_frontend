@@ -106,8 +106,18 @@ export const LoginForm: React.FC<ILoginForm> = ({
   }, [formHasChanges]);
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
+    const storedLanguage = localStorage.getItem("language");
     if (registerForm) {
-      register(values);
+      const registerValues = {
+        email: values.email,
+        password: values.password,
+        name: values.name,
+        lastname: values.lastname,
+        extra: {
+          lang: storedLanguage ?? "en",
+        },
+      };
+      register(registerValues);
     } else {
       const { name, lastname, ...loginData } = values;
       login(loginData);

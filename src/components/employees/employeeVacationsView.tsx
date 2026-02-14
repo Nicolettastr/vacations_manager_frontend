@@ -19,6 +19,8 @@ export const EmployeeVacationsView: React.FC<EmployeeDetails> = ({ type }) => {
       100,
   );
 
+  console.log("selectedEmployee", selectedEmployee);
+
   return (
     <>
       <div>
@@ -51,14 +53,14 @@ export const EmployeeVacationsView: React.FC<EmployeeDetails> = ({ type }) => {
                 {t("extraDays")}
               </p>
               <p className="text-2xl font-bold text-foreground">
-                {selectedEmployee.vacation_days}
+                {selectedEmployee.total_extra_days}
               </p>
             </div>
 
             <div className="flex-1 bg-accent/10 rounded-lg p-4 border border-accent/30">
               <p className="text-xs text-accent mb-1">{t("totalExtraHours")}</p>
               <p className="text-2xl font-bold text-accent">
-                {selectedEmployee.available_vacation_days}
+                {selectedEmployee.total_extra_hours}
               </p>
             </div>
           </div>

@@ -273,7 +273,9 @@
   .user-edit-input {
     background-color: hsl(var(--muted) / 0.4);
     border-color: hsl(var(--border));
-    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
   }
 
   .user-edit-input:focus {
@@ -315,4 +317,12 @@
   [data-radix-popover-content] {
     z-index: 10000 !important;
   }
+}
+
+.fc-daygrid-day {
+  cursor: pointer;
+}
+
+.fc-timegrid-col {
+  cursor: pointer;
 }

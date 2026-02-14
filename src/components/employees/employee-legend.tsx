@@ -24,6 +24,7 @@ export function EmployeeLegend() {
     setModalState,
     employeesSettingsMobileIcon,
     selectedEmployee,
+    setSelectedEmployee,
   ] = useEmployeeStore(
     useShallow((state) => [
       state.configureEmployees,
@@ -32,6 +33,7 @@ export function EmployeeLegend() {
       state.setModalState,
       state.employeesSettingsMobileIcon,
       state.selectedEmployee,
+      state.setSelectedEmployee,
     ]),
   );
 
@@ -75,6 +77,7 @@ export function EmployeeLegend() {
   };
 
   const handleSetModal = () => {
+    setSelectedEmployee(null);
     setModalState({
       isOpen: true,
       mode: "create",
