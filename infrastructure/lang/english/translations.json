@@ -182,6 +182,20 @@
     "createErrorTitle": "Employee creation failed",
     "createErrorDesc": "There was an error creating the employee."
   },
+  "usersHooks": {
+    "deletedTitle": "User deleted",
+    "deletedDesc": "The user has been successfully deleted.",
+    "deleteErrorTitle": "User deletion failed",
+    "deleteErrorDesc": "There was an error deleting the user.",
+    "editedTitle": "User edited",
+    "editedDesc": "The user has been edited successfully.",
+    "editErrorTitle": "User editing failed",
+    "editErrorDesc": "There was an error editing the user.",
+    "createdTitle": "User created",
+    "createdDesc": "The user has been created successfully.",
+    "createErrorTitle": "User creation failed",
+    "createErrorDesc": "There was an error creating the user."
+  },
   "extraDayHook": {
     "createdTitle": "Extra day created",
     "createdDesc": "The employee extra day has been successfully created.",

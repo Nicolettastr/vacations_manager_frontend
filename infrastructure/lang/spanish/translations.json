@@ -226,6 +226,20 @@
     "deleteErrorTitle": "Error al eliminar la nota",
     "deleteErrorDesc": "Ocurrió un error al eliminar la nota."
   },
+  "usersHooks": {
+    "deletedTitle": "Usuario eliminado",
+    "deletedDesc": "El usuario ha sido eliminado correctamente.",
+    "deleteErrorTitle": "Error al eliminar el usuario",
+    "deleteErrorDesc": "Hubo un error al eliminar el usuario.",
+    "editedTitle": "Usuario editado",
+    "editedDesc": "El usuario ha sido editado correctamente.",
+    "editErrorTitle": "Error al editar el usuario",
+    "editErrorDesc": "Hubo un error al editar el usuario.",
+    "createdTitle": "Usuario creado",
+    "createdDesc": "El usuario ha sido creado correctamente.",
+    "createErrorTitle": "Error al crear el usuario",
+    "createErrorDesc": "Hubo un error al crear el usuario."
+  },
   "forgotPassword": "¿Olvidaste tu contraseña?",
   "cancelRegisterModal": "¿Cancelar registro?",
   "cancelRegisterMessage": "Has ingresado información en el formulario. Si cancelas ahora, se borrarán todos los datos y serás redirigido a la pantalla de inicio de sesión. ¿Deseas continuar?",
