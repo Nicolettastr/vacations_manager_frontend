@@ -58,7 +58,7 @@ export default function Home() {
       state.resetStore,
     ]),
   );
-  const { user, userFetching } = useGetUser(isLoggedIn);
+  const { user } = useGetUser(isLoggedIn);
 
   const [userConfiguration, setUserConfiguration] = useUserStore(
     useShallow((state) => [
@@ -72,7 +72,7 @@ export default function Home() {
       setUser(user);
     }
     setUserConfiguration(false);
-  }, [userFetching]);
+  }, [user]);
 
   useEffect(() => {
     if (!user?.extra?.lang) return;
