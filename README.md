@@ -352,6 +352,10 @@ npm start
 
 Provide a simple and efficient tool for managing employees in small businesses.
 
+## React Doctor
+
+[![React Doctor](https://www.react.doctor/share/badge?p=nextn&s=98&w=3&f=1)](https://www.react.doctor/share?p=nextn&s=98&w=3&f=1)
+
 ---
 
 ## 📄 License
