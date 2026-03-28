@@ -71,7 +71,8 @@
     "completeDetailsExtraDay": "Complete the extra day details",
     "createLeaveDescription": "Add new leave",
     "createNoteDescription": "Add new note",
-    "createExtraDaysDescription": "Add new extra day"
+    "createExtraDaysDescription": "Add new extra day",
+    "addExtraHours": "Add extra hours"
   },
   "errors": {
     "errorUpdatingLeave": "Error updating leave:",

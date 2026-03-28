@@ -69,7 +69,8 @@
     "completeDetailsExtraDay": "Completa los detalles del día extra",
     "createLeaveDescription": "Agregar nuevo permiso",
     "createNoteDescription": "Agregar nueva nota",
-    "createExtraDaysDescription": "Agregar nuevo día extra"
+    "createExtraDaysDescription": "Agregar nuevo día extra",
+    "addExtraHours": "Agregar horas extras"
   },
   "errors": {
     "errorUpdatingLeave": "Error al actualizar la ausencia:",

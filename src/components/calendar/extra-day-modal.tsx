@@ -125,7 +125,7 @@ export const ExtraDayModal = ({
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
             <DialogHeader>
               <DialogTitle>
-                {mode === "create" && t("modal.createLeave")}
+                {mode === "create" && t("modal.addExtraHours")}
                 {mode === "edit" && t("modal.extraDayEdit")}
                 {mode === "view" &&
                   `${t("modal.extraDay")} ${employee?.name || ""}`}
