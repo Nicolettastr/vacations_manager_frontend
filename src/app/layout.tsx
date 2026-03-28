@@ -6,8 +6,11 @@ import "./globals.css";
 import { Providers } from "./Providers";
 
 export const metadata: Metadata = {
-  title: "VisorVacaciones",
+  title: "TeamTracker",
   description: "HR Calendar for managing employee leaves and notes.",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({
